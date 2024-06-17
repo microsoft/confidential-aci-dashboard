@@ -12,11 +12,13 @@ on:
   workflow_dispatch:
     inputs:
       location:
+        type: string
         description: Where to deploy to
         required: true
   workflow_call:
     inputs:
       location:
+        type: string
         description: Where to deploy to
         required: true
 
