@@ -1,0 +1,65 @@
+name: Minimal
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      - location:
+          description: Where to deploy to
+          required: true
+  workflow_call:
+    inputs:
+      - location:
+          description: Where to deploy to
+          required: true
+
+env:
+  DEPLOYMENT_NAME: minimal-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
+  SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
+  RESOURCE_GROUP: c-aci-dashboard
+  MANAGED_IDENTITY: cacidashboard
+  LOCATION: ${{ inputs.location || 'westeurope' }}
+
+jobs:
+  minimal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
+
+      - name: Install c_aci_testing package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/install-c-aci-testing.sh
+
+      - name: Setup Docker
+        run: sudo usermod -aG docker $USER
+
+      - name: Pull Image
+        run: python -m c_aci_testing.images_pull workloads/minimal
+
+      - name: Generate Security Policy
+        run: python -m c_aci_testing.policies_gen workloads/minimal --deployment-name $DEPLOYMENT_NAME
+
+      - name: Deploy Container Group
+        run: python -m c_aci_testing.aci_deploy workloads/minimal --name $DEPLOYMENT_NAME
+
+      - name: Gather Logs
+        run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME
+
+      - name: Remove Container
+        run: python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
