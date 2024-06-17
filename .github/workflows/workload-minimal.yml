@@ -75,8 +75,8 @@ jobs:
 
       - name: Set Parameters
         run: |
-          python -m c_aci_testing.aci_param_set workloads/minimal --parameter cpu-$CPU
-          python -m c_aci_testing.aci_param_set workloads/minimal --parameter memoryInGb-$MEMORY_IN_GB
+          python -m c_aci_testing.aci_param_set workloads/minimal --parameter cpu=$CPU
+          python -m c_aci_testing.aci_param_set workloads/minimal --parameter memoryInGb=$MEMORY_IN_GB
 
       - name: Generate Security Policy
         run: python -m c_aci_testing.policies_gen workloads/minimal --deployment-name $DEPLOYMENT_NAME
