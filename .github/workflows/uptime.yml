@@ -73,19 +73,23 @@ jobs:
 
           currentContainerCount=0
 
-          for container in $(echo $CONTAINERS | jq -r '.[].name'); do
-            creationTime="${container#uptime-}"
-            containerAge=$(( ($(date -u +"%s") - creationTime) / 3600 ))
+          for container in $(echo $CONTAINERS | jq -r '.[].id'); do
+            echo "checking $container"
+            containerJson=$(az container show --resource-group $RESOURCE_GROUP --ids $container)
+            echo $containerJson | jq
+            creationTime=$(date -d $(az container show --resource-group $RESOURCE_GROUP --ids $container --query "containers[0].instanceView.events" --output json | jq -r 'min_by(.firstTimestamp) | .firstTimestamp') +%s)
+            now=$(date -u +"%s")
+            echo "creationTime=$creationTime"
+            echo "now=$now"
+            containerAge=$(( ($now - $creationTime) / 3600 ))
+            echo "containerAge=$containerAge"
             if [ $containerAge -lt ${{ env.UPTIME_HRS }} ]; then
-              currentContainerCount=$((currentContainerCount+1))
-              echo "Checking container group: $container"
-              containerJson=$(az container show --resource-group $RESOURCE_GROUP --name $container)
-              echo $containerJson | jq
+              echo "Checking for bad states"
               for BAD_STATE in "${BAD_STATES[@]}"; do
                 if echo $containerJson | jq -r '.containers[].instanceView.events[].name' | grep $BAD_STATE; then
                   echo "Container group: ${container} has been killed within 48 hours:"
                   echo "Cleaning up failing container group"
-                  az resource delete --resource-group $RESOURCE_GROUP --name $container --resource-type Microsoft.ContainerInstance/containerGroups
+                  az resource delete --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name $container --resource-type Microsoft.ContainerInstance/containerGroups
                   exit 1
                 fi
               done
