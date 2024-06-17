@@ -1,4 +1,4 @@
-name: Minimal
+name: Workload - Minimal
 
 permissions:
   id-token: write

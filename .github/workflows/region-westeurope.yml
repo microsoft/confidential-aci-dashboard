@@ -1,4 +1,4 @@
-name: West Europe
+name: Region - West Europe
 
 permissions:
   id-token: write
@@ -13,3 +13,5 @@ jobs:
   minimal:
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
+    with:
+      location: westeurope
