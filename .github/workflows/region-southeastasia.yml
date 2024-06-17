@@ -1,0 +1,17 @@
+name: Region - Southeast Asia
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  minimal:
+    secrets: inherit
+    uses: ./.github/workflows/workload-minimal.yml
+    with:
+      location: southeastasia
