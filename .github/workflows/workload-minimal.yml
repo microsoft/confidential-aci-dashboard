@@ -16,11 +16,11 @@ on:
         description: Where to deploy to
         required: true
       cpu:
-        type: integer
+        type: int
         description: The number of CPU cores in container
         default: 1
       memory_in_gb:
-        type: integer
+        type: int
         description: The memory in container in Gb
         default: 4
   workflow_call:
@@ -30,11 +30,11 @@ on:
         description: Where to deploy to
         required: true
       cpu:
-        type: integer
+        type: int
         description: The number of CPU cores in container
         default: 1
       memory_in_gb:
-        type: integer
+        type: int
         description: The memory in container in Gb
         default: 4
 
