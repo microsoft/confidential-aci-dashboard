@@ -22,7 +22,7 @@ Suite of tests to monitor reliability and performance of Confidential ACI.
 
 ## High Spec Containers
 
-### Stable (4 core, 16Gb memory)
+### Stable
 
 [![High Spec - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml)
 
