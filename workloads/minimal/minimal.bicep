@@ -3,6 +3,9 @@ param ccePolicies object
 param managedIDGroup string = resourceGroup().name
 param managedIDName string
 
+param cpu int = 1
+param memoryInGB int = 4
+
 resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
   name: deployment().name
   location: location
@@ -41,8 +44,8 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           ]
           resources: {
             requests: {
-              memoryInGB: 4
-              cpu: 1
+              memoryInGB: memoryInGB
+              cpu: cpu
             }
           }
         }

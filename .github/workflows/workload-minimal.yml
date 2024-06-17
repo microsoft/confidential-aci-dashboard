@@ -15,12 +15,28 @@ on:
         type: string
         description: Where to deploy to
         required: true
+      cpu:
+        type: integer
+        description: The number of CPU cores in container
+        default: 1
+      memory_in_gb:
+        type: integer
+        description: The memory in container in Gb
+        default: 4
   workflow_call:
     inputs:
       location:
         type: string
         description: Where to deploy to
         required: true
+      cpu:
+        type: integer
+        description: The number of CPU cores in container
+        default: 1
+      memory_in_gb:
+        type: integer
+        description: The memory in container in Gb
+        default: 4
 
 env:
   DEPLOYMENT_NAME: minimal-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
@@ -29,6 +45,8 @@ env:
   REGISTRY: cacidashboard
   MANAGED_IDENTITY: cacidashboard
   LOCATION: ${{ inputs.location || 'westeurope' }}
+  CPU: ${{ inputs.cpu || 1 }}
+  MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
 
 jobs:
   minimal:
@@ -54,6 +72,11 @@ jobs:
 
       - name: Pull Image
         run: python -m c_aci_testing.images_pull workloads/minimal
+
+      - name: Set Parameters
+        run: |
+          python -m c_aci_testing.aci_param_set workloads/minimal --parameter cpu $CPU
+          python -m c_aci_testing.aci_param_set workloads/minimal --parameter memoryInGb $MEMORY_IN_GB
 
       - name: Generate Security Policy
         run: python -m c_aci_testing.policies_gen workloads/minimal --deployment-name $DEPLOYMENT_NAME

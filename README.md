@@ -20,6 +20,14 @@ Suite of tests to monitor reliability and performance of Confidential ACI.
 ### Canary
 [![Region - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus2euap.yml)
 
+## High Spec Containers
+
+### Stable (4 core, 16Gb memory)
+
+[![High Spec - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml)
+
+### Canary
+
 ## Performance
 
 **Coming Soom
