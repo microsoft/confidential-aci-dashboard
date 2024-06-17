@@ -105,5 +105,5 @@ jobs:
     uses: ./.github/workflows/workload-minimal.yml
     with:
       id: uptime
-      location: westeurope
+      location: ${{ inputs.location }}
       cleanup: false
