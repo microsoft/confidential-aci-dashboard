@@ -11,6 +11,5 @@ on:
 
 jobs:
   minimal:
-    name: Minimal
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
