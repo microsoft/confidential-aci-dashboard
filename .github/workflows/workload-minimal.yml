@@ -11,14 +11,14 @@ on:
       - main
   workflow_dispatch:
     inputs:
-      - location:
-          description: Where to deploy to
-          required: true
+      location:
+        description: Where to deploy to
+        required: true
   workflow_call:
     inputs:
-      - location:
-          description: Where to deploy to
-          required: true
+      location:
+        description: Where to deploy to
+        required: true
 
 env:
   DEPLOYMENT_NAME: minimal-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
