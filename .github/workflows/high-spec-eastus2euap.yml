@@ -1,0 +1,43 @@
+name: High Spec - East US 2 EUAP
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  minimal-4cpu-8gb:
+    secrets: inherit
+    uses: ./.github/workflows/workload-minimal.yml
+    with:
+      location: eastus2euap
+      cpu: 4
+      memory_in_gb: 8
+
+  minimal-4cpu-16gb:
+    secrets: inherit
+    uses: ./.github/workflows/workload-minimal.yml
+    with:
+      location: eastus2euap
+      cpu: 4
+      memory_in_gb: 16
+
+  minimal-16cpu-16gb:
+    secrets: inherit
+    uses: ./.github/workflows/workload-minimal.yml
+    with:
+      location: eastus2euap
+      cpu: 16
+      memory_in_gb: 16
+
+  minimal-32cpu-32gb:
+    secrets: inherit
+    uses: ./.github/workflows/workload-minimal.yml
+    with:
+      location: eastus2euap
+      cpu: 32
+      memory_in_gb: 32

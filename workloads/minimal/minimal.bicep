@@ -4,7 +4,7 @@ param managedIDGroup string = resourceGroup().name
 param managedIDName string
 
 param cpu int = 1
-param memoryInGB int = 4
+param memoryInGb int = 4
 
 resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
   name: deployment().name
@@ -44,7 +44,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           ]
           resources: {
             requests: {
-              memoryInGB: memoryInGB
+              memoryInGB: memoryInGb
               cpu: cpu
             }
           }
