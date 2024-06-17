@@ -11,19 +11,22 @@ on:
       - main
   workflow_dispatch:
     inputs:
-      - location:
-          description: Where to deploy to
-          required: true
+      location:
+        type: string
+        description: Where to deploy to
+        required: true
   workflow_call:
     inputs:
-      - location:
-          description: Where to deploy to
-          required: true
+      location:
+        type: string
+        description: Where to deploy to
+        required: true
 
 env:
   DEPLOYMENT_NAME: minimal-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
+  REGISTRY: cacidashboard
   MANAGED_IDENTITY: cacidashboard
   LOCATION: ${{ inputs.location || 'westeurope' }}
 
@@ -58,8 +61,8 @@ jobs:
       - name: Deploy Container Group
         run: python -m c_aci_testing.aci_deploy workloads/minimal --name $DEPLOYMENT_NAME
 
-      - name: Gather Logs
+      - name: Monitor Container Group
         run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME
 
-      - name: Remove Container
+      - name: Remove Container Group
         run: python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
