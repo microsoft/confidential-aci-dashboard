@@ -4,7 +4,13 @@ Suite of tests to monitor reliability and performance of Confidential ACI.
 
 ## Region Status
 
+### Stable
+
 [![Region - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westeurope.yml)
+[![Region - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-northeurope.yml)
+
+### Canary
+[![Region - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus2euap.yml)
 
 ## Performance
 
