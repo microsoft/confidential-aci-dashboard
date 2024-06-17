@@ -11,6 +11,9 @@ on:
       - main
   workflow_dispatch:
     inputs:
+      id:
+        type: string
+        description: ID of the run
       location:
         type: string
         description: Where to deploy to
@@ -23,8 +26,15 @@ on:
         type: number
         description: The memory in container in Gb
         default: 4
+      cleanup:
+        type: boolean
+        description: Whether to cleanup the container group after testing
+        default: true
   workflow_call:
     inputs:
+      id:
+        type: string
+        description: ID of the run
       location:
         type: string
         description: Where to deploy to
@@ -37,9 +47,13 @@ on:
         type: number
         description: The memory in container in Gb
         default: 4
+      cleanup:
+        type: boolean
+        description: Whether to cleanup the container group after testing
+        default: true
 
 env:
-  DEPLOYMENT_NAME: minimal-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'minimal' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard
@@ -47,6 +61,7 @@ env:
   LOCATION: ${{ inputs.location || 'westeurope' }}
   CPU: ${{ inputs.cpu || 1 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
+  CLEANUP: ${{ inputs.cleanup || true }}
 
 jobs:
   minimal:
@@ -88,4 +103,5 @@ jobs:
         run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME
 
       - name: Remove Container Group
+        if: ${{ env.CLEANUP == true || env.CLEANUP == '' }}
         run: python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
