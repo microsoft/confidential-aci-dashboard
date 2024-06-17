@@ -1,0 +1,33 @@
+name: Cleanup
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  cleanup-container-groups:
+    name: Cleanup Container Groups
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
+
+      - name: Cleanup Container Groups
+        run: |
+          RUNNING_CONTAINERS=$(az container list \
+          --resource-group c-aci-dashboard \
+          --query "[?!starts_with(name, 'uptime-')]")
+
+          for container in $(echo $RUNNING_CONTAINERS | jq -r '.[].id'); do
+              echo "Deleting container group: ${container}"
+              az resource delete --ids ${container}
+          done

@@ -4,6 +4,8 @@ Suite of tests to monitor reliability and performance of Confidential ACI.
 
 ## Region Status
 
+Deploys to many regions to gather data about region health
+
 ### Stable
 
 [![Region - Australia East](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-australiaeast.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-australiaeast.yml)
@@ -22,6 +24,8 @@ Suite of tests to monitor reliability and performance of Confidential ACI.
 
 ## High Spec Containers
 
+Deploys with container with high specification (varies by region)
+
 ### Stable
 
 [![High Spec - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml)
@@ -32,11 +36,19 @@ Suite of tests to monitor reliability and performance of Confidential ACI.
 
 ## Performance
 
-**Coming Soom
+**Coming Soon
 
 ## Uptime
 
-**Coming Soom
+Deploys but doesn't remove, checks that containers live at least 48 hours without entering a bad state
+
+### Stable
+
+[![Uptime - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westeurope.yml)
+
+### Canary
+
+[![Uptime - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus2euap.yml)
 
 ## Contributing
 
