@@ -28,6 +28,8 @@ Suite of tests to monitor reliability and performance of Confidential ACI.
 
 ### Canary
 
+[![High Spec - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus2euap.yml)
+
 ## Performance
 
 **Coming Soom

@@ -10,7 +10,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  minimal:
+  minimal-4cpu-8gb:
+    secrets: inherit
+    uses: ./.github/workflows/workload-minimal.yml
+    with:
+      location: westeurope
+      cpu: 4
+      memory_in_gb: 8
+
+  minimal-4cpu-16gb:
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
     with:
