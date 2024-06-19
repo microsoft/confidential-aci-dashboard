@@ -18,3 +18,9 @@ jobs:
     uses: ./.github/workflows/workload-minimal.yml
     with:
       location: northeurope
+
+  attestation:
+    secrets: inherit
+    uses: ./.github/workflows/workload-attestation.yml
+    with:
+      location: northeurope
