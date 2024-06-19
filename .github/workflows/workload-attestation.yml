@@ -121,6 +121,6 @@ jobs:
 
       - name: Remove Container Group
         run: |
-          if [ $CLEANUP = true ]; then
+          if [ "$CLEANUP" = true ]; then
             python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
           fi
