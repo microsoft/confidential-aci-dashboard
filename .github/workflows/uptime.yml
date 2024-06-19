@@ -42,6 +42,7 @@ jobs:
             echo "containerAge=$containerAge hours"
             if [ $containerAge -gt ${{ env.UPTIME_HRS }} ]; then
                 echo "Deleting container group: ${container}"
+                az resource delete --resource-group $RESOURCE_GROUP --name $container --resource-type Microsoft.ContainerInstance/containerGroups
             fi
           done
 
@@ -85,6 +86,7 @@ jobs:
             echo "creationTime=$creationTime"
             echo "containerAge=$containerAge hours"
             if [ $containerAge -lt ${{ env.UPTIME_HRS }} ]; then
+              currentContainerCount=$((currentContainerCount + 1))
               echo "Checking for bad states"
               for BAD_STATE in "${BAD_STATES[@]}"; do
                 if echo $containerJson | jq -r '.containers[].instanceView.events[].name' | grep $BAD_STATE; then
