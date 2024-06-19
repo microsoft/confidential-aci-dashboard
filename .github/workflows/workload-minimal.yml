@@ -61,12 +61,13 @@ env:
   LOCATION: ${{ inputs.location || 'westeurope' }}
   CPU: ${{ inputs.cpu || 1 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
-  CLEANUP: ${{ inputs.cleanup || 'true' }}
+  CLEANUP: ${{ inputs.cleanup }}
 
 jobs:
   minimal:
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -103,5 +104,7 @@ jobs:
         run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME
 
       - name: Remove Container Group
-        if: ${{ env.CLEANUP == true || env.CLEANUP == 'true' }}
-        run: python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
+        run: |
+          if [ "$CLEANUP" = true ]; then
+            python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
+          fi

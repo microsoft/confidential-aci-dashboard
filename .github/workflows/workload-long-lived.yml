@@ -1,4 +1,4 @@
-name: Workload - Attestation
+name: Workload - Long Lived
 
 permissions:
   id-token: write
@@ -25,7 +25,7 @@ on:
       memory_in_gb:
         type: number
         description: The memory in container in Gb
-        default: 4
+        default: 2
       cleanup:
         type: boolean
         description: Whether to cleanup the container group after testing
@@ -46,14 +46,14 @@ on:
       memory_in_gb:
         type: number
         description: The memory in container in Gb
-        default: 4
+        default: 2
       cleanup:
         type: boolean
         description: Whether to cleanup the container group after testing
         default: true
 
 env:
-  DEPLOYMENT_NAME: ${{ inputs.id || 'attestation' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'long_lived' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard
@@ -65,7 +65,7 @@ env:
   TAG: 2.7
 
 jobs:
-  attestation:
+  long-lived:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -87,37 +87,21 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Pull Image
-        run: python -m c_aci_testing.images_pull workloads/attestation
+        run: python -m c_aci_testing.images_pull workloads/long_lived
 
       - name: Set Parameters
         run: |
-          python -m c_aci_testing.aci_param_set workloads/attestation --parameter cpu=$CPU
-          python -m c_aci_testing.aci_param_set workloads/attestation --parameter memoryInGb=$MEMORY_IN_GB
+          python -m c_aci_testing.aci_param_set workloads/long_lived --parameter cpu=$CPU
+          python -m c_aci_testing.aci_param_set workloads/long_lived --parameter memoryInGb=$MEMORY_IN_GB
 
       - name: Generate Security Policy
-        run: python -m c_aci_testing.policies_gen workloads/attestation --deployment-name $DEPLOYMENT_NAME
+        run: python -m c_aci_testing.policies_gen workloads/long_lived --deployment-name $DEPLOYMENT_NAME
 
       - name: Deploy Container Group
-        run: python -m c_aci_testing.aci_deploy workloads/attestation --name $DEPLOYMENT_NAME
+        run: python -m c_aci_testing.aci_deploy workloads/long_lived --name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
         run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME --no-follow
-
-      - name: Get MAA Token
-        run: |
-          ip_address=$(python -m c_aci_testing.aci_get_ips --name $DEPLOYMENT_NAME)
-
-          result=$(curl -X POST "http://$ip_address:8000/attest/maa" \
-            -H "Content-Type: application/json" \
-            -d '{"maa_endpoint": "cacidashboard.weu.attest.azure.net", "runtime_data": "'$(echo '{"keys": [{"key_ops": ["encrypt"], "kid": "example-key", "kty": "oct-HSM", "k": "example"}]}' | base64 -w 0)'"}')
-
-          token=$(echo $result | jq -r '.token')
-          if [ -z "$token" ]; then
-            echo "Token field is empty or missing in the response"
-            exit 1
-          else
-            echo "Token successfully acquired from MAA: $token"
-          fi
 
       - name: Remove Container Group
         run: |
