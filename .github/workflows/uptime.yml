@@ -103,7 +103,7 @@ jobs:
     needs: check-deployed
     if: ${{ always() && needs.check-deployed.outputs.deployment-needed == '1' }}
     secrets: inherit
-    uses: ./.github/workflows/workload-minimal.yml
+    uses: ./.github/workflows/workload-long-lived.yml
     with:
       id: uptime
       location: ${{ inputs.location }}
