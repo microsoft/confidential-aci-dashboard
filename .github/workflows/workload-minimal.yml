@@ -68,7 +68,7 @@ jobs:
     steps:
 
       - name: Test condition
-        if: ${{ inputs.cleanup != 'false' }}
+        if: ${{ inputs.cleanup != false }}
         run: echo "${{ inputs.cleanup }}"
 
       - name: Checkout
@@ -107,5 +107,5 @@ jobs:
         run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME
 
       - name: Remove Container Group
-        if: ${{ inputs.cleanup != 'false' }}
+        if: ${{ inputs.cleanup != false }}
         run: python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
