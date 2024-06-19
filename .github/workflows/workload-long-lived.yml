@@ -61,17 +61,13 @@ env:
   LOCATION: ${{ inputs.location || 'westeurope' }}
   CPU: ${{ inputs.cpu || 1 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
+  CLEANUP: ${{ inputs.cleanup }}
   TAG: 2.7
 
 jobs:
   long-lived:
     runs-on: ubuntu-latest
     steps:
-
-      - name: Test condition
-        if: inputs.cleanup != false
-        run: echo "${{ inputs.cleanup }}"
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -108,5 +104,7 @@ jobs:
         run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME --no-follow
 
       - name: Remove Container Group
-        if: inputs.cleanup != false
-        run: python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
+        run: |
+          if [ $CLEANUP = true ]; then
+            python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
+          fi
