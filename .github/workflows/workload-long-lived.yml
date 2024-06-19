@@ -65,7 +65,7 @@ env:
   TAG: 2.7
 
 jobs:
-  long_lived:
+  long-lived:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
