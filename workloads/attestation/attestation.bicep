@@ -1,5 +1,5 @@
 param location string
-param tag string = '2.7'
+param tag string
 param ccePolicies object
 param managedIDGroup string = resourceGroup().name
 param managedIDName string

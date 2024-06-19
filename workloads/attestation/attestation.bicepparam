@@ -1,7 +1,7 @@
 using './attestation.bicep'
 
 // Image info
-param tag='2.7'
+param tag=''
 
 // Deployment info
 param location='westeurope'
