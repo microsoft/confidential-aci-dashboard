@@ -68,6 +68,11 @@ jobs:
   attestation:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Test condition
+        if: ${{ inputs.cleanup == '' || inputs.cleanup == 'true' }}
+        run: echo "${{ inputs.cleanup }}"
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -120,5 +125,5 @@ jobs:
           fi
 
       - name: Remove Container Group
-        if: ${{ inputs.cleanup == '' || inputs.cleanup }}
+        if: ${{ inputs.cleanup == '' || inputs.cleanup == 'true' }}
         run: python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
