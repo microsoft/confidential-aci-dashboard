@@ -17,6 +17,7 @@ jobs:
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
     with:
+      id: 4cpu-8gb
       location: westeurope
       cpu: 4
       memory_in_gb: 8
@@ -25,6 +26,7 @@ jobs:
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
     with:
+      id: 4cpu-16gb
       location: westeurope
       cpu: 4
       memory_in_gb: 16
