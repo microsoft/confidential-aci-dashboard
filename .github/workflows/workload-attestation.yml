@@ -101,7 +101,7 @@ jobs:
         run: python -m c_aci_testing.aci_deploy workloads/attestation --name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
-        run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME
+        run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME --no-follow
 
       - name: Get MAA Token
         run: |
