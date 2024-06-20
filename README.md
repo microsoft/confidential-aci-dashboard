@@ -8,14 +8,8 @@ Deploys to many regions to gather data about region health
 
 ### Stable
 
-[![Region - Australia East](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-australiaeast.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-australiaeast.yml)
-[![Region - Central US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-centralus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-centralus.yml)
-[![Region - East Asia](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastasia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastasia.yml)
 [![Region - East US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus.yml)
-[![Region - Japan East](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-japaneast.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-japaneast.yml)
 [![Region - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-northeurope.yml)
-[![Region - Southcentral US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-southcentralus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-southcentralus.yml)
-[![Region - Southeast Asia](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-southeastasia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-southeastasia.yml)
 [![Region - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westeurope.yml)
 [![Region - West US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westus.yml)
 
