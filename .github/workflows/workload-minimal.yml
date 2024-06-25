@@ -97,6 +97,9 @@ jobs:
       - name: Generate Security Policy
         run: python -m c_aci_testing.policies_gen workloads/minimal --deployment-name $DEPLOYMENT_NAME
 
+      - name: Print Security Policy
+        run: cat workloads/minimal/policy_minimal.rego
+
       - name: Deploy Container Group
         run: python -m c_aci_testing.aci_deploy workloads/minimal --name $DEPLOYMENT_NAME
 
