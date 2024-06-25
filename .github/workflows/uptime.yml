@@ -67,6 +67,7 @@ jobs:
     if: ${{ always() && needs.cleanup-deployed.outputs.deployments-matrix != '[]' }}
     secrets: inherit
     strategy:
+      fail-fast: false
       matrix:
         idx: ${{ fromJson(needs.cleanup-deployed.outputs.deployments-matrix) }}
     uses: ./.github/workflows/workload-long-lived.yml
