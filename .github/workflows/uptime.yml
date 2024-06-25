@@ -62,7 +62,7 @@ jobs:
           deploymentsNeeded=$(((48 / 24 + 1) - $currentContainerCount))
           if [ $deploymentsNeeded -gt 0 ]; then
             echo "deployment-needed=1" >> $GITHUB_OUTPUT
-            echo "deployments-matrix=$(seq -s, 1 $deploymentsNeeded" >> $GITHUB_OUTPUT
+            echo "deployments-matrix=$(seq -s, 1 $deploymentsNeeded)" >> $GITHUB_OUTPUT
           else
             echo "deployment-needed=0" >> $GITHUB_OUTPUT
           fi
