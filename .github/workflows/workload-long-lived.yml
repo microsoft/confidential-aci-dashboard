@@ -97,6 +97,9 @@ jobs:
       - name: Generate Security Policy
         run: python -m c_aci_testing.policies_gen workloads/long_lived --deployment-name $DEPLOYMENT_NAME
 
+      - name: Print Security Policy
+        run: cat workloads/long_lived/policy_long_lived.rego
+
       - name: Deploy Container Group
         run: python -m c_aci_testing.aci_deploy workloads/long_lived --name $DEPLOYMENT_NAME
 

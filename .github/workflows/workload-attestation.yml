@@ -97,6 +97,9 @@ jobs:
       - name: Generate Security Policy
         run: python -m c_aci_testing.policies_gen workloads/attestation --deployment-name $DEPLOYMENT_NAME
 
+      - name: Print Security Policy
+        run: cat workloads/attestation/policy_attestation.rego
+
       - name: Deploy Container Group
         run: python -m c_aci_testing.aci_deploy workloads/attestation --name $DEPLOYMENT_NAME
 
