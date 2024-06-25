@@ -20,6 +20,7 @@ jobs:
 
   cleanup-deployed:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Log into Azure
         uses: azure/login@v2
@@ -36,13 +37,13 @@ jobs:
 
           for container in $(echo $CONTAINERS | jq -r '.[].id'); do
             echo "checking $container"
-            creationTime=$(date -d $(az container show --resource-group $RESOURCE_GROUP --ids $container --query "containers[0].instanceView.events" --output json | jq -r 'min_by(.firstTimestamp) | .firstTimestamp') +%s)
+            creationTime=$(date -d $(az container show --ids $container --query "containers[0].instanceView.events" --output json | jq -r 'min_by(.firstTimestamp) | .firstTimestamp') +%s)
             containerAge=$(( ($(date -u +"%s") - $creationTime) / 3600 ))
             echo "creationTime=$creationTime"
             echo "containerAge=$containerAge hours"
             if [ $containerAge -gt ${{ env.UPTIME_HRS }} ]; then
                 echo "Deleting container group: ${container}"
-                az resource delete --resource-group $RESOURCE_GROUP --name $container --resource-type Microsoft.ContainerInstance/containerGroups
+                az resource delete --ids $container
             fi
           done
 
