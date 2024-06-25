@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     outputs:
-      deployment-needed: ${{ steps.delete-containers.outputs.deployment-needed }}
       deployments-matrix: ${{ steps.delete-containers.outputs.deployments-matrix }}
     steps:
       - name: Log into Azure
@@ -61,23 +60,18 @@ jobs:
 
           deploymentsNeeded=$(((48 / 24 + 1) - $currentContainerCount))
           echo "deploymentsNeeded=$deploymentsNeeded"
-          if [ $deploymentsNeeded -gt 0 ]; then
-            echo "deployment-needed=1" >> $GITHUB_OUTPUT
-            echo "deployments-matrix=[$(seq -s, 1 $deploymentsNeeded)]" >> $GITHUB_OUTPUT
-          else
-            echo "deployment-needed=0" >> $GITHUB_OUTPUT
-          fi
+          echo "deployments-matrix=[$(seq -s, 1 $deploymentsNeeded)]" >> $GITHUB_OUTPUT
 
   deploy-new:
     needs: cleanup-deployed
-    if: ${{ always() && needs.cleanup-deployed.outputs.deployment-needed == '1' }}
+    if: ${{ always() && needs.cleanup-deployed.outputs.deployments-matrix != '[]' }}
     secrets: inherit
     strategy:
       matrix:
         idx: ${{ fromJson(needs.cleanup-deployed.outputs.deployments-matrix) }}
     uses: ./.github/workflows/workload-long-lived.yml
     with:
-      id: uptime
+      id: uptime-${{ matrix.idx }}
       location: ${{ inputs.location || 'westeurope' }}
       cleanup: false
 
