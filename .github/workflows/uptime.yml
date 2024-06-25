@@ -72,6 +72,7 @@ jobs:
 
           if [ -z "$CONTAINERS" ]; then
             echo "No containers found"
+            echo "deployment-needed=1" >> $GITHUB_OUTPUT
             exit 0
           fi
 
@@ -80,27 +81,36 @@ jobs:
           currentContainerCount=0
 
           for container in $(echo $CONTAINERS | jq -r '.[].id'); do
-            echo "checking $container"
-            containerJson=$(az container show --resource-group $RESOURCE_GROUP --ids $container)
-            creationTime=$(date -d $(az container show --resource-group $RESOURCE_GROUP --ids $container --query "containers[0].instanceView.events" --output json | jq -r 'min_by(.firstTimestamp) | .firstTimestamp') +%s)
-            containerAge=$(( ($(date -u +"%s") - $creationTime) / 3600 ))
-            echo "creationTime=$creationTime"
-            echo "containerAge=$containerAge hours"
+            echo "Checking $container"
+            containerJson=$(az container show --ids $container)
+            containerCreate=$(date -d $(echo $containerJson | jq -r '.containers[0].instanceView.events' | jq -r 'min_by(.firstTimestamp) | .firstTimestamp') +%s)
+            containerAge=$(( ($(date -u +"%s") - $containerCreate) / 3600 ))
+            echo "  Age: $containerAge hours"
             if [ $containerAge -lt ${{ env.UPTIME_HRS }} ]; then
               currentContainerCount=$((currentContainerCount + 1))
-              echo "Checking for bad states"
-              echo "All states: $(echo $containerJson | jq -r '.containers[].instanceView.events[].name')"
-              for BAD_STATE in "${BAD_STATES[@]}"; do
-                if echo $containerJson | jq -r '.containers[].instanceView.events[].name' | grep $BAD_STATE; then
-                  echo "Container group: ${container} has been killed within 48 hours:"
-                  echo "Cleaning up failing container group"
-                  az resource delete --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name $container --resource-type Microsoft.ContainerInstance/containerGroups
-                  exit 1
-                fi
+              echo "  Container is less than ${{ env.UPTIME_HRS }} hours old, checking for bad states:"
+              containerStates=$(echo $containerJson | jq -r '.containers[0].instanceView.events[].name')
+              echo "  All states: $(echo $containerStates | tr '\n' ' ')"
+              for containerState in $containerStates; do
+                for badState in "${BAD_STATES[@]}"; do
+                  if [[ "$containerState" == "$badState" ]]; then
+                    echo "    This group entered the failure state "$badState" in the last 48 hours"
+                    echo "    Cleaning up failed group and exiting with error"
+                    az resource delete --ids $container
+                    exit 1
+                  fi
+                done
               done
+              echo "  No bad states found"
             fi
           done
 
+          echo "There are $currentContainerCount currently running containers"
+          if [ $currentContainerCount -lt 3 ]; then
+            echo "Deployment needed"
+          else
+            echo "No deployment needed"
+          fi
           echo "deployment-needed=$(($currentContainerCount < 3 ? 1 : 0))" >> $GITHUB_OUTPUT
 
   deploy-new:
