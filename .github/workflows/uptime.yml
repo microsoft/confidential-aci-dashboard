@@ -124,5 +124,5 @@ jobs:
     uses: ./.github/workflows/workload-long-lived.yml
     with:
       id: uptime
-      location: ${{ env.LOCATION }}
+      location: $LOCATION
       cleanup: false
