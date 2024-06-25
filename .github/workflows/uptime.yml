@@ -59,6 +59,13 @@ jobs:
           done
 
           deploymentsNeeded=$(((48 / 24 + 1) - $currentContainerCount))
+          
+          # Always deploy at least one uptime container so that we test a
+          # range of ages
+          if [ $deploymentsNeeded -lt 1 ]; then
+            deploymentsNeeded=1
+          fi
+          
           echo "deploymentsNeeded=$deploymentsNeeded"
           echo "deployments-matrix=[$(seq -s, 1 $deploymentsNeeded)]" >> $GITHUB_OUTPUT
 
