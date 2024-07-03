@@ -56,13 +56,13 @@ env:
   DEPLOYMENT_NAME: ${{ inputs.id || 'long_lived' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
-  REGISTRY: cacidashboard
+  REGISTRY: cacidashboard.azurecr.io
   MANAGED_IDENTITY: cacidashboard
   LOCATION: ${{ inputs.location || 'westeurope' }}
   CPU: ${{ inputs.cpu || 1 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
-  TAG: 2.7
+  TAG: latest
 
 jobs:
   long-lived:

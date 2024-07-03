@@ -1,4 +1,4 @@
 version: '3'
 services:
   ubuntu:
-    image: ubuntu:latest
+    image: cacidashboard.azurecr.io/ubuntu:latest

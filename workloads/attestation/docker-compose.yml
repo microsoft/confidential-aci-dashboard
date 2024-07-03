@@ -1,6 +1,6 @@
 version: '3'
 services:
   proxy:
-    image: nginx:latest
+    image: cacidashboard.azurecr.io/nginx:latest
   attestation:
     image: mcr.microsoft.com/aci/skr:$TAG

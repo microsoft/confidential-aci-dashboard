@@ -1,6 +1,7 @@
 using './attestation.bicep'
 
 // Image info
+param registry=''
 param tag=''
 
 // Deployment info
