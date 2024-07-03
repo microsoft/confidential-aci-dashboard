@@ -86,6 +86,9 @@ jobs:
       - name: Setup Docker
         run: sudo usermod -aG docker $USER
 
+      - name: Log into Registry
+        run: az acr login -n $REGISTRY
+
       - name: Pull Image
         run: python -m c_aci_testing.images_pull workloads/minimal
 
