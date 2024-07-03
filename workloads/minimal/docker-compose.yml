@@ -1,4 +1,4 @@
 version: '3'
 services:
   hello-world:
-    image: cacidashabord.azurecr.io/hello-world:latest
+    image: cacidashboard.azurecr.io/hello-world:latest
