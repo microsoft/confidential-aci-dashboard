@@ -1,4 +1,6 @@
 param location string
+param registry string
+param tag string
 param ccePolicies object
 param managedIDGroup string = resourceGroup().name
 param managedIDName string
@@ -19,6 +21,12 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
     osType: 'Linux'
     sku: 'Confidential'
     restartPolicy: 'Never'
+    imageRegistryCredentials: [
+      {
+        server: registry
+        identity: resourceId(managedIDGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities', managedIDName)
+      }
+    ]
     confidentialComputeProperties: {
       ccePolicy: ccePolicies.long_lived
     }
@@ -26,7 +34,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'ubuntu'
         properties: {
-          image: 'cacidashboard.azurecr.io/ubuntu:latest'
+          image: '${registry}/ubuntu:${tag}'
           command: [
             'sh'
             '-c'
