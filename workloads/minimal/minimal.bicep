@@ -35,7 +35,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'primary'
         properties: {
-          image: 'hello-world:latest'
+          image: 'cacidashabord.azurecr.io/hello-world:latest'
           ports: [
             {
               protocol: 'TCP'

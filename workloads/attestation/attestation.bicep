@@ -36,7 +36,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'proxy'
         properties: {
-          image: 'nginx:latest'
+          image: 'cacidashabord.azurecr.io/nginx:latest'
           ports: [
             {
               protocol: 'TCP'

@@ -26,7 +26,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'ubuntu'
         properties: {
-          image: 'ubuntu:latest'
+          image: 'cacidashabord.azurecr.io/ubuntu:latest'
           command: [
             'sh'
             '-c'
