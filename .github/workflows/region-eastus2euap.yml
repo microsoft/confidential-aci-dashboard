@@ -17,14 +17,14 @@ jobs:
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
     with:
-      id: generated
+      id: minimal-generated
       location: eastus2euap
 
   minimal-allow-all:
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
     with:
-      id: allow-all
+      id: minimal-allow-all
       location: eastus2euap
       allow_all: true
 
@@ -32,13 +32,13 @@ jobs:
     secrets: inherit
     uses: ./.github/workflows/workload-attestation.yml
     with:
-      id: generated
+      id: attestation-generated
       location: eastus2euap
 
   attestation-allow-all:
     secrets: inherit
     uses: ./.github/workflows/workload-attestation.yml
     with:
-      id: allow-all
+      id: attestation-allow-all
       location: eastus2euap
       allow_all: true
