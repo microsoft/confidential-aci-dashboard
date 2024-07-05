@@ -23,6 +23,12 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
     confidentialComputeProperties: {
       ccePolicy: ccePolicies.managed_identity
     }
+    imageRegistryCredentials: [
+      {
+        server: registry
+        identity: resourceId(managedIDGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities', managedIDName)
+      }
+    ]
     containers: [
       {
         name: 'primary'
