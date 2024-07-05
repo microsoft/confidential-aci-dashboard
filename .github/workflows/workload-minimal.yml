@@ -74,7 +74,7 @@ env:
 
 jobs:
   minimal:
-    name: id
+    name: ${{ inputs.id || 'minimal' }}
     runs-on: ubuntu-latest
     steps:
 

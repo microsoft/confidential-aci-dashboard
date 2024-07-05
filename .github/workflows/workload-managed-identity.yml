@@ -74,7 +74,7 @@ env:
 
 jobs:
   managed-identity:
-    name: id
+    name: ${{ inputs.id || 'managed-identity' }}
     runs-on: ubuntu-latest
     steps:
 
