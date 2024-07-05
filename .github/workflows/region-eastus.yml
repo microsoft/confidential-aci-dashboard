@@ -13,14 +13,8 @@ on:
       - .github/workflows/region-eastus.yml
 
 jobs:
-  minimal:
+  region:
     secrets: inherit
-    uses: ./.github/workflows/workload-minimal.yml
-    with:
-      location: eastus
-
-  attestation:
-    secrets: inherit
-    uses: ./.github/workflows/workload-attestation.yml
+    uses: ./.github/workflows/region.yml
     with:
       location: eastus

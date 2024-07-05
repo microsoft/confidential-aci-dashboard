@@ -13,47 +13,8 @@ on:
       - .github/workflows/region-eastus2euap.yml
 
 jobs:
-  minimal-generated:
+  region:
     secrets: inherit
-    uses: ./.github/workflows/workload-minimal.yml
+    uses: ./.github/workflows/region.yml
     with:
-      id: minimal-generated
       location: eastus2euap
-
-  minimal-allow-all:
-    secrets: inherit
-    uses: ./.github/workflows/workload-minimal.yml
-    with:
-      id: minimal-allow-all
-      location: eastus2euap
-      allow_all: true
-
-  managed-id-generated:
-    secrets: inherit
-    uses: ./.github/workflows/workload-managed-identity.yml
-    with:
-      id: managed-id-generated
-      location: eastus2euap
-
-  managed-id-allow-all:
-    secrets: inherit
-    uses: ./.github/workflows/workload-managed-identity.yml
-    with:
-      id: managed-id-allow-all
-      location: eastus2euap
-      allow_all: true
-
-  attestation-generated:
-    secrets: inherit
-    uses: ./.github/workflows/workload-attestation.yml
-    with:
-      id: attestation-generated
-      location: eastus2euap
-
-  attestation-allow-all:
-    secrets: inherit
-    uses: ./.github/workflows/workload-attestation.yml
-    with:
-      id: attestation-allow-all
-      location: eastus2euap
-      allow_all: true

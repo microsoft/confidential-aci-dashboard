@@ -1,0 +1,62 @@
+name: Region
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/region.yml
+  workflow_call:
+    inputs:
+      location:
+        type: string
+        required: true
+        description: 'The location of the Azure Container Instances'
+
+jobs:
+  minimal-generated:
+    secrets: inherit
+    uses: ./.github/workflows/workload-minimal.yml
+    with:
+      id: minimal-generated
+      location: ${{ inputs.location }}
+
+  minimal-allow-all:
+    secrets: inherit
+    uses: ./.github/workflows/workload-minimal.yml
+    with:
+      id: minimal-allow-all
+      location: ${{ inputs.location }}
+      allow_all: true
+
+  managed-id-generated:
+    secrets: inherit
+    uses: ./.github/workflows/workload-managed-identity.yml
+    with:
+      id: managed-id-generated
+      location: ${{ inputs.location }}
+
+  managed-id-allow-all:
+    secrets: inherit
+    uses: ./.github/workflows/workload-managed-identity.yml
+    with:
+      id: managed-id-allow-all
+      location: ${{ inputs.location }}
+      allow_all: true
+
+  attestation-generated:
+    secrets: inherit
+    uses: ./.github/workflows/workload-attestation.yml
+    with:
+      id: attestation-generated
+      location: ${{ inputs.location }}
+
+  attestation-allow-all:
+    secrets: inherit
+    uses: ./.github/workflows/workload-attestation.yml
+    with:
+      id: attestation-allow-all
+      location: ${{ inputs.location }}
+      allow_all: true
