@@ -1,4 +1,5 @@
 param location string
+param registry string
 param tag string
 param ccePolicies object
 param managedIDGroup string = resourceGroup().name

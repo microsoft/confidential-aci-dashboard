@@ -1,6 +1,7 @@
 using './managed_identity.bicep'
 
 // Image info
+param registry=''
 param tag=''
 
 // Deployment info
