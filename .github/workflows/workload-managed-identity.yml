@@ -110,7 +110,7 @@ jobs:
           else
             python -m c_aci_testing.policies_gen workloads/managed_identity --deployment-name $DEPLOYMENT_NAME
           fi
-          cat workloads/managed_identity/policy_managed-identity.rego
+          cat workloads/managed_identity/policy_managed_identity.rego
 
       - name: Deploy Container Group
         run: python -m c_aci_testing.aci_deploy workloads/managed_identity --name $DEPLOYMENT_NAME
