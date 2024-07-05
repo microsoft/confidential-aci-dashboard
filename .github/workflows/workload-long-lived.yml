@@ -75,7 +75,6 @@ env:
 
 jobs:
   long-lived:
-    name: ${{ inputs.id || 'long-lived' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

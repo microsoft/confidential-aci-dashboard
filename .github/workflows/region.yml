@@ -17,6 +17,7 @@ on:
 
 jobs:
   minimal-generated:
+    name: generated
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
     with:
@@ -24,6 +25,7 @@ jobs:
       location: ${{ inputs.location }}
 
   minimal-allow-all:
+    name: allow-all
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
     with:
@@ -32,6 +34,7 @@ jobs:
       allow_all: true
 
   managed-id-generated:
+    name: generated
     secrets: inherit
     uses: ./.github/workflows/workload-managed-identity.yml
     with:
@@ -39,6 +42,7 @@ jobs:
       location: ${{ inputs.location }}
 
   managed-id-allow-all:
+    name: allow-all
     secrets: inherit
     uses: ./.github/workflows/workload-managed-identity.yml
     with:
@@ -47,6 +51,7 @@ jobs:
       allow_all: true
 
   attestation-generated:
+    name: generated
     secrets: inherit
     uses: ./.github/workflows/workload-attestation.yml
     with:
@@ -54,6 +59,7 @@ jobs:
       location: ${{ inputs.location }}
 
   attestation-allow-all:
+    name: allow-all
     secrets: inherit
     uses: ./.github/workflows/workload-attestation.yml
     with:
