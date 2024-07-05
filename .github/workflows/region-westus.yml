@@ -13,7 +13,7 @@ on:
       - .github/workflows/region-westus.yml
 
 jobs:
-  region:
+  westus:
     secrets: inherit
     uses: ./.github/workflows/region.yml
     with:

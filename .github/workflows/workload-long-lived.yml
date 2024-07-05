@@ -75,6 +75,7 @@ env:
 
 jobs:
   long-lived:
+    name: id
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

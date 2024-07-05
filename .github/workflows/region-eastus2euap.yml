@@ -13,7 +13,7 @@ on:
       - .github/workflows/region-eastus2euap.yml
 
 jobs:
-  region:
+  eastus2euap:
     secrets: inherit
     uses: ./.github/workflows/region.yml
     with:
