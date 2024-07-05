@@ -28,6 +28,21 @@ jobs:
       location: eastus2euap
       allow_all: true
 
+  managed-id-generated:
+    secrets: inherit
+    uses: ./.github/workflows/workload-managed-identity.yml
+    with:
+      id: managed-id-generated
+      location: eastus2euap
+
+  managed-id-allow-all:
+    secrets: inherit
+    uses: ./.github/workflows/workload-managed-identity.yml
+    with:
+      id: minimal-allow-all
+      location: eastus2euap
+      allow_all: true
+
   attestation-generated:
     secrets: inherit
     uses: ./.github/workflows/workload-attestation.yml

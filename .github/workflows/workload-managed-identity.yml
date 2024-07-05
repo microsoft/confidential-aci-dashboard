@@ -1,0 +1,125 @@
+name: Workload - Managed Identity
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      id:
+        type: string
+        description: ID of the run
+      location:
+        type: string
+        description: Where to deploy to
+        required: true
+      cpu:
+        type: number
+        description: The number of CPU cores in container
+        default: 1
+      memory_in_gb:
+        type: number
+        description: The memory in container in Gb
+        default: 4
+      cleanup:
+        type: boolean
+        description: Whether to cleanup the container group after testing
+        default: true
+      allow_all:
+        type: boolean
+        description: Whether to use the allow all policy
+        default: false
+  workflow_call:
+    inputs:
+      id:
+        type: string
+        description: ID of the run
+      location:
+        type: string
+        description: Where to deploy to
+        required: true
+      cpu:
+        type: number
+        description: The number of CPU cores in container
+        default: 1
+      memory_in_gb:
+        type: number
+        description: The memory in container in Gb
+        default: 4
+      cleanup:
+        type: boolean
+        description: Whether to cleanup the container group after testing
+        default: true
+      allow_all:
+        type: boolean
+        description: Whether to use the allow all policy
+        default: false
+
+env:
+  DEPLOYMENT_NAME: ${{ inputs.id || 'managed-identity' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
+  SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
+  RESOURCE_GROUP: c-aci-dashboard
+  REGISTRY: cacidashboard.azurecr.io
+  MANAGED_IDENTITY: cacidashboard
+  LOCATION: ${{ inputs.location || 'westeurope' }}
+  CPU: ${{ inputs.cpu || 1 }}
+  MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
+  CLEANUP: ${{ inputs.cleanup || true }}
+  ALLOW_ALL: ${{ inputs.allow_all || false }}
+
+jobs:
+  managed-identity:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
+
+      - name: Install c_aci_testing package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/install-c-aci-testing.sh
+
+      - name: Setup Docker
+        run: sudo usermod -aG docker $USER
+
+      - name: Pull Image
+        run: python -m c_aci_testing.images_pull workloads/managed_identity
+
+      - name: Set Parameters
+        run: |
+          python -m c_aci_testing.aci_param_set workloads/managed_identity --parameter cpu=$CPU
+          python -m c_aci_testing.aci_param_set workloads/managed_identity --parameter memoryInGb=$MEMORY_IN_GB
+
+      - name: Generate Security Policy
+        run: |
+          if [ "$ALLOW_ALL" == true ]; then
+            python -m c_aci_testing.policies_gen workloads/managed_identity --deployment-name $DEPLOYMENT_NAME --allow-all
+          else
+            python -m c_aci_testing.policies_gen workloads/managed_identity --deployment-name $DEPLOYMENT_NAME
+          fi
+          cat workloads/managed_identity/policy_managed-identity.rego
+
+      - name: Deploy Container Group
+        run: python -m c_aci_testing.aci_deploy workloads/managed_identity --name $DEPLOYMENT_NAME
+
+      - name: Monitor Container Group
+        run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME
+
+      - name: Remove Container Group
+        run: |
+          if [ "$CLEANUP" = true ]; then
+            python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
+          fi
