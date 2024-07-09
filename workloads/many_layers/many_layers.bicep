@@ -18,7 +18,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'primary'
         properties: {
-          image: 'mcr.microsoft.com/devcontainers/base:jammy'
+          image: 'mcr.microsoft.com/devcontainers/cpp:jammy'
           command: [
             'bash'
             '-c'
