@@ -95,11 +95,8 @@ jobs:
       - name: Setup Docker
         run: sudo usermod -aG docker $USER
 
-      - name: Build Image
-        run: python -m c_aci_testing.images_build workloads/many_layers
-
-      - name: Push Image
-        run: python -m c_aci_testing.images_push workloads/many_layers
+      - name: Pull Image
+        run: python -m c_aci_testing.images_pull workloads/many_layers
 
       - name: Set Parameters
         run: |
