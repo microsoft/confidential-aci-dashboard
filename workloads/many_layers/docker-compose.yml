@@ -1,0 +1,7 @@
+version: '3'
+services:
+  many_layers:
+    image: cacidashboard.azurecr.io/many_layers:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
