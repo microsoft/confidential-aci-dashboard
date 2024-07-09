@@ -1,4 +1,4 @@
 version: '3'
 services:
   many_layers:
-    image: mcr.microsoft.com/devcontainers/cpp:jammy
+    image: mcr.microsoft.com/devcontainers/python:3
