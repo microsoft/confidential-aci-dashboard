@@ -96,30 +96,30 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Pull Image
-        run: python -m c_aci_testing.images_pull workloads/minimal
+        run: c-aci-testing images pull workloads/minimal
 
       - name: Set Parameters
         run: |
-          python -m c_aci_testing.aci_param_set workloads/minimal --parameter cpu=$CPU
-          python -m c_aci_testing.aci_param_set workloads/minimal --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/minimal --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/minimal --parameter memoryInGb=$MEMORY_IN_GB
 
       - name: Generate Security Policy
         run: |
           if [ "$ALLOW_ALL" == true ]; then
-            python -m c_aci_testing.policies_gen workloads/minimal --deployment-name $DEPLOYMENT_NAME --allow-all
+            c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME --allow-all
           else
-            python -m c_aci_testing.policies_gen workloads/minimal --deployment-name $DEPLOYMENT_NAME
+            c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME
           fi
           cat workloads/minimal/policy_minimal.rego
 
       - name: Deploy Container Group
-        run: python -m c_aci_testing.aci_deploy workloads/minimal --name $DEPLOYMENT_NAME
+        run: c-aci-testing aci deploy workloads/minimal --deployment-name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
-        run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME
+        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME --follow
 
       - name: Remove Container Group
         run: |
           if [ "$CLEANUP" = true ]; then
-            python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
+            c-aci-testing aci remove --deployment-name $DEPLOYMENT_NAME
           fi

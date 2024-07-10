@@ -96,30 +96,30 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Pull Image
-        run: python -m c_aci_testing.images_pull workloads/long_lived
+        run: c-aci-testing images pull workloads/long_lived
 
       - name: Set Parameters
         run: |
-          python -m c_aci_testing.aci_param_set workloads/long_lived --parameter cpu=$CPU
-          python -m c_aci_testing.aci_param_set workloads/long_lived --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/long_lived --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/long_lived --parameter memoryInGb=$MEMORY_IN_GB
 
       - name: Generate Security Policy
         run: |
           if [ "$ALLOW_ALL" == true ]; then
-            python -m c_aci_testing.policies_gen workloads/long_lived --deployment-name $DEPLOYMENT_NAME --allow-all
+            c-aci-testing policies gen workloads/long_lived --deployment-name $DEPLOYMENT_NAME --allow-all
           else
-            python -m c_aci_testing.policies_gen workloads/long_lived --deployment-name $DEPLOYMENT_NAME
+            c-aci-testing policies gen workloads/long_lived --deployment-name $DEPLOYMENT_NAME
           fi
           cat workloads/long_lived/policy_long_lived.rego
 
       - name: Deploy Container Group
-        run: python -m c_aci_testing.aci_deploy workloads/long_lived --name $DEPLOYMENT_NAME
+        run: c-aci-testing aci deploy workloads/long_lived --deployment-name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
-        run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME --no-follow
+        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
 
       - name: Remove Container Group
         run: |
           if [ "$CLEANUP" = true ]; then
-            python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
+            c-aci-testing aci remove --deployment-name $DEPLOYMENT_NAME
           fi

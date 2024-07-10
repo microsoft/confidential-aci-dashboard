@@ -19,7 +19,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'primary'
         properties: {
-          image: 'mcr.microsoft.com/mcr/hello-world:${tag}'
+          image: 'mcr.microsoft.com/mcr/hello-world:${empty(tag) ? 'latest': tag}'
           resources: {
             requests: {
               memoryInGB: memoryInGb
