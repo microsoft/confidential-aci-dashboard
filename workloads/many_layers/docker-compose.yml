@@ -1,4 +1,4 @@
 version: '3'
 services:
   many_layers:
-    image: mcr.microsoft.com/devcontainers/python:3
+    image: mcr.microsoft.com/devcontainers/dotnet:dev-6.0-focal
