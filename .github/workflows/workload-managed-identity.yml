@@ -100,8 +100,8 @@ jobs:
 
       - name: Set Parameters
         run: |
-          c-aci-testing.aci param_set workloads/managed_identity --parameter cpu=$CPU
-          c-aci-testing.aci param_set workloads/managed_identity --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/managed_identity --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/managed_identity --parameter memoryInGb=$MEMORY_IN_GB
 
       - name: Generate Security Policy
         run: |
