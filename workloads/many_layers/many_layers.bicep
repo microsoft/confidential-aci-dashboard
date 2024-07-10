@@ -18,7 +18,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'primary'
         properties: {
-          image: 'mcr.microsoft.com/devcontainers/dotnet:dev-6.0-focal'
+          image: 'mcr.microsoft.com/devcontainers/universal:focal'
           command: [
             'bash'
             '-c'
