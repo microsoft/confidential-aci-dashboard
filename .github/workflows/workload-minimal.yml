@@ -96,7 +96,7 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Pull Image
-        run: c-aci-testing.images_pull workloads/minimal
+        run: c-aci-testing images pull workloads/minimal
 
       - name: Set Parameters
         run: |

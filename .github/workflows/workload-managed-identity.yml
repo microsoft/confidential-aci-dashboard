@@ -96,7 +96,7 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Pull Image
-        run: c-aci-testing.images_pull workloads/managed_identity
+        run: c-aci-testing images pull workloads/managed_identity
 
       - name: Set Parameters
         run: |
