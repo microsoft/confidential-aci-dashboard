@@ -71,7 +71,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'attestation'
         properties: {
-          image: 'mcr.microsoft.com/aci/skr:${tag}'
+          image: 'mcr.microsoft.com/aci/skr:${empty(tag) ? 'latest': tag}'
           ports: [
             {
               protocol: 'TCP'

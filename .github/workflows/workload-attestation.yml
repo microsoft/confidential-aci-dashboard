@@ -96,31 +96,31 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Pull Image
-        run: python -m c_aci_testing.images_pull workloads/attestation
+        run: c-aci-testing images pull workloads/attestation
 
       - name: Set Parameters
         run: |
-          python -m c_aci_testing.aci_param_set workloads/attestation --parameter cpu=$CPU
-          python -m c_aci_testing.aci_param_set workloads/attestation --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/attestation --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/attestation --parameter memoryInGb=$MEMORY_IN_GB
 
       - name: Generate Security Policy
         run: |
           if [ "$ALLOW_ALL" == true ]; then
-            python -m c_aci_testing.policies_gen workloads/attestation --deployment-name $DEPLOYMENT_NAME --allow-all
+            c-aci-testing policies gen workloads/attestation --deployment-name $DEPLOYMENT_NAME --allow-all
           else
-            python -m c_aci_testing.policies_gen workloads/attestation --deployment-name $DEPLOYMENT_NAME
+            c-aci-testing policies gen workloads/attestation --deployment-name $DEPLOYMENT_NAME
           fi
           cat workloads/attestation/policy_attestation.rego
 
       - name: Deploy Container Group
-        run: python -m c_aci_testing.aci_deploy workloads/attestation --name $DEPLOYMENT_NAME
+        run: c-aci-testing aci deploy workloads/attestation --deployment-name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
-        run: python -m c_aci_testing.aci_monitor --name $DEPLOYMENT_NAME --no-follow
+        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME --no-follow
 
       - name: Get MAA Token
         run: |
-          ip_address=$(python -m c_aci_testing.aci_get_ips --name $DEPLOYMENT_NAME)
+          ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME)
 
           result=$(curl -X POST "http://$ip_address:8000/attest/maa" \
             -H "Content-Type: application/json" \
@@ -137,5 +137,5 @@ jobs:
       - name: Remove Container Group
         run: |
           if [ "$CLEANUP" = true ]; then
-            python -m c_aci_testing.aci_remove --name $DEPLOYMENT_NAME
+            c-aci-testing aci remove --deployment-name $DEPLOYMENT_NAME
           fi

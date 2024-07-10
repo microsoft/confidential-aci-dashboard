@@ -1,7 +1,7 @@
 using './minimal.bicep'
 
 // Image info
-param tag='latest'
+param tag=''
 
 // Deployment info
 param location='westeurope'
