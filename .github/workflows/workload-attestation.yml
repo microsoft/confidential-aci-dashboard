@@ -116,7 +116,7 @@ jobs:
         run: c-aci-testing aci deploy workloads/attestation --deployment-name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
-        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME --no-follow
+        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
 
       - name: Get MAA Token
         run: |

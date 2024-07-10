@@ -116,7 +116,7 @@ jobs:
         run: c-aci-testing aci deploy workloads/minimal --deployment-name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
-        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
+        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME --follow
 
       - name: Remove Container Group
         run: |
