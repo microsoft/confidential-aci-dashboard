@@ -120,7 +120,7 @@ jobs:
 
       - name: Get MAA Token
         run: |
-          ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME)
+          ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
 
           result=$(curl -X POST "http://$ip_address:8000/attest/maa" \
             -H "Content-Type: application/json" \
