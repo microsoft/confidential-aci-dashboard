@@ -18,7 +18,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'primary'
         properties: {
-          image: 'mcr.microsoft.com/devcontainers/python:3'
+          image: 'mcr.microsoft.com/ccf/app/dev:4.0.19-virtual'
           command: [
             'bash'
             '-c'
