@@ -106,7 +106,7 @@ jobs:
       - name: Generate Security Policy
         run: |
           if [ "$ALLOW_ALL" == true ]; then
-            c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME --allow-all
+            c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
           else
             c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME
           fi
