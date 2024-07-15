@@ -99,6 +99,7 @@ jobs:
         run: |
           apt-cache policy azure-cli
           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          pip install requests==2.32
 
       - name: Pull Image
         run: c-aci-testing images pull workloads/minimal
