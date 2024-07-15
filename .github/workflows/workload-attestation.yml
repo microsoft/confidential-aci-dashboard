@@ -69,7 +69,7 @@ env:
   LOCATION: ${{ inputs.location || 'westeurope' }}
   CPU: ${{ inputs.cpu || 1 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
-  CLEANUP: ${{ inputs.cleanup || true }}
+  CLEANUP: ${{ inputs.cleanup }}
   ALLOW_ALL: ${{ inputs.allow_all || false }}
   TAG: 2.7
 
@@ -136,6 +136,6 @@ jobs:
 
       - name: Remove Container Group
         run: |
-          if [ "$CLEANUP" = true ]; then
+          if [ "$CLEANUP" != false ]; then
             c-aci-testing aci remove --deployment-name $DEPLOYMENT_NAME
           fi
