@@ -22,7 +22,10 @@ Deploys with container with high specification (varies by region)
 
 ### Stable
 
+[![High Spec - East US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus.yml)
+[![High Spec - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-northeurope.yml)
 [![High Spec - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml)
+[![High Spec - West US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westus.yml)
 
 ### Canary
 
@@ -38,7 +41,10 @@ Deploys but doesn't remove, checks that containers live at least 48 hours withou
 
 ### Stable
 
+[![Uptime - East US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus.yml)
+[![Uptime - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-northeurope.yml)
 [![Uptime - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westeurope.yml)
+[![Uptime - West US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westus.yml)
 
 ### Canary
 

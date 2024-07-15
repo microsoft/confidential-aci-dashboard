@@ -1,0 +1,20 @@
+name: Uptime - East US
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/uptime-eastus.yml
+
+jobs:
+  uptime:
+    secrets: inherit
+    uses: ./.github/workflows/uptime.yml
+    with:
+      location: eastus
