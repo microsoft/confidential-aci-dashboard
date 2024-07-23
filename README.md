@@ -12,6 +12,7 @@ Deploys to many regions to gather data about region health
 [![Region - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-northeurope.yml)
 [![Region - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westeurope.yml)
 [![Region - West US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-westus.yml)
+[![Region - Central India](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-centralindia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-centralindia.yml)
 
 ### Canary
 [![Region - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus2euap.yml)
@@ -26,6 +27,7 @@ Deploys with container with high specification (varies by region)
 [![High Spec - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-northeurope.yml)
 [![High Spec - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml)
 [![High Spec - West US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westus.yml)
+[![High Spec - Central India](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-centralindia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-centralindia.yml)
 
 ### Canary
 
@@ -45,10 +47,17 @@ Deploys but doesn't remove, checks that containers live at least 48 hours withou
 [![Uptime - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-northeurope.yml)
 [![Uptime - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westeurope.yml)
 [![Uptime - West US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-westus.yml)
+[![Uptime - Central India](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-centralindia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-centralindia.yml)
 
 ### Canary
 
 [![Uptime - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus2euap.yml)
+
+## Adding new regions
+
+To add a new region, simply copy high-spec-<anyregion>.yml, region-<anyregion>.yml and uptime-<anyregion>.yml files and change <anyregion> to the name of your region, including the title case workflow names.
+
+Then update `README.md` to point to the three new workflows.
 
 ## Contributing
 
