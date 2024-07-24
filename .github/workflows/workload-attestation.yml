@@ -132,7 +132,7 @@ jobs:
             -d '{"maa_endpoint": "cacidashboard.weu.attest.azure.net", "runtime_data": "'$(echo '{"keys": [{"key_ops": ["encrypt"], "kid": "example-key", "kty": "oct-HSM", "k": "example"}]}' | base64 -w 0)'"}')
 
           token=$(echo $result | jq -r '.token')
-          if [ -z "$token" || "$token" == null ]; then
+          if [ -z "$token" ] || [ "$token" == null ]; then
             echo "Token field is empty, null or missing in the response"
             exit 1
           else
