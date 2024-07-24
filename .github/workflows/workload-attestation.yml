@@ -138,6 +138,16 @@ jobs:
           else
             echo "Token successfully acquired from MAA: $token"
           fi
+          
+          IFS='.' read -r header payload signature <<< "$token"
+          payload=$(echo "$payload" | tr '_-' '/+' | base64 -d 2>/dev/null)
+          azure_compliance_status=$(echo "$payload" | jq -r '."x-ms-compliance-status"')
+          if [ "$azure_compliance_status" != "azure-compliant-uvm" ]; then
+            echo "UVM isn't Azure Compliant"
+            exit 1
+          else
+            echo "UVM is Azure Compliant"
+          fi
 
       - name: Remove Container Group
         run: |
