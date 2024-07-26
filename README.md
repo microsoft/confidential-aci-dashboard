@@ -27,11 +27,11 @@ Deploys with container with high specification (varies by region)
 [![High Spec - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-northeurope.yml)
 [![High Spec - West Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westeurope.yml)
 [![High Spec - West US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-westus.yml)
-[![High Spec - Central India](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-centralindia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-centralindia.yml)
 
 ### Canary
 
 [![High Spec - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus2euap.yml)
+[![High Spec - Central India](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-centralindia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-centralindia.yml)
 
 ## Performance
 
