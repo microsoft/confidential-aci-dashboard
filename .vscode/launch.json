@@ -28,7 +28,8 @@
                 "long_lived",
                 "managed_identity",
                 "many_layers",
-                "minimal"
+                "minimal",
+                "server"
             ]
         },
         {
