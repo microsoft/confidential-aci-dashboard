@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Workload",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "c_aci_testing.main",
+            "args": [
+                "target",
+                "run",
+                "workloads/${input:workload}",
+                "--deployment-name",
+                "${input:name}",
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "workload",
+            "type": "pickString",
+            "description": "Workload to run:",
+            "options": [
+                "attestation",
+                "long_lived",
+                "managed_identity",
+                "many_layers",
+                "minimal"
+            ]
+        },
+        {
+            "id": "name",
+            "type": "promptString",
+            "description": "Name of deployment:",
+        }
+    ]
+}
