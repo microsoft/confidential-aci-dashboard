@@ -126,7 +126,7 @@ jobs:
           curl http://$ip_address:80
 
       - name: Monitor Container Group
-        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME --follow
+        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
 
       - name: Remove Container Group
         run: |
