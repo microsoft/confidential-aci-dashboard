@@ -9,5 +9,12 @@
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/devcontainers/features/python:1": {}
 	},
-	"postCreateCommand": "./scripts/install-c-aci-testing.sh"
+	"postCreateCommand": "./scripts/install-c-aci-testing.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-bicep"
+			]
+		}
+	}
 }
