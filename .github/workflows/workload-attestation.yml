@@ -138,7 +138,9 @@ jobs:
           else
             echo "Token successfully acquired from MAA: $token"
           fi
-          
+
+          echo "Attempting to parse token to extract UVM compliance"
+
           IFS='.' read -r header payload signature <<< "$token"
           payload=$(echo "$payload" | tr '_-' '/+' | base64 -d 2>/dev/null)
           azure_compliance_status=$(echo "$payload" | jq -r '."x-ms-compliance-status"')
