@@ -74,3 +74,20 @@ jobs:
     with:
       id: many-layers-generated
       location: ${{ inputs.location }}
+
+  server-generated:
+    name: generated
+    secrets: inherit
+    uses: ./.github/workflows/workload-server.yml
+    with:
+      id: server-generated
+      location: ${{ inputs.location }}
+
+  server-allow-all:
+    name: allow-all
+    secrets: inherit
+    uses: ./.github/workflows/workload-server.yml
+    with:
+      id: server-allow-all
+      location: ${{ inputs.location }}
+      allow_all: true
