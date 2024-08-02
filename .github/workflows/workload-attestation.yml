@@ -149,7 +149,11 @@ jobs:
           echo "signature=$signature"
           
           echo "Base64 decoding payload..."
-          payload=$(echo "$payload" | tr '_-' '/+' | base64 -d 2>/dev/null)
+          payload=$(echo "$payload" | tr '_-' '/+' | awk '{ 
+              padding = (4 - length($0) % 4) % 4; 
+              for(i = 0; i < padding; i++) $0 = $0 "="; 
+              print 
+          }' | base64 -d 2>/dev/null)
           echo "Base64 decoding payload done:"
           echo "payload=$payload"
           azure_compliance_status=$(echo "$payload" | jq -r '."x-ms-compliance-status"')
