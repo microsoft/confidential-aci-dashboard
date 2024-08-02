@@ -140,9 +140,18 @@ jobs:
           fi
 
           echo "Attempting to parse token to extract UVM compliance"
-
+          
+          echo "Splitting token into header/payload/signature by . delimiter..."
           IFS='.' read -r header payload signature <<< "$token"
+          echo "Successfully split token:"
+          echo "header=$header"
+          echo "payload=$payload"
+          echo "signature=$signature"
+          
+          echo "Base64 decoding payload..."
           payload=$(echo "$payload" | tr '_-' '/+' | base64 -d 2>/dev/null)
+          echo "Base64 decoding payload done:"
+          echo "payload=$payload"
           azure_compliance_status=$(echo "$payload" | jq -r '."x-ms-compliance-status"')
           if [ "$azure_compliance_status" != "azure-compliant-uvm" ]; then
             echo "UVM isn't Azure Compliant"
