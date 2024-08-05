@@ -71,7 +71,7 @@ env:
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
   ALLOW_ALL: ${{ inputs.allow_all || false }}
-  TAG: latest
+  TAG: 20.04
 
 jobs:
   long-lived:
