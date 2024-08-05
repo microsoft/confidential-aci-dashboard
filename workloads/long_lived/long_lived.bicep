@@ -34,7 +34,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'ubuntu'
         properties: {
-          image: '${registry}/ubuntu:${empty(tag) ? 'latest': tag}'
+          image: '${registry}/ubuntu:${empty(tag) ? '20.04': tag}'
           command: [
             'sh'
             '-c'

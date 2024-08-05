@@ -43,7 +43,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'proxy'
         properties: {
-          image: '${registry}/nginx:latest'
+          image: '${registry}/nginx:1.26'
           ports: [
             {
               protocol: 'TCP'
