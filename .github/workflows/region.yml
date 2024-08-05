@@ -91,3 +91,12 @@ jobs:
       id: server-allow-all
       location: ${{ inputs.location }}
       allow_all: true
+
+  non-confidential:
+    name: allow-all
+    secrets: inherit
+    uses: ./.github/workflows/workload-non-confidential.yml
+    with:
+      id: non-confidential
+      location: ${{ inputs.location }}
+      allow_all: true
