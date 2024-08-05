@@ -108,15 +108,6 @@ jobs:
           c-aci-testing aci param_set workloads/non_confidential --parameter cpu=$CPU
           c-aci-testing aci param_set workloads/non_confidential --parameter memoryInGb=$MEMORY_IN_GB
 
-      - name: Generate Security Policy
-        run: |
-          if [ "$ALLOW_ALL" == true ]; then
-            c-aci-testing policies gen workloads/non_confidential --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
-          else
-            c-aci-testing policies gen workloads/non_confidential --deployment-name $DEPLOYMENT_NAME
-          fi
-          cat workloads/non_confidential/policy_non_confidential.rego
-
       - name: Deploy Container Group
         run: c-aci-testing aci deploy workloads/non_confidential --deployment-name $DEPLOYMENT_NAME
 
