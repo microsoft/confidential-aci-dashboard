@@ -3,7 +3,7 @@
 workload=$1
 region=$2
 
-echo "Getting results for: $workload workload in region: $region"
+echo "Getting results for:"
 echo "  Workload: $workload"
 echo "  Region: $region"
 
