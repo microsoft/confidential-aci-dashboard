@@ -35,6 +35,7 @@ for run_id in $workflow_runs; do
             url=$(echo "$job_result" | jq -r '.url')
             date=$(echo "$job_result" | jq -r '.completedAt')
             echo "Job failed:"
+            echo "  Run ID: $run_id"
             echo "  Date: $date"
             echo "  Url: $url"
             echo "$job_result" | jq -c '.steps[]' | while IFS= read -r step_result; do
