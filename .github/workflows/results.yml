@@ -1,4 +1,4 @@
-name: Region
+name: Historical Results
 
 permissions:
   id-token: write
