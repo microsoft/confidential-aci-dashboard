@@ -34,6 +34,10 @@ on:
         type: boolean
         description: Whether to use the allow all policy
         default: false
+      instance_count:
+        type: number
+        description: The number of instances to deploy
+        default: 1
   workflow_call:
     inputs:
       id:
@@ -75,6 +79,9 @@ env:
 jobs:
   minimal:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        idx: ${{ range(1, github.event.inputs.instance_count | int + 1) }}
     steps:
 
       - name: Checkout
@@ -111,20 +118,20 @@ jobs:
       - name: Generate Security Policy
         run: |
           if [ "$ALLOW_ALL" == true ]; then
-            c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
+            c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME-${ matrix.idx } --policy-type allow_all
           else
-            c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME
+            c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME-${ matrix.idx }
           fi
           cat workloads/minimal/policy_minimal.rego
 
       - name: Deploy Container Group
-        run: c-aci-testing aci deploy workloads/minimal --deployment-name $DEPLOYMENT_NAME
+        run: c-aci-testing aci deploy workloads/minimal --deployment-name $DEPLOYMENT_NAME-${ matrix.idx }
 
       - name: Monitor Container Group
-        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME --follow
+        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME-${ matrix.idx } --follow
 
       - name: Remove Container Group
         run: |
           if [ "$CLEANUP" != false ]; then
-            c-aci-testing aci remove --deployment-name $DEPLOYMENT_NAME
+            c-aci-testing aci remove --deployment-name $DEPLOYMENT_NAME-${ matrix.idx }
           fi
