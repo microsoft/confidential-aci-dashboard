@@ -25,3 +25,47 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: ./scripts/get_workload_region_results.sh minimal eastus
+
+  minimal-westus:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Results
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/get_workload_region_results.sh minimal westus
+
+  minimal-westeurope:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Results
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/get_workload_region_results.sh minimal westeurope
+
+  minimal-northeurope:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Results
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/get_workload_region_results.sh minimal northeurope
+
+  minimal-eastus2euap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Results
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/get_workload_region_results.sh minimal eastus2euap
