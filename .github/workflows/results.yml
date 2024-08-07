@@ -24,4 +24,4 @@ jobs:
       - name: Results
         env:
           GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh
+        run: ./scripts/get_workload_region_results.sh minimal eastus
