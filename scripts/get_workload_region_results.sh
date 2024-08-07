@@ -23,7 +23,7 @@ parse_jobs() {
 
         elif [[ $conclusion == "failure" ]]; then
             date=$(echo "$job_result" | jq -r '.completedAt')
-            echo "\e[31m✗\e[0m Failure: $url"
+            echo -e "\e[31m✗\e[0m Failure: $url"
             echo "  Run ID: $run_id"
             echo "  Date: $date"
             echo "$job_result" | jq -c '.steps[]' | while IFS= read -r step_result; do
