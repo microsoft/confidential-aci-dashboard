@@ -110,7 +110,7 @@ jobs:
             exit 1
           fi
 
-          BAD_STATES=("Killed" "Stopped" "Failed")
+          BAD_STATES=("Killed" "Killing" "Stopped" "Failed")
 
           for container in $(echo $CONTAINERS | jq -r '.[].id'); do
             echo "Checking $container"
