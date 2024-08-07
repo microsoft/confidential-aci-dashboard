@@ -15,17 +15,17 @@ parse_jobs() {
 
     while IFS= read -r job_result; do
         conclusion=$(echo "$job_result" | jq -r '.conclusion')
+        url=$(echo "$job_result" | jq -r '.url')
 
         if [[ $conclusion == "success" ]]; then
+            echo -e "\e[32m✓\e[0m Success: $url"
             success_count=$((success_count + 1))
 
         elif [[ $conclusion == "failure" ]]; then
-            url=$(echo "$job_result" | jq -r '.url')
             date=$(echo "$job_result" | jq -r '.completedAt')
-            echo "Job failed:"
+            echo "\e[31m✗\e[0m Failure: $url"
             echo "  Run ID: $run_id"
             echo "  Date: $date"
-            echo "  Url: $url"
             echo "$job_result" | jq -c '.steps[]' | while IFS= read -r step_result; do
                 step_conclusion=$(echo "$step_result" | jq -r '.conclusion')
                 if [[ $step_conclusion == "failure" ]]; then
