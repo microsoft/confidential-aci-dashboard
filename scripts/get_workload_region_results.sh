@@ -7,23 +7,11 @@ echo "Getting results for:"
 echo "  Workload: $workload"
 echo "  Region: $region"
 
-workflow_runs=$(gh run list \
-    --workflow region-$region.yml \
-    --branch main \
-    --json databaseId \
-    --jq '.[].databaseId' \
-    --limit 99999)
-
 success_count=0
 failure_count=0
 
-for run_id in $workflow_runs; do
-
-    job_results=$(gh run view \
-        $run_id \
-        --json jobs \
-        | jq -c -r --arg workload "$workload" \
-            '[.jobs[] | select(.name | contains($workload))]')
+parse_jobs() {
+    job_results=$1
 
     while IFS= read -r job_result; do
         conclusion=$(echo "$job_result" | jq -r '.conclusion')
@@ -53,6 +41,39 @@ for run_id in $workflow_runs; do
         fi
 
     done < <(echo "$job_results" | jq -c '.[]')
+}
+
+# Check region workloads
+workflow_runs=$(gh run list \
+    --workflow region-$region.yml \
+    --branch main \
+    --json databaseId \
+    --jq '.[].databaseId' \
+    --limit 99999)
+for run_id in $workflow_runs; do
+    job_results=$(gh run view \
+        $run_id \
+        --json jobs \
+        | jq -c -r --arg workload "$workload" \
+            '[.jobs[] | select(.name | contains($workload))]')
+    parse_jobs "$job_results"
+done
+
+# Check workload runs
+workflow_runs=$(gh run list \
+    --workflow workload-$workload.yml \
+    --branch main \
+    --json databaseId \
+    --jq '.[].databaseId' \
+    --limit 99999)
+for run_id in $workflow_runs; do
+    location=$(gh run view $run_id --log \
+        | grep "Setting parameter location to" \
+        | sed -n "s/.*'\(.*\)'.*/\1/p")
+    if [[ $location == $region ]]; then
+        job_results=$(gh run view $run_id --json jobs | jq -c -r '[.jobs[]]')
+        parse_jobs "$job_results"
+    fi
 done
 
 echo "Success: ${success_count}"
