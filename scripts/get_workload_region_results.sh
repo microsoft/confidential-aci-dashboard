@@ -2,10 +2,14 @@
 
 workload=$1
 region=$2
+since=$3
 
 echo "Getting results for:"
 echo "  Workload: $workload"
 echo "  Region: $region"
+if [[ "$since" != "" ]]; then
+    echo "  Since: $since"
+fi
 
 success_count=0
 failure_count=0
@@ -16,6 +20,15 @@ parse_jobs() {
     while IFS= read -r job_result; do
         conclusion=$(echo "$job_result" | jq -r '.conclusion')
         url=$(echo "$job_result" | jq -r '.url')
+
+        if [[ "$since" != "" ]]; then
+            startedAt=$(echo "$job_result" | jq -r '.startedAt')
+            startedAtTS=$(date -d "$startedAt" +%s)
+            sinceTs=$(date -d "$since" +%s)
+            if [[ $startedAtTS -lt $sinceTs ]]; then
+                continue
+            fi
+        fi
 
         if [[ $conclusion == "success" ]]; then
             echo -e "\e[32m✓\e[0m Success: $url"
