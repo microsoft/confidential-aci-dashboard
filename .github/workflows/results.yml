@@ -1,0 +1,27 @@
+name: Region
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/results.yml
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+
+  minimal-eastus:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Results
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/get_workload_region_results.sh
