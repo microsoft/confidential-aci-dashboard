@@ -67,7 +67,7 @@ workflow_runs=$(gh run list \
     --jq '.[].databaseId' \
     --limit 99999)
 for run_id in $workflow_runs; do
-    location=$(gh run view $run_id --log \
+    location=$(gh run view $run_id --log 2>/dev/null \
         | grep "Setting parameter location to" \
         | sed -n "s/.*'\(.*\)'.*/\1/p")
     if [[ $location == $region ]]; then
