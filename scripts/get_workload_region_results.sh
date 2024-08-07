@@ -3,7 +3,9 @@
 workload=$1
 region=$2
 
-echo "Getting results for $workload workload in region: $region"
+echo "Getting results for: $workload workload in region: $region"
+echo "  Workload: $workload"
+echo "  Region: $region"
 
 workflow_runs=$(gh run list \
     --workflow region-$region.yml \
@@ -31,7 +33,9 @@ for run_id in $workflow_runs; do
 
         elif [[ $conclusion == "failure" ]]; then
             url=$(echo "$job_result" | jq -r '.url')
+            date=$(echo "$job_result" | jq -r '.completedAt')
             echo "Job failed:"
+            echo "  Date: $date"
             echo "  Url: $url"
             echo "$job_result" | jq -c '.steps[]' | while IFS= read -r step_result; do
                 step_conclusion=$(echo "$step_result" | jq -r '.conclusion')
