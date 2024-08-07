@@ -13,6 +13,10 @@ on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
+    inputs:
+      since:
+        type: string
+        required: false
 
 jobs:
 
@@ -25,7 +29,7 @@ jobs:
       - name: Results
         env:
           GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal eastus
+        run: ./scripts/get_workload_region_results.sh minimal eastus ${{ github.event.inputs.since }}
 
   minimal-westus:
     runs-on: ubuntu-latest
@@ -36,7 +40,7 @@ jobs:
       - name: Results
         env:
           GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal westus
+        run: ./scripts/get_workload_region_results.sh minimal westus ${{ github.event.inputs.since }}
 
   minimal-westeurope:
     runs-on: ubuntu-latest
@@ -47,7 +51,7 @@ jobs:
       - name: Results
         env:
           GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal westeurope
+        run: ./scripts/get_workload_region_results.sh minimal westeurope ${{ github.event.inputs.since }}
 
   minimal-northeurope:
     runs-on: ubuntu-latest
@@ -58,7 +62,7 @@ jobs:
       - name: Results
         env:
           GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal northeurope
+        run: ./scripts/get_workload_region_results.sh minimal northeurope ${{ github.event.inputs.since }}
 
   minimal-eastus2euap:
     runs-on: ubuntu-latest
@@ -69,4 +73,4 @@ jobs:
       - name: Results
         env:
           GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal eastus2euap
+        run: ./scripts/get_workload_region_results.sh minimal eastus2euap ${{ github.event.inputs.since }}
