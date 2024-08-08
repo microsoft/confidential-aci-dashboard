@@ -134,6 +134,7 @@ jobs:
       - name: Get Container States
         if: always()
         run: |
+          sleep 20 # Ensure all states are up to date
           az container show \
             --resource-group $RESOURCE_GROUP \
             --name $DEPLOYMENT_NAME \
