@@ -14,6 +14,12 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
+      workloads:
+        type: string
+        default: '[minimal, managed-identity, attestation, many-layers, server, non-confidential]'
+      regions:
+        type: string
+        default: '[eastus, westus, westeurope, northeurope, centralindia, centraluseuap, eastus2euap]'
       since:
         type: string
         required: false
@@ -22,10 +28,12 @@ jobs:
 
   results:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        workload: [minimal, managed-identity, attestation, many-layers, server, non-confidential]
-        region: [eastus, westus, westeurope, northeurope, centralindia, centraluseuap, eastus2euap]
+        workload: ${{ fromJSON(github.event.inputs.workloads || '[minimal]') }}
+        region: ${{ fromJSON(github.event.inputs.regions || '[eastus]') }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
