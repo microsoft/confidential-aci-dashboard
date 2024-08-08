@@ -120,6 +120,9 @@ jobs:
       - name: Deploy Container Group
         run: c-aci-testing aci deploy workloads/attestation --deployment-name $DEPLOYMENT_NAME
 
+      - name: Monitor Container Group
+        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
+
       - name: Get MAA Token
         run: |
           template_ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
