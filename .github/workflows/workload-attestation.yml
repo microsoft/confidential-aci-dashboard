@@ -120,9 +120,6 @@ jobs:
       - name: Deploy Container Group
         run: c-aci-testing aci deploy workloads/attestation --deployment-name $DEPLOYMENT_NAME
 
-      - name: Monitor Container Group
-        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
-
       - name: Get MAA Token
         run: |
           ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
@@ -140,19 +137,19 @@ jobs:
           fi
 
           echo "Attempting to parse token to extract UVM compliance"
-          
+
           echo "Splitting token into header/payload/signature by . delimiter..."
           IFS='.' read -r header payload signature <<< "$token"
           echo "Successfully split token:"
           echo "header=$header"
           echo "payload=$payload"
           echo "signature=$signature"
-          
+
           echo "Base64 decoding payload..."
-          payload=$(echo "$payload" | tr '_-' '/+' | awk '{ 
-              padding = (4 - length($0) % 4) % 4; 
-              for(i = 0; i < padding; i++) $0 = $0 "="; 
-              print 
+          payload=$(echo "$payload" | tr '_-' '/+' | awk '{
+              padding = (4 - length($0) % 4) % 4;
+              for(i = 0; i < padding; i++) $0 = $0 "=";
+              print
           }' | base64 -d 2>/dev/null)
           echo "Base64 decoding payload done:"
           echo "payload=$payload"
@@ -163,6 +160,17 @@ jobs:
           else
             echo "UVM is Azure Compliant"
           fi
+
+      - name: Monitor Container Group
+        if: always()
+        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
+
+      - name: Get Container States
+        if: always()
+        run: |
+          az container show \
+            --resource-group $RESOURCE_GROUP \
+            --name $DEPLOYMENT_NAME
 
       - name: Remove Container Group
         run: |

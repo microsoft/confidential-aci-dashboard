@@ -121,7 +121,15 @@ jobs:
         run: c-aci-testing aci deploy workloads/many_layers --deployment-name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
+        if: always()
         run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME --follow
+
+      - name: Get Container States
+        if: always()
+        run: |
+          az container show \
+            --resource-group $RESOURCE_GROUP \
+            --name $DEPLOYMENT_NAME
 
       - name: Remove Container Group
         run: |

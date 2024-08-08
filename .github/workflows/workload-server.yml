@@ -128,7 +128,15 @@ jobs:
           curl http://$ip_address:80
 
       - name: Monitor Container Group
+        if: always()
         run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
+
+      - name: Get Container States
+        if: always()
+        run: |
+          az container show \
+            --resource-group $RESOURCE_GROUP \
+            --name $DEPLOYMENT_NAME
 
       - name: Remove Container Group
         run: |
