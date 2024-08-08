@@ -122,7 +122,18 @@ jobs:
 
       - name: Get MAA Token
         run: |
-          ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
+          template_ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
+          echo "IP Address from template output: $template_ip_address"
+          az_cli_ip_address=$(\
+            az container show \
+            --resource-group $RESOURCE_GROUP \
+            --name $DEPLOYMENT_NAME \
+            --query ipAddress.ip --output tsv \
+          )
+          echo "IP Address from az cli: $az_cli_ip_address"
+
+          # Select the IP address which is not empty
+          ip_address="${template_ip_address:-${az_cli_ip_address}}"
 
           result=$(curl -X POST "http://$ip_address:8000/attest/maa" \
             -H "Content-Type: application/json" \
