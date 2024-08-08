@@ -20,57 +20,17 @@ on:
 
 jobs:
 
-  minimal-eastus:
+  results:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        workload: [minimal, managed-identity, attestation, many-layers, server, non-confidential]
+        region: [eastus, westus, westeurope, northeurope, centralindia, centraluseuap, eastus2euap]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Results
+      - name: ${{ matrix.workload }}-${{ matrix.region }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal eastus ${{ github.event.inputs.since }}
-
-  minimal-westus:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Results
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal westus ${{ github.event.inputs.since }}
-
-  minimal-westeurope:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Results
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal westeurope ${{ github.event.inputs.since }}
-
-  minimal-northeurope:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Results
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal northeurope ${{ github.event.inputs.since }}
-
-  minimal-eastus2euap:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Results
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: ./scripts/get_workload_region_results.sh minimal eastus2euap ${{ github.event.inputs.since }}
+        run: ./scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} ${{ github.event.inputs.since }}
