@@ -170,7 +170,12 @@ jobs:
         run: |
           az container show \
             --resource-group $RESOURCE_GROUP \
-            --name $DEPLOYMENT_NAME
+            --name $DEPLOYMENT_NAME \
+          | jq -c '.containers[]' | while read -r container; do
+            container_name=$(echo "$container" | jq -r '.name')
+            echo "Events for container $container_name:"
+            echo "$container" | jq -r '.instanceView | .events[]'
+          done
 
       - name: Remove Container Group
         run: |
