@@ -121,7 +121,20 @@ jobs:
         run: c-aci-testing aci deploy workloads/minimal --deployment-name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
+        if: always()
         run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME --follow
+
+      - name: Get Container States
+        if: always()
+        run: |
+          az container show \
+            --resource-group $RESOURCE_GROUP \
+            --name $DEPLOYMENT_NAME \
+          | jq -c '.containers[]' | while read -r container; do
+            container_name=$(echo "$container" | jq -r '.name')
+            echo "Events for container $container_name:"
+            echo "$container" | jq -r '.instanceView | .events[]'
+          done
 
       - name: Remove Container Group
         run: |
