@@ -79,15 +79,43 @@ workflow_runs=$(gh run list \
     --json databaseId \
     --jq '.[].databaseId' \
     --limit 99999)
+
+any_locations_found=false
+
 for run_id in $workflow_runs; do
+
+    # Location is provided as in input to the workflow so you would assume
+    # finding the workflow run inputs and checking the value of location would
+    # be the best way to find the location.
+    #
+    # However these are not provided in the github actions API as far as I can
+    # see, neither is the workflow defined environment variables I could also
+    # check.
+    #
+    # Therefore the only way I can find to get the location is to fetch all logs
+    # and look for the log that sets the bicepparam parameter for location.
+    #
+    # THIS COULD BREAK IF WE STOP LOGGING THAT IN THIS WAY IN C-ACI-TESTING
+    #
+    # It also means that runs which don't get as far as setting this, don't get
+    # found, this is an okay tradeoff only because we're interested in runs that
+    # got to the step of deploying, if they didn't get that far something else
+    # broke that is our responsibility not ACI's
     location=$(gh run view $run_id --log 2>/dev/null \
         | grep "Setting parameter location to" \
         | sed -n "s/.*'\(.*\)'.*/\1/p")
+
     if [[ $location == $region ]]; then
+        any_locations_found=true
         job_results=$(gh run view $run_id --json jobs | jq -c -r '[.jobs[]]')
         parse_jobs "$job_results"
     fi
 done
+
+if [[ $any_locations_found == false ]]; then
+    echo "No runs of specific workflow found for location, see code for explanation"
+    exit 1
+fi
 
 echo "Success: ${success_count}"
 echo "Failed: ${failure_count}"
