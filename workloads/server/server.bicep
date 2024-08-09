@@ -1,6 +1,8 @@
 param location string
-param tag string
+param registry string
 param ccePolicies object
+param managedIDGroup string = resourceGroup().name
+param managedIDName string
 
 param cpu int = 1
 param memoryInGb int = 4
@@ -8,6 +10,12 @@ param memoryInGb int = 4
 resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
   name: deployment().name
   location: location
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${resourceId(managedIDGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities', managedIDName)}': {}
+    }
+  }
   properties: {
     osType: 'Linux'
     sku: 'Confidential'
@@ -15,6 +23,12 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
     confidentialComputeProperties: {
       ccePolicy: ccePolicies.server
     }
+    imageRegistryCredentials: [
+      {
+        server: registry
+        identity: resourceId(managedIDGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities', managedIDName)
+      }
+    ]
     ipAddress: {
       ports: [
         {
@@ -28,7 +42,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'primary'
         properties: {
-          image: 'mcr.microsoft.com/azuredocs/aci-helloworld:${empty(tag) ? 'latest': tag}'
+          image: '${registry}/nginx:1.26'
           resources: {
             requests: {
               memoryInGB: memoryInGb

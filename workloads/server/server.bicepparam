@@ -1,7 +1,8 @@
 using './server.bicep'
 
 // Image info
-param tag=''
+param registry=''
+param managedIDName=''
 
 // Deployment info
 param location=''
