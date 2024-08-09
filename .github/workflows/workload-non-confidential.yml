@@ -111,6 +111,17 @@ jobs:
       - name: Deploy Container Group
         run: c-aci-testing aci deploy workloads/non_confidential --deployment-name $DEPLOYMENT_NAME
 
+      - name: Wait for IP address
+        run: |
+          ip_address=""
+          elapsed=0
+          while [[ -z "$ip_address" && elapsed -lt 60 ]]; do
+            ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
+            echo "IP Address: $ip_address"
+            sleep 5
+            elapsed=$((elapsed + 5))
+          done
+
       - name: Curl Server
         run: |
           ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
