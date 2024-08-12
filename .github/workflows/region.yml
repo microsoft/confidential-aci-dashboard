@@ -92,6 +92,23 @@ jobs:
       location: ${{ inputs.location }}
       allow_all: true
 
+  server-with-wait-generated:
+    name: generated
+    secrets: inherit
+    uses: ./.github/workflows/workload-server-with-wait.yml
+    with:
+      id: server-with-wait-generated
+      location: ${{ inputs.location }}
+
+  server-with-wait-allow-all:
+    name: allow-all
+    secrets: inherit
+    uses: ./.github/workflows/workload-server-with-wait.yml
+    with:
+      id: server-with-wait-allow-all
+      location: ${{ inputs.location }}
+      allow_all: true
+
   non-confidential:
     name: allow-all
     secrets: inherit
