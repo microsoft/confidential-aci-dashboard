@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         workload: ${{ fromJSON(github.event.inputs.workloads || '["minimal"]') }}
         region: ${{ fromJSON(github.event.inputs.regions || '["eastus"]') }}

@@ -114,7 +114,8 @@ done
 
 if [[ $any_locations_found == false ]]; then
     echo "No runs of specific workflow found for location, see code for explanation"
-    exit 1
+    echo "Might be genuine if the workload specific workflow is only run in a "
+    echo "region via the region workflow, otherwise it's only run in westeurope"
 fi
 
 echo "Success: ${success_count}"
