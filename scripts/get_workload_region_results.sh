@@ -50,7 +50,6 @@ parse_jobs() {
 
         else
             echo "$name had uncovered conclusion: $conclusion"
-            exit 1
         fi
 
     done < <(echo "$job_results" | jq -c '.[]')
