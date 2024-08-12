@@ -121,7 +121,8 @@ jobs:
         run: c-aci-testing aci deploy workloads/server --deployment-name $DEPLOYMENT_NAME
 
       - name: Wait 10 minutes
-        run: sleep 600
+        run: |
+          sleep 600
 
       - name: Wait for IP address
         run: |
