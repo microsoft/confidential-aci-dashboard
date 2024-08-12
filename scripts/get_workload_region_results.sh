@@ -34,7 +34,7 @@ parse_jobs() {
             echo -e "\e[32m✓\e[0m Success: $url"
             success_count=$((success_count + 1))
 
-        elif [[ $conclusion == "failure" ]]; then
+        elif [[ $conclusion == "failure" || $conclusion == "cancelled" ]]; then
             date=$(echo "$job_result" | jq -r '.completedAt')
             echo -e "\e[31m✗\e[0m Failure: $url"
             echo "  Run ID: $run_id"
