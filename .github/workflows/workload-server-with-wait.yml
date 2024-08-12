@@ -61,7 +61,7 @@ on:
         default: false
 
 env:
-  DEPLOYMENT_NAME: ${{ inputs.id || 'server' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'server-with-wait' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
@@ -73,7 +73,7 @@ env:
   ALLOW_ALL: ${{ inputs.allow_all || false }}
 
 jobs:
-  server:
+  server-with-wait:
     runs-on: ubuntu-latest
     steps:
 
