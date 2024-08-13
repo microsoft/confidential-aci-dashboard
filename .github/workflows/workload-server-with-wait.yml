@@ -120,19 +120,14 @@ jobs:
       - name: Deploy Container Group
         run: c-aci-testing aci deploy workloads/server --deployment-name $DEPLOYMENT_NAME
 
-      - name: Wait 10 minutes
-        run: |
-          sleep 600
-
       - name: Wait for IP address
         run: |
           ip_address=""
-          elapsed=0
-          while [[ -z "$ip_address" && elapsed -lt 60 ]]; do
+          timeout=$(($(date +%s) + (60 * 5))) # 5 minutes
+          while [[ -z "$ip_address" && $(date +%s) -lt $timeout ]]; do
             ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
             echo "IP Address: $ip_address"
             sleep 5
-            elapsed=$((elapsed + 5))
           done
 
       - name: Curl Server
@@ -149,13 +144,13 @@ jobs:
 
           # Select the IP address which is not empty
           ip_address="${template_ip_address:-${az_cli_ip_address}}"
+
           echo "Attempting to send a request..."
-          retries=15
-          while [ $retries -gt 0 ]; do
-            echo "Attempt $((15 - retries + 1)):"
-            curl http://$ip_address:80 --max-time 20 && break
-            retries=$((retries - 1))
+          timeout=$(($(date +%s) + (60 * 10))) # 10 minutes
+          while [[ $(date +%s) -lt $timeout ]]; do
+            curl http://$ip_address:80 --max-time 20 && exit 0
           done
+          exit 1
 
       - name: Monitor Container Group
         if: always()
