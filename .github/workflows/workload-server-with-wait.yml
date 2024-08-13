@@ -123,7 +123,7 @@ jobs:
       - name: Wait for IP address
         run: |
           ip_address=""
-          timeout=$(($(date +%s) + (60 * 5))) # 5 minutes
+          timeout=$(($(date +%s) + (60 * 10))) # 10 minutes
           while [[ -z "$ip_address" && $(date +%s) -lt $timeout ]]; do
             ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
             echo "IP Address: $ip_address"
