@@ -16,7 +16,7 @@ on:
     inputs:
       workloads:
         type: string
-        default: '["minimal", "managed-identity", "attestation", "many-layers", "server", "non-confidential"]'
+        default: '["minimal", "managed-identity", "attestation", "attestation-with-wait", "many-layers", "server", "server-with-wait", "non-confidential"]'
       regions:
         type: string
         default: '["eastus", "westus", "westeurope", "northeurope", "centralindia", "centraluseuap", "eastus2euap"]'
@@ -32,8 +32,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        workload: ${{ fromJSON(github.event.inputs.workloads || '["minimal"]') }}
-        region: ${{ fromJSON(github.event.inputs.regions || '["eastus"]') }}
+        workload: ${{ fromJSON(github.event.inputs.workloads || '["attestation-with-wait"]') }}
+        region: ${{ fromJSON(github.event.inputs.regions || '["eastus", "westeurope", "eastus2euap"]') }}
 
     steps:
       - name: Checkout
