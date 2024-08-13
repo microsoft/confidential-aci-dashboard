@@ -154,7 +154,15 @@ jobs:
 
       - name: Monitor Container Group
         if: always()
-        run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
+        run: |
+          echo "Attempting to get container logs..."
+          timeout=$(($(date +%s) + (60 * 10))) # 10 minutes
+          while [[ $(date +%s) -lt $timeout ]]; do
+            c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME && exit 0
+            sleep 20
+          done
+          exit 1
+
 
       - name: Get Container States
         if: always()
