@@ -150,7 +150,12 @@ jobs:
           # Select the IP address which is not empty
           ip_address="${template_ip_address:-${az_cli_ip_address}}"
           echo "Attempting to send a request..."
-          curl http://$ip_address:80
+          retries=15
+          while [ $retries -gt 0 ]; do
+            echo "Attempt $((15 - retries + 1)):"
+            curl http://$ip_address:80 --max-time 20 && break
+            retries=$((retries - 1))
+          done
 
       - name: Monitor Container Group
         if: always()
