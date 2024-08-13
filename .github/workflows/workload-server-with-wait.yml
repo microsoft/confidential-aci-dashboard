@@ -120,7 +120,7 @@ jobs:
       - name: Deploy Container Group
         run: c-aci-testing aci deploy workloads/server --deployment-name $DEPLOYMENT_NAME
 
-      - name: Wait for IP address
+      - name: Curl Server
         run: |
           ip_address=""
           timeout=$(($(date +%s) + (60 * 10))) # 10 minutes
@@ -129,21 +129,6 @@ jobs:
             echo "IP Address: $ip_address"
             sleep 5
           done
-
-      - name: Curl Server
-        run: |
-          template_ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
-          echo "IP Address from template output: $template_ip_address"
-          az_cli_ip_address=$(\
-            az container show \
-            --resource-group $RESOURCE_GROUP \
-            --name $DEPLOYMENT_NAME \
-            --query ipAddress.ip --output tsv \
-          )
-          echo "IP Address from az cli: $az_cli_ip_address"
-
-          # Select the IP address which is not empty
-          ip_address="${template_ip_address:-${az_cli_ip_address}}"
 
           echo "Attempting to send a request..."
           timeout=$(($(date +%s) + (60 * 10))) # 10 minutes
