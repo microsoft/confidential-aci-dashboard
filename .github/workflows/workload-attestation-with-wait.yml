@@ -135,9 +135,9 @@ jobs:
           while [[ $(date +%s) -lt $timeout ]]; do
 
             result=$(curl -X POST "http://$ip_address:8000/attest/maa" \
-                --max-time 20 \
-                -H "Content-Type: application/json" \
-                -d '{"maa_endpoint": "cacidashboard.weu.attest.azure.net", "runtime_data": "'$(echo '{"keys": [{"key_ops": ["encrypt"], "kid": "example-key", "kty": "oct-HSM", "k": "example"}]}' | base64 -w 0)'"}')
+              --max-time 20 \
+              -H "Content-Type: application/json" \
+              -d '{"maa_endpoint": "cacidashboard.weu.attest.azure.net", "runtime_data": "'$(echo '{"keys": [{"key_ops": ["encrypt"], "kid": "example-key", "kty": "oct-HSM", "k": "example"}]}' | base64 -w 0)'"}' || echo "")
 
             if [ -n "$result" ]; then
               echo "Token fetched successfully"
