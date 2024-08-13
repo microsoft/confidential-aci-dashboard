@@ -150,10 +150,12 @@ jobs:
 
       - name: Monitor Container Group
         if: always()
+        continue-on-error: true
         run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
 
       - name: Get Container States
         if: always()
+        continue-on-error: true
         run: |
           sleep 60 # Ensure all states are up to date
           az container show \
