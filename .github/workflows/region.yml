@@ -16,104 +16,94 @@ on:
         description: 'The location of the Azure Container Instances'
 
 jobs:
-  minimal-generated:
-    name: generated
+
+  minimal:
+    name: minimal
     secrets: inherit
     uses: ./.github/workflows/workload-minimal.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'allow-all']
     with:
-      id: minimal-generated
+      id: minimal-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
+      allow_all: ${{ matrix.policy_type == 'allow-all' }}
 
-  minimal-allow-all:
-    name: allow-all
-    secrets: inherit
-    uses: ./.github/workflows/workload-minimal.yml
-    with:
-      id: minimal-allow-all
-      location: ${{ inputs.location }}
-      allow_all: true
-
-  managed-id-generated:
-    name: generated
+  managed-id:
+    name: managed-id
     secrets: inherit
     uses: ./.github/workflows/workload-managed-identity.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'allow-all']
     with:
-      id: managed-id-generated
+      id: managed-id-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
+      allow_all: ${{ matrix.policy_type == 'allow-all' }}
 
-  managed-id-allow-all:
-    name: allow-all
-    secrets: inherit
-    uses: ./.github/workflows/workload-managed-identity.yml
-    with:
-      id: managed-id-allow-all
-      location: ${{ inputs.location }}
-      allow_all: true
-
-  attestation-generated:
-    name: generated
+  attestation:
+    name: attestation
     secrets: inherit
     uses: ./.github/workflows/workload-attestation.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'allow-all']
     with:
-      id: attestation-generated
+      id: attestation-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
+      allow_all: ${{ matrix.policy_type == 'allow-all' }}
 
-  attestation-allow-all:
-    name: allow-all
-    secrets: inherit
-    uses: ./.github/workflows/workload-attestation.yml
-    with:
-      id: attestation-allow-all
-      location: ${{ inputs.location }}
-      allow_all: true
-
-  many-layers-generated:
-    name: generated
+  many-layers:
+    name: many-layers
     secrets: inherit
     uses: ./.github/workflows/workload-many-layers.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated']
     with:
-      id: many-layers-generated
+      id: many-layers-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
+      allow_all: ${{ matrix.policy_type == 'allow-all' }}
 
-  server-generated:
-    name: generated
+  server:
+    name: server
     secrets: inherit
     uses: ./.github/workflows/workload-server.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'allow-all']
     with:
-      id: server-generated
+      id: server-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
+      allow_all: ${{ matrix.policy_type == 'allow-all' }}
 
-  server-allow-all:
-    name: allow-all
-    secrets: inherit
-    uses: ./.github/workflows/workload-server.yml
-    with:
-      id: server-allow-all
-      location: ${{ inputs.location }}
-      allow_all: true
-
-  server-with-wait-generated:
-    name: generated
+  server-with-wait:
+    name: server-with-wait
     secrets: inherit
     uses: ./.github/workflows/workload-server-with-wait.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'allow-all']
     with:
-      id: server-with-wait-generated
+      id: server-with-wait-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-
-  server-with-wait-allow-all:
-    name: allow-all
-    secrets: inherit
-    uses: ./.github/workflows/workload-server-with-wait.yml
-    with:
-      id: server-with-wait-allow-all
-      location: ${{ inputs.location }}
-      allow_all: true
+      allow_all: ${{ matrix.policy_type == 'allow-all' }}
 
   non-confidential:
-    name: allow-all
+    name: non-confidential
     secrets: inherit
     uses: ./.github/workflows/workload-non-confidential.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['allow-all']
     with:
-      id: non-confidential
+      id: non-confidential-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: true
+      allow_all: ${{ matrix.policy_type == 'allow-all' }}
