@@ -24,11 +24,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow-all']
+        policy_type: ['generated', 'allow_all']
     with:
       id: minimal-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow-all' }}
+      allow_all: ${{ matrix.policy_type == 'allow_all' }}
 
   managed-id:
     name: managed-id
@@ -37,11 +37,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow-all']
+        policy_type: ['generated', 'allow_all']
     with:
       id: managed-id-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow-all' }}
+      allow_all: ${{ matrix.policy_type == 'allow_all' }}
 
   attestation:
     name: attestation
@@ -50,11 +50,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow-all']
+        policy_type: ['generated', 'allow_all']
     with:
       id: attestation-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow-all' }}
+      allow_all: ${{ matrix.policy_type == 'allow_all' }}
 
   many-layers:
     name: many-layers
@@ -67,7 +67,7 @@ jobs:
     with:
       id: many-layers-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow-all' }}
+      allow_all: ${{ matrix.policy_type == 'allow_all' }}
 
   server:
     name: server
@@ -76,11 +76,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow-all']
+        policy_type: ['generated', 'allow_all']
     with:
       id: server-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow-all' }}
+      allow_all: ${{ matrix.policy_type == 'allow_all' }}
 
   server-with-wait:
     name: server-with-wait
@@ -89,11 +89,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow-all']
+        policy_type: ['generated', 'allow_all']
     with:
       id: server-with-wait-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow-all' }}
+      allow_all: ${{ matrix.policy_type == 'allow_all' }}
 
   non-confidential:
     name: non-confidential
@@ -102,8 +102,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['allow-all']
+        policy_type: ['allow_all']
     with:
       id: non-confidential-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow-all' }}
+      allow_all: ${{ matrix.policy_type == 'allow_all' }}
