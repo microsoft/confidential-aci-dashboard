@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow_all']
+        policy_type: ['generated', 'debug', 'allow_all']
     with:
       id: minimal-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow_all']
+        policy_type: ['generated', 'debug', 'allow_all']
     with:
       id: managed-id-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
@@ -50,7 +50,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow_all']
+        policy_type: ['generated', 'debug', 'allow_all']
     with:
       id: attestation-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
@@ -76,7 +76,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow_all']
+        policy_type: ['generated', 'debug', 'allow_all']
     with:
       id: server-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
@@ -89,7 +89,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['generated', 'allow_all']
+        policy_type: ['generated', 'debug', 'allow_all']
     with:
       id: server-with-wait-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
