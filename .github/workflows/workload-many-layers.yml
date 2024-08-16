@@ -70,7 +70,7 @@ env:
   CPU: ${{ inputs.cpu || 1 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
-  ALLOW_ALL: ${{ inputs.allow_all || false }}
+  POLICY_TYPE: ${{ inputs.policy_type || generated }}
 
 jobs:
   many_layers:
@@ -110,7 +110,7 @@ jobs:
 
       - name: Generate Security Policy
         run: |
-          c-aci-testing policies gen workloads/many_layers --deployment-name $DEPLOYMENT_NAME --policy-type ${{ inputs.policy_type || generated }}
+          c-aci-testing policies gen workloads/many_layers --deployment-name $DEPLOYMENT_NAME
           cat workloads/many_layers/policy_many_layers.rego
 
       - name: Deploy Container Group
