@@ -110,7 +110,7 @@ jobs:
 
       - name: Generate Security Policy
         run: |
-          c-aci-testing policies gen workloads/many_layers --deployment-name $DEPLOYMENT_NAME --policy-type ${{ inputs.policy_type }}
+          c-aci-testing policies gen workloads/many_layers --deployment-name $DEPLOYMENT_NAME --policy-type ${{ inputs.policy_type || generated }}
           cat workloads/many_layers/policy_many_layers.rego
 
       - name: Deploy Container Group
