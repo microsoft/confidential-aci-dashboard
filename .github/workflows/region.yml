@@ -28,7 +28,7 @@ jobs:
     with:
       id: minimal-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow_all' }}
+      policy_type: ${{ matrix.policy_type }}
 
   managed-id:
     name: managed-id
@@ -41,7 +41,7 @@ jobs:
     with:
       id: managed-id-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow_all' }}
+      policy_type: ${{ matrix.policy_type }}
 
   attestation:
     name: attestation
@@ -54,7 +54,7 @@ jobs:
     with:
       id: attestation-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow_all' }}
+      policy_type: ${{ matrix.policy_type }}
 
   many-layers:
     name: many-layers
@@ -67,7 +67,7 @@ jobs:
     with:
       id: many-layers-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow_all' }}
+      policy_type: ${{ matrix.policy_type }}
 
   server:
     name: server
@@ -80,7 +80,7 @@ jobs:
     with:
       id: server-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow_all' }}
+      policy_type: ${{ matrix.policy_type }}
 
   server-with-wait:
     name: server-with-wait
@@ -93,7 +93,7 @@ jobs:
     with:
       id: server-with-wait-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow_all' }}
+      policy_type: ${{ matrix.policy_type }}
 
   non-confidential:
     name: non-confidential
@@ -106,4 +106,4 @@ jobs:
     with:
       id: non-confidential-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
-      allow_all: ${{ matrix.policy_type == 'allow_all' }}
+      policy_type: ${{ matrix.policy_type }}
