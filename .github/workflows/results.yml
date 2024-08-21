@@ -58,12 +58,14 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Write test page
-        run: echo "<h1>Historical Results</h1>" > index.html
+        run: |
+          mkdir dist
+          echo "<h1>Historical Results</h1>" > dist/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'index.html'
+          path: 'dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
