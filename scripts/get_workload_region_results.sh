@@ -4,6 +4,16 @@ workload=$1
 region=$2
 since=$3
 
+output_file="$workload-$region.csv"
+
+# Create the CSV file and write the header if it doesn't exist
+if [[ ! -f "$output_file" ]]; then
+    echo "Conclusion,URL,Date,Failing Step" > "$output_file"
+else
+    echo "Ensure the file $output_file is empty before running this script"
+    exit 1
+fi
+
 echo "Getting results for:"
 echo "  Workload: $workload"
 echo "  Region: $region"
@@ -14,12 +24,18 @@ fi
 success_count=0
 failure_count=0
 
+tail -f "$output_file" &
+tail_pid=$!
+
 parse_jobs() {
     job_results=$1
 
     while IFS= read -r job_result; do
+        job_entry=""
         conclusion=$(echo "$job_result" | jq -r '.conclusion')
         url=$(echo "$job_result" | jq -r '.url')
+        date=$(echo "$job_result" | jq -r '.completedAt')
+        failing_step="None"
 
         if [[ "$since" != "" ]]; then
             startedAt=$(echo "$job_result" | jq -r '.startedAt')
@@ -31,19 +47,16 @@ parse_jobs() {
         fi
 
         if [[ $conclusion == "success" ]]; then
-            echo -e "\e[32m✓\e[0m Success: $url"
+            job_entry+=$(echo -e "\e[32m✓\e[0m Success,$url")
             success_count=$((success_count + 1))
 
         elif [[ $conclusion == "failure" || $conclusion == "cancelled" ]]; then
-            date=$(echo "$job_result" | jq -r '.completedAt')
-            echo -e "\e[31m✗\e[0m Failure: $url"
-            echo "  Run ID: $run_id"
-            echo "  Date: $date"
+            job_entry+=$(echo -e "\e[31m✗\e[0m Failure,$url")
             echo "$job_result" | jq -c '.steps[]' | while IFS= read -r step_result; do
                 step_conclusion=$(echo "$step_result" | jq -r '.conclusion')
                 if [[ $step_conclusion == "failure" ]]; then
                     name=$(echo "$step_result" | jq -r '.name')
-                    echo "  Step failed: $name"
+                    failing_step="$name"
                 fi
             done
             failure_count=$((failure_count + 1))
@@ -51,6 +64,10 @@ parse_jobs() {
         else
             echo "$name had uncovered conclusion: $conclusion"
         fi
+
+        job_entry+=$(echo ",$date")
+        job_entry+=$(echo ",$failing_step")
+        echo -e "$job_entry" >> "$output_file"
 
     done < <(echo "$job_results" | jq -c '.[]')
 }
@@ -120,3 +137,5 @@ fi
 echo "Success: ${success_count}"
 echo "Failed: ${failure_count}"
 echo "Success rate: $(awk "BEGIN {print $success_count / ($success_count + $failure_count) * 100}")%"
+
+kill $tail_pid
