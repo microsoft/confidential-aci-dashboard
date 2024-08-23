@@ -39,6 +39,15 @@ jobs:
       location: eastus2euap
       cpu: 16
       memory_in_gb: 16
+  
+  minimal-31cpu-32gb:
+    secrets: inherit
+    uses: ./.github/workflows/workload-minimal.yml
+    with:
+      id: 31cpu-32gb
+      location: eastus2euap
+      cpu: 31
+      memory_in_gb: 32
 
   minimal-32cpu-32gb:
     secrets: inherit
