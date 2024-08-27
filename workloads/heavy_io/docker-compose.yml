@@ -1,0 +1,6 @@
+version: '3'
+services:
+  proxy:
+    image: tingmaotest.azurecr.io/payload-test
+  attestation:
+    image: mcr.microsoft.com/aci/skr:$skrTag
