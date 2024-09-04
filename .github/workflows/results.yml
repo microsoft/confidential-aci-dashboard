@@ -48,7 +48,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cd artifact
-          ./scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} ${{ github.event.inputs.since }}
+          ../scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} ${{ github.event.inputs.since }}
 
       - name: Create Graph
         env:
