@@ -48,7 +48,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cd artifact
-          ../scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} ${{ github.event.inputs.since }}
+          ../scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} 2024-09-3T00:00:00Z # TODO: REMOVE
 
       - name: Create Graph
         env:
@@ -58,10 +58,11 @@ jobs:
           cd artifact
           python ../scripts/graph_results.py ${{ matrix.workload }} ${{ matrix.region }}
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload Graph
+        uses: actions/upload-artifact@v4
         with:
-          path: 'artifact'
+          name: ${{ matrix.workload }}-${{ matrix.region }}
+          path: artifact
 
   graph:
     environment:
@@ -76,12 +77,15 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Create Pages Directory
+        run: mkdir dist
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+
       - name: Create Index Page
-        run: |
-          pip install -r requirements.txt
-          mkdir dist
-          cd dist
-          echo "<a href="server_eastus2euap.html">Go to server_eastus2euap.html</a>" > index.html
+        run: echo "<a href="server_eastus2euap.html">server_eastus2euap.html</a>" > index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
