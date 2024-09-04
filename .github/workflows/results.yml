@@ -60,7 +60,9 @@ jobs:
       - name: Write test page
         run: |
           mkdir dist
-          echo "<h1>Historical Results</h1>" > dist/index.html
+          cd dist
+          ../scripts/get_workload_region_results.sh attestation eastus2euap
+          python ../scripts/graph_results.py attestation eastus2euap
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -38,4 +38,4 @@ fig = px.bar(melted_data, x='Date', y='Ratio', color='Conclusion',
              barmode='stack')
 
 # Save the figure as an HTML file
-pio.write_html(fig, file='daily_conclusion_breakdown.html', auto_open=True)
+pio.write_html(fig, file='index.html', auto_open=True)
