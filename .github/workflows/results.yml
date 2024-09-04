@@ -57,7 +57,9 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Write test page
+      - name: Create Results Page
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           pip install -r requirements.txt
           mkdir dist
