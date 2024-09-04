@@ -59,6 +59,7 @@ jobs:
 
       - name: Write test page
         run: |
+          pip install -r requirements.txt
           mkdir dist
           cd dist
           ../scripts/get_workload_region_results.sh attestation eastus2euap
