@@ -27,23 +27,41 @@ on:
 
 jobs:
 
-  # results:
-  #   runs-on: ubuntu-latest
+  results:
+    runs-on: ubuntu-latest
 
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       workload: ${{ fromJSON(github.event.inputs.workloads || '["attestation-with-wait"]') }}
-  #       region: ${{ fromJSON(github.event.inputs.regions || '["eastus", "westeurope", "eastus2euap"]') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        workload: ${{ fromJSON(github.event.inputs.workloads || '["attestation-with-wait"]') }}
+        region: ${{ fromJSON(github.event.inputs.regions || '["eastus", "westeurope", "eastus2euap"]') }}
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  #     - name: ${{ matrix.workload }}-${{ matrix.region }}
-  #       env:
-  #         GH_TOKEN: ${{ github.token }}
-  #       run: ./scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} ${{ github.event.inputs.since }}
+      - name: Make Artifact Directory
+        run: mkdir artifact
+
+      - name: Get Results
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd artifact
+          ./scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} ${{ github.event.inputs.since }}
+
+      - name: Create Graph
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd artifact
+          pip install -r requirements.txt
+          python ../scripts/graph_results.py ${{ matrix.workload }} ${{ matrix.region }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'artifact'
 
   graph:
     environment:
@@ -57,15 +75,12 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Create Results Page
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Create Index Page
         run: |
           pip install -r requirements.txt
           mkdir dist
           cd dist
-          ../scripts/get_workload_region_results.sh attestation eastus2euap
-          python ../scripts/graph_results.py attestation eastus2euap
+          echo "<a href="server_eastus2euap.html">Go to server_eastus2euap.html</a>" > index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

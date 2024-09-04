@@ -32,10 +32,10 @@ melted_data = ratio_data.melt(id_vars='Date', value_vars=existing_columns,
 
 # Plot the data as a stacked bar chart
 fig = px.bar(melted_data, x='Date', y='Ratio', color='Conclusion',
-             title='Daily Conclusion Ratio Breakdown',
+             title=f'{args.workload} - {args.region}',
              labels={'Ratio':'Success Rate', 'Date':'Date'},
              color_discrete_map={'Success': 'green', 'Failure': 'red'},
              barmode='stack')
 
 # Save the figure as an HTML file
-pio.write_html(fig, file='index.html', auto_open=True)
+pio.write_html(fig, file=f'{args.workload}_{args.region}.html', auto_open=True)
