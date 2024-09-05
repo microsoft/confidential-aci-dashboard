@@ -67,7 +67,7 @@ env:
   REGISTRY: cacidashboard.azurecr.io
   MANAGED_IDENTITY: cacidashboard
   LOCATION: ${{ inputs.location || 'westus' }}
-  CPU: ${{ inputs.cpu || 1 }}
+  CPU: ${{ inputs.cpu || 4 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
