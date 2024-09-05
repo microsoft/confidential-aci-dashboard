@@ -1,11 +1,9 @@
 param location string
 param registry string
-param workloadImgRef string
-param workloadCmd string
-param skrTag string
 param managedIDGroup string = resourceGroup().name
 param managedIDName string
 param ccePolicy string
+param cmd array = ['/bin/bash', 'workload_fio.sh']
 
 param cpu int = 4
 param memoryInGb int = 4
@@ -32,12 +30,12 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       ]
       type: 'Public'
     }
-    // imageRegistryCredentials: [
-    //   {
-    //     server: registry
-    //     identity: resourceId(managedIDGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities', managedIDName)
-    //   }
-    // ]
+    imageRegistryCredentials: [
+      {
+        server: registry
+        identity: resourceId(managedIDGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities', managedIDName)
+      }
+    ]
     confidentialComputeProperties: {
       ccePolicy: ccePolicy
     }
@@ -45,7 +43,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'workload'
         properties: {
-          image: workloadImgRef
+          image: '${registry}/heavy_io/workload:latest'
           ports: [
             {
               protocol: 'TCP'
@@ -54,7 +52,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           ]
           environmentVariables: [
             {
-              name: 'NGINX_PORT'
+              name: 'PORT'
               value: '8000'
             }
           ]
@@ -64,16 +62,12 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
               cpu: cpu
             }
           }
-          command: [
-            '/bin/bash', '-c'
-            workloadCmd
-          ]
         }
       }
       {
-        name: 'attestation'
+        name: 'sidecar'
         properties: {
-          image: 'mcr.microsoft.com/aci/skr:${empty(skrTag) ? 'latest': skrTag}'
+          image: '${registry}/heavy_io/sidecar:latest'
           ports: [
             {
               protocol: 'TCP'

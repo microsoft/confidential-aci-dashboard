@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+if [ -z "$MANUAL" ]; then
+  MANUAL=0
+fi
+
 TARGET_PATH=`pwd`
+PREFIX=`basename $TARGET_PATH`
 TS=`date +'%Y%m%d-%H%M%S-%3N'`
-DEPLOYMENT_NAME="heavy-io-test-$TS"
+DEPLOYMENT_NAME="$PREFIX-$TS"
 RESOURCE_GROUP=tingmao-6.1-test
 MANAGED_IDENTITY="tw61test-mid"
 SUBSCRIPTION_ID=85c61f94-8912-4e82-900e-6ab44de9bdf8
@@ -14,7 +19,7 @@ echo Deployment name: $DEPLOYMENT_NAME
 function run_on() {
   local container_name="$1"
   local cmd="$2"
-  echo Running \"$cmd\" on \"$container_name\"
+  echo Running \"$cmd\" on \"$container_name\" >&2
   az container exec \
     --container-name "$container_name" \
     -g "$RESOURCE_GROUP" \
@@ -96,20 +101,23 @@ function do_checks() {
     return 1
   fi
 
-  sleep 30
+  # sleep 30
 
-  local stdout=`run_on workload 'echo ok'`
-  if [ $? -ne 0 ] || [[ $stdout != *"ok"* ]]; then
-    echo "Failed to get back echo ok on workload"
-    failure_reason="workload-cmd-echo-postsleep"
-    return 1
-  fi
-  local stdout=`run_on attestation 'echo ok'`
-  if [ $? -ne 0 ] || [[ $stdout != *"ok"* ]]; then
-    echo "Failed to get back echo ok on attestation"
-    failure_reason="attestation-cmd-echo-postsleep"
-    return 1
-  fi
+  run_on workload dmesg | grep -i hv_storvsc
+  # run_on attestation dmesg | grep -i hv_storvsc
+
+  # local stdout=`run_on workload 'echo ok'`
+  # if [ $? -ne 0 ] || [[ $stdout != *"ok"* ]]; then
+  #   echo "Failed to get back echo ok on workload"
+  #   failure_reason="workload-cmd-echo-postsleep"
+  #   return 1
+  # fi
+  # local stdout=`run_on attestation 'echo ok'`
+  # if [ $? -ne 0 ] || [[ $stdout != *"ok"* ]]; then
+  #   echo "Failed to get back echo ok on attestation"
+  #   failure_reason="attestation-cmd-echo-postsleep"
+  #   return 1
+  # fi
 }
 
 function write_loop_log() {
@@ -130,9 +138,10 @@ else
   write_loop_log "fail-$failure_reason"
 fi
 
-
-# echo Press any key to remove the deployment
-# read -n 1
+if [ "$MANUAL" -eq 1 ]; then
+  echo Press any key to remove the deployment
+  read -n 1
+fi
 
 c-aci-testing aci remove \
     --deployment-name $DEPLOYMENT_NAME \

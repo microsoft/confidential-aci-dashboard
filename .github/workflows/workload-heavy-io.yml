@@ -20,8 +20,8 @@ on:
         required: true
       cpu:
         type: number
-        description: The number of CPU cores in container
-        default: 1
+        description: The number of CPU cores in each container
+        default: 4
       memory_in_gb:
         type: number
         description: The memory in container in Gb
@@ -45,8 +45,8 @@ on:
         required: true
       cpu:
         type: number
-        description: The number of CPU cores in container
-        default: 1
+        description: The number of CPU cores in each container
+        default: 4
       memory_in_gb:
         type: number
         description: The memory in container in Gb
@@ -66,12 +66,11 @@ env:
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
   MANAGED_IDENTITY: cacidashboard
-  LOCATION: ${{ inputs.location || 'westeurope' }}
+  LOCATION: ${{ inputs.location || 'westus' }}
   CPU: ${{ inputs.cpu || 1 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
-  skrTag: 2.7
 
 jobs:
   server:
@@ -106,9 +105,9 @@ jobs:
 
       - name: Set Parameters
         run: |
+          c-aci-testing aci param_set workloads/heavy_io --parameter registry=$REGISTRY
           c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
           c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
-          c-aci-testing aci param_set workloads/heavy_io --parameter skrTag=$skrTag
 
       - name: Generate Security Policy
         run: |
@@ -144,7 +143,13 @@ jobs:
           # Select the IP address which is not empty
           ip_address="${template_ip_address:-${az_cli_ip_address}}"
           echo "Attempting to send a request..."
-          curl http://$ip_address:80
+          curl http://$ip_address:8000 || exit 1
+          echo 'ip_address=$ip_address' >> $GITHUB_ENV
+
+      - name: Let container run for 30s and test again
+        run: |
+          sleep 30
+          curl http://$ip_address:8000 || exit 1
 
       - name: Monitor Container Group
         if: always()
