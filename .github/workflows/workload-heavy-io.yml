@@ -1,4 +1,4 @@
-name: Workload - Server
+name: Workload - Heavy IO
 
 permissions:
   id-token: write
