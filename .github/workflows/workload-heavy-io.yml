@@ -111,7 +111,7 @@ jobs:
       - name: Generate Security Policy
         run: |
           c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
-          cat workloads/heavy_io/policy_server.rego
+          cat workloads/heavy_io/policy_heavy_io.rego
 
       - name: Deploy Container Group
         run: c-aci-testing aci deploy workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
