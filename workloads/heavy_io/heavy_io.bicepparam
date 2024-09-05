@@ -1,9 +1,12 @@
 using './heavy_io.bicep'
 
-param registry=''
 // param cmd=['/bin/bash', 'workload_fio.sh']
+
+// Image info
+param registry='cacidashboard.azurecr.io'
 param location=''
 
+// Deployment info
 param ccePolicies = {
   heavy_io: ''
 }
