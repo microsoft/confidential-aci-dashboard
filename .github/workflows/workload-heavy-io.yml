@@ -105,13 +105,12 @@ jobs:
 
       - name: Set Parameters
         run: |
-          c-aci-testing aci param_set workloads/heavy_io --parameter registry=$REGISTRY
           c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
           c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
 
       - name: Generate Security Policy
         run: |
-          c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --policy-type $POLICY_TYPE
+          c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
           cat workloads/heavy_io/policy_server.rego
 
       - name: Deploy Container Group
