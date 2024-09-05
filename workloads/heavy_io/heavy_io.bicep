@@ -2,7 +2,7 @@ param location string
 param registry string
 param managedIDGroup string = resourceGroup().name
 param managedIDName string
-param ccePolicy string
+param ccePolicies object
 param cmd array = ['/bin/bash', 'workload_fio.sh']
 
 param cpu int = 4
@@ -37,7 +37,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       }
     ]
     confidentialComputeProperties: {
-      ccePolicy: ccePolicy
+      ccePolicy: ccePolicies.heavy_io
     }
     containers: [
       {
@@ -62,6 +62,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
               cpu: cpu
             }
           }
+          command: cmd
         }
       }
       {
