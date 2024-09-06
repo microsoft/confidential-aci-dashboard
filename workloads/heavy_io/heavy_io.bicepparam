@@ -4,10 +4,10 @@ using './heavy_io.bicep'
 
 // Image info
 param registry='cacidashboard.azurecr.io'
-param location=''
 
 // Deployment info
-param ccePolicies = {
+param location=''
+param ccePolicies={
   heavy_io: ''
 }
 param managedIDName='cacidashboard'
