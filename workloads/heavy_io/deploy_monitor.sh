@@ -7,17 +7,17 @@ fi
 TARGET_PATH=`pwd`
 PREFIX=`basename $TARGET_PATH`
 TS=`date +'%Y%m%d-%H%M%S-%3N'`
-DEPLOYMENT_NAME="$PREFIX-$TS"
+export DEPLOYMENT_NAME="$PREFIX-$TS"
 export MANAGED_IDENTITY="tw61test-mid"
 export RESOURCE_GROUP=tingmao-6.1-test
-export SUBSCRIPTION_ID=85c61f94-8912-4e82-900e-6ab44de9bdf8
+export SUBSCRIPTION=85c61f94-8912-4e82-900e-6ab44de9bdf8
 export REGISTRY=tingmaotest.azurecr.io
 export TAG=latest
 export SCRIPT=workload_tar
 # export LOCATION=eastus2euap
 export LOCATION=westus
-CPU=4
-MEMORY_IN_GB=4
+export CPU=4
+export MEMORY_IN_GB=4
 
 echo Deployment name: $DEPLOYMENT_NAME
 
@@ -39,7 +39,7 @@ function run_on() {
 # c-aci-testing aci remove \
 #     --deployment-name $DEPLOYMENT_NAME \
 #     --resource-group $RESOURCE_GROUP \
-#     --subscription $SUBSCRIPTION_ID || true
+#     --subscription $ SUBSCRIPTION || true
 
 c-aci-testing aci param_set $TARGET_PATH --parameter cpu=$CPU
 c-aci-testing aci param_set $TARGET_PATH --parameter memoryInGb=$MEMORY_IN_GB
@@ -50,12 +50,7 @@ c-aci-testing aci param_set $TARGET_PATH --parameter "registry='$REGISTRY'"
 echo Running deployment
 
 timeout -s INT 5m \
-    c-aci-testing aci deploy $TARGET_PATH \
-    --deployment-name $DEPLOYMENT_NAME \
-    --resource-group $RESOURCE_GROUP \
-    --location $LOCATION \
-    --managed-identity $MANAGED_IDENTITY \
-    --subscription $SUBSCRIPTION_ID
+    c-aci-testing aci deploy $TARGET_PATH --deployment-name $DEPLOYMENT_NAME
 status=$?
 failure_reason=""
 
@@ -67,10 +62,7 @@ elif [ $status -ne 0 ]; then
 fi
 
 function do_checks() {
-  local monitor_output=`c-aci-testing aci monitor \
-      --deployment-name $DEPLOYMENT_NAME \
-      --resource-group $RESOURCE_GROUP \
-      --subscription $SUBSCRIPTION_ID`
+  local monitor_output=`c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
 
   if [ $? -ne 0 ]; then
     failure_reason="monitor"
@@ -178,7 +170,4 @@ if [ "$MANUAL" -eq 1 ]; then
   read -n 1
 fi
 
-c-aci-testing aci remove \
-    --deployment-name $DEPLOYMENT_NAME \
-    --resource-group $RESOURCE_GROUP \
-    --subscription $SUBSCRIPTION_ID
+c-aci-testing aci remove --deployment-name $DEPLOYMENT_NAME
