@@ -78,7 +78,7 @@ env:
   SCRIPT: ${{ inputs.script || 'workload_fio' }}
 
 jobs:
-  heavy_io:
+  heavy-io:
     runs-on: ubuntu-latest
     steps:
 

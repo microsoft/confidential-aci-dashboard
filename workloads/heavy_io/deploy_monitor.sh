@@ -100,10 +100,10 @@ function do_checks() {
     failure_reason="workload-cmd-echo"
     return 1
   fi
-  local stdout=`run_on attestation 'echo ok'`
+  local stdout=`run_on sidecar 'echo ok'`
   if [ $? -ne 0 ] || [[ $stdout != *"ok"* ]]; then
-    echo "Failed to get back echo ok on attestation"
-    failure_reason="attestation-cmd-echo"
+    echo "Failed to get back echo ok on sidecar"
+    failure_reason="sidecar-cmd-echo"
     return 1
   fi
 
@@ -139,7 +139,7 @@ function do_checks() {
   fi
 
   run_on workload dmesg | grep -i hv_storvsc
-  # run_on attestation dmesg | grep -i hv_storvsc
+  # run_on sidecar dmesg | grep -i hv_storvsc
 
   # local stdout=`run_on workload 'echo ok'`
   # if [ $? -ne 0 ] || [[ $stdout != *"ok"* ]]; then
@@ -147,10 +147,10 @@ function do_checks() {
   #   failure_reason="workload-cmd-echo-postsleep"
   #   return 1
   # fi
-  # local stdout=`run_on attestation 'echo ok'`
+  # local stdout=`run_on sidecar 'echo ok'`
   # if [ $? -ne 0 ] || [[ $stdout != *"ok"* ]]; then
-  #   echo "Failed to get back echo ok on attestation"
-  #   failure_reason="attestation-cmd-echo-postsleep"
+  #   echo "Failed to get back echo ok on sidecar"
+  #   failure_reason="sidecar-cmd-echo-postsleep"
   #   return 1
   # fi
 }
