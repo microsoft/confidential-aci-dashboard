@@ -1,5 +1,6 @@
 param location string
 param registry string
+param tag string
 param managedIDGroup string = resourceGroup().name
 param managedIDName string
 param ccePolicies object
@@ -43,7 +44,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'workload'
         properties: {
-          image: '${registry}/heavy_io/workload:latest'
+          image: '${registry}/heavy_io/workload:${tag}'
           ports: [
             {
               protocol: 'TCP'
@@ -71,7 +72,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'sidecar'
         properties: {
-          image: '${registry}/heavy_io/sidecar:latest'
+          image: '${registry}/heavy_io/sidecar:${tag}'
           ports: [
             {
               protocol: 'TCP'

@@ -4,6 +4,7 @@ param script='workload_fio.sh'
 
 // Image info
 param registry='cacidashboard.azurecr.io'
+param tag=''
 
 // Deployment info
 param location=''
