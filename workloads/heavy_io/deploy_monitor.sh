@@ -130,7 +130,11 @@ function do_checks() {
     return 1
   fi
 
-  run_on workload dmesg | grep -i hv_storvsc
+  run_on workload dmesg > dmesg.log
+  grep -F '] hv_storvsc' dmesg.log
+  grep -i segfault dmesg.log
+  grep -i 'protection fault' dmesg.log
+  grep 'BUG:' dmesg.log
   # run_on sidecar dmesg | grep -i hv_storvsc
 
   # local stdout=`run_on workload 'echo ok'`
