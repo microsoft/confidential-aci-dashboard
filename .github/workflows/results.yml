@@ -90,7 +90,7 @@ jobs:
         run: |
           cd dist
           find . -type f -name "*.html" -exec cp {} ./ \;
-          echo "<a href="server_eastus2euap.html">server_eastus2euap.html</a>" > index.html
+          ./scripts/create_homepage.sh
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
