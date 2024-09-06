@@ -131,24 +131,20 @@ function do_checks() {
   fi
 
   run_on workload dmesg > dmesg.log
-  grep -F '] hv_storvsc' dmesg.log
-  grep -i segfault dmesg.log
-  grep -i 'protection fault' dmesg.log
-  grep 'BUG:' dmesg.log
-  # run_on sidecar dmesg | grep -i hv_storvsc
 
-  # local stdout=`run_on workload 'echo ok'`
-  # if [ $? -ne 0 ] || [[ $stdout != *"ok"* ]]; then
-  #   echo "Failed to get back echo ok on workload"
-  #   failure_reason="workload-cmd-echo-postsleep"
-  #   return 1
-  # fi
-  # local stdout=`run_on sidecar 'echo ok'`
-  # if [ $? -ne 0 ] || [[ $stdout != *"ok"* ]]; then
-  #   echo "Failed to get back echo ok on sidecar"
-  #   failure_reason="sidecar-cmd-echo-postsleep"
-  #   return 1
-  # fi
+  found_sus_message=""
+  grep -F '] hv_storvsc' dmesg.log && found_sus_message="hv_storvsc"
+  grep -i segfault dmesg.log && found_sus_message="segfault"
+  grep -i 'protection fault' dmesg.log && found_sus_message="protection-fault"
+  grep 'BUG:' dmesg.log && found_sus_message="kernel-bug"
+
+  if [ "$found_sus_message" != "" ]; then
+    echo "Found suspicious message in dmesg: $found_sus_message"
+    failure_reason="dmesg-$found_sus_message"
+    return 1
+  fi
+
+  return 0
 }
 
 function write_loop_log() {
