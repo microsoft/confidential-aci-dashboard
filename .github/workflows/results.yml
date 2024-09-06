@@ -87,7 +87,9 @@ jobs:
           path: dist
 
       - name: Create Index Page
-        run: echo "<a href="server_eastus2euap.html">server_eastus2euap.html</a>" > index.html
+        run: |
+          cd dist
+          echo "<a href="server_eastus2euap.html">server_eastus2euap.html</a>" > index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
