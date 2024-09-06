@@ -148,6 +148,7 @@ jobs:
 
       - name: Curl Server
         run: |
+          sleep 1
           echo "Attempting to send a request..."
           curl -f http://$ip_address:8000/index.txt || exit 1
 

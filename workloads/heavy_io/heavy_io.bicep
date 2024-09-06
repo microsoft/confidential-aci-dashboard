@@ -21,7 +21,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
   properties: {
     osType: 'Linux'
     sku: 'Confidential'
-    restartPolicy: 'Never'
+    restartPolicy: 'Never' // Detect container crashes
     ipAddress: {
       ports: [
         {
