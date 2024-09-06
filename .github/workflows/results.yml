@@ -48,7 +48,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cd artifact
-          ../scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} 2024-09-3T00:00:00Z # TODO: REMOVE
+          # TEMP: Copy test data to avoid API rate limits
+          cp ../test/data/${{ matrix.workload }}-${{ matrix.region }}.csv .
+          # ../scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} ${{ github.event.inputs.since }}
 
       - name: Create Graph
         env:
