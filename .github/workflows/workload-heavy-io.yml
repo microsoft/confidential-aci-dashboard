@@ -59,6 +59,10 @@ on:
         type: string
         description: The type of policy to use
         default: generated
+      script:
+        type: string
+        description: The script to run
+        default: workload_fio.sh
 
 env:
   DEPLOYMENT_NAME: ${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
@@ -71,6 +75,7 @@ env:
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
+  SCRIPT: ${{ inputs.script || 'workload_fio.sh' }}
 
 jobs:
   server:
@@ -107,6 +112,7 @@ jobs:
         run: |
           c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
           c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/heavy_io --parameter script=$SCRIPT
 
       - name: Generate Security Policy
         run: |

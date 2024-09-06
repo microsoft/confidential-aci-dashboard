@@ -3,7 +3,7 @@ param registry string
 param managedIDGroup string = resourceGroup().name
 param managedIDName string
 param ccePolicies object
-param cmd array = ['/bin/bash', 'workload_fio.sh']
+param script string = 'workload_fio.sh'
 
 param cpu int = 4
 param memoryInGb int = 4
@@ -62,7 +62,10 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
               cpu: cpu
             }
           }
-          command: cmd
+          command: [
+            '/bin/bash'
+            script
+          ]
         }
       }
       {
