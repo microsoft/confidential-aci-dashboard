@@ -106,14 +106,24 @@ jobs:
       - name: Setup Docker
         run: sudo usermod -aG docker $USER
 
-      # - name: Pull Image
-      #   run: c-aci-testing images pull workloads/heavy_io
-
       - name: Use last commit hash for folder as tag
         run: |
           TAG=$(git log -n 1 --format=oneline -- workloads/heavy_io/ | cut -b 1-10)
           echo "TAG=$TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Pull Image
+        run: |
+          c-aci-testing images pull workloads/heavy_io
+          if [ $? -ne 0 ]; then
+            echo "Image pull failed. Please build the image for tag $TAG locally, push to the registry, and try this run again:"
+            echo 'TAG=$(git log -n 1 --format=oneline -- workloads/heavy_io/ | cut -b 1-10)"
+            echo "docker build workloads/heavy_io -f workload.Dockerfile -t $REGISTRY/heavy_io/workload:"'$TAG'
+            echo "docker push $REGISTRY/heavy_io/workload:"'$TAG'
+            echo "Docker build workloads/heavy_io -f sidecar.Dockerfile -t $REGISTRY/heavy_io/sidecar:"'$TAG'
+            echo "docker push $REGISTRY/heavy_io/sidecar:"'$TAG'
+            exit 1
+          fi
 
       - name: Build image
         run: c-aci-testing images build workloads/heavy_io
