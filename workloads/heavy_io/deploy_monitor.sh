@@ -11,6 +11,11 @@ DEPLOYMENT_NAME="$PREFIX-$TS"
 RESOURCE_GROUP=tingmao-6.1-test
 MANAGED_IDENTITY="tw61test-mid"
 SUBSCRIPTION_ID=85c61f94-8912-4e82-900e-6ab44de9bdf8
+REGISTRY=tingmaotest
+TAG=latest
+SCRIPT=workload_tar
+CPU=4
+MEMORY_IN_GB=4
 # LOCATION=eastus2euap
 LOCATION=westus
 
@@ -35,6 +40,12 @@ function run_on() {
 #     --deployment-name $DEPLOYMENT_NAME \
 #     --resource-group $RESOURCE_GROUP \
 #     --subscription $SUBSCRIPTION_ID || true
+
+c-aci-testing aci param_set $TARGET_PATH --parameter cpu=$CPU
+c-aci-testing aci param_set $TARGET_PATH --parameter memoryInGb=$MEMORY_IN_GB
+c-aci-testing aci param_set $TARGET_PATH --parameter "script='$SCRIPT'"
+c-aci-testing aci param_set $TARGET_PATH --parameter "tag='$TAG'"
+c-aci-testing aci param_set $TARGET_PATH --parameter "registry='$REGISTRY'"
 
 echo Running deployment
 
@@ -77,11 +88,6 @@ function do_checks() {
     failure_reason="workload-cmd"
     return 1
   fi
-  run_on workload "ls -la /dev/sev-guest"
-  if [ $? -ne 0 ]; then
-    failure_reason="workload-cmd"
-    return 1
-  fi
   run_on workload "uname -a"
   if [ $? -ne 0 ]; then
     failure_reason="workload-cmd"
@@ -101,7 +107,36 @@ function do_checks() {
     return 1
   fi
 
-  # sleep 30
+  # get ip
+  ip_address=""
+  elapsed=0
+  while [[ -z "$ip_address" && elapsed -lt 60 ]]; do
+    ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
+    echo "IP Address: $ip_address"
+    sleep 5
+    elapsed=$((elapsed + 5))
+  done
+  if [[ -z "$ip_address" ]]; then
+    echo "Failed to get IP address"
+    failure_reason="get-ip"
+    return 1
+  fi
+  sleep 1
+  curl -f http://$ip_address:8000/index.txt
+  if [ $? -ne 0 ]; then
+    echo "Failed to send request to container"
+    failure_reason="curl"
+    return 1
+  fi
+
+  sleep 30
+
+  curl -f http://$ip_address:8000/index.txt
+  if [ $? -ne 0 ]; then
+    echo "Failed to send request to container after 30s"
+    failure_reason="curl-postsleep"
+    return 1
+  fi
 
   run_on workload dmesg | grep -i hv_storvsc
   # run_on attestation dmesg | grep -i hv_storvsc
