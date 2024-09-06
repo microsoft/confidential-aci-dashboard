@@ -117,7 +117,7 @@ jobs:
           c-aci-testing images pull workloads/heavy_io
           if [ $? -ne 0 ]; then
             echo "Image pull failed. Please build the image for tag $TAG locally, push to the registry, and try this run again:"
-            echo 'TAG=$(git log -n 1 --format=oneline -- workloads/heavy_io/ | cut -b 1-10)"
+            echo 'TAG=$(git log -n 1 --format=oneline -- workloads/heavy_io/ | cut -b 1-10)'
             echo "docker build workloads/heavy_io -f workload.Dockerfile -t $REGISTRY/heavy_io/workload:"'$TAG'
             echo "docker push $REGISTRY/heavy_io/workload:"'$TAG'
             echo "Docker build workloads/heavy_io -f sidecar.Dockerfile -t $REGISTRY/heavy_io/sidecar:"'$TAG'
@@ -125,11 +125,11 @@ jobs:
             exit 1
           fi
 
-      - name: Build image
-        run: c-aci-testing images build workloads/heavy_io
+      # - name: Build image
+      #   run: c-aci-testing images build workloads/heavy_io
 
-      - name: Push image
-        run: c-aci-testing images push workloads/heavy_io
+      # - name: Push image
+      #   run: c-aci-testing images push workloads/heavy_io
 
       - name: Set Parameters
         run: |
