@@ -49,8 +49,8 @@ jobs:
         run: |
           cd artifact
           # TEMP: Copy test data to avoid API rate limits
-          cp ../test/data/${{ matrix.workload }}-${{ matrix.region }}.csv .
-          # ../scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} ${{ github.event.inputs.since }}
+          # cp ../test/data/${{ matrix.workload }}-${{ matrix.region }}.csv .
+          ../scripts/get_workload_region_results.sh ${{ matrix.workload }} ${{ matrix.region }} ${{ github.event.inputs.since }}
 
       - name: Create Graph
         env:
