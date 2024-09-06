@@ -39,7 +39,7 @@ function run_on() {
 # c-aci-testing aci remove \
 #     --deployment-name $DEPLOYMENT_NAME \
 #     --resource-group $RESOURCE_GROUP \
-#     --subscription $ SUBSCRIPTION || true
+#     --subscription $SUBSCRIPTION || true
 
 c-aci-testing aci param_set $TARGET_PATH --parameter cpu=$CPU
 c-aci-testing aci param_set $TARGET_PATH --parameter memoryInGb=$MEMORY_IN_GB
@@ -62,7 +62,7 @@ elif [ $status -ne 0 ]; then
 fi
 
 function do_checks() {
-  local monitor_output=`c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
+  local monitor_output=`c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME`
 
   if [ $? -ne 0 ]; then
     failure_reason="monitor"
