@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+uname -a
 
 # Sleep a random time between 0 and 1.5 seconds.
 # We do this because this issue seems to have something to do with badly timed
