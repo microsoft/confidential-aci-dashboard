@@ -132,29 +132,17 @@ jobs:
             sleep 5
             elapsed=$((elapsed + 5))
           done
+          echo "ip_address=$ip_address" >> $GITHUB_ENV
 
       - name: Curl Server
         run: |
-          template_ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
-          echo "IP Address from template output: $template_ip_address"
-          az_cli_ip_address=$(\
-            az container show \
-            --resource-group $RESOURCE_GROUP \
-            --name $DEPLOYMENT_NAME \
-            --query ipAddress.ip --output tsv \
-          )
-          echo "IP Address from az cli: $az_cli_ip_address"
-
-          # Select the IP address which is not empty
-          ip_address="${template_ip_address:-${az_cli_ip_address}}"
           echo "Attempting to send a request..."
-          curl http://$ip_address:8000 || exit 1
-          echo 'ip_address=$ip_address' >> $GITHUB_ENV
+          curl -f http://$ip_address:8000/index.txt || exit 1
 
       - name: Let container run for 30s and test again
         run: |
           sleep 30
-          curl http://$ip_address:8000 || exit 1
+          curl -f http://$ip_address:8000/index.txt || exit 1
 
       - name: Monitor Container Group
         if: always()
