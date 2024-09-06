@@ -111,7 +111,7 @@ jobs:
 
       - name: Use last commit hash for folder as tag
         run: |
-          TAG=$(git log -n 1 --format=oneline -- workloads/heavy_io/ | cut -d' ' -f1)
+          TAG=$(git log -n 1 --format=oneline -- workloads/heavy_io/ | cut -b 1-10)
           echo "TAG=$TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV
 
