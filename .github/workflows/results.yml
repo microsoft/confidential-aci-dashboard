@@ -90,7 +90,7 @@ jobs:
         run: |
           cd dist
           find . -type f -name "*.html" -exec cp {} ./ \;
-          ./scripts/create_homepage.sh
+          ../scripts/create_homepage.sh
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
