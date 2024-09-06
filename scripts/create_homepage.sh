@@ -1,3 +1,4 @@
+#!/bin/bash
 
 echo "<html><body>" > index.html
 echo "<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>" >> index.html
