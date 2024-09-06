@@ -75,7 +75,7 @@ env:
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
-  SCRIPT: ${{ inputs.script || 'workload_fio.sh' }}
+  SCRIPT: ${{ inputs.script || 'workload_fio' }}
   # TAG: ${{ github.run_id }}
 
 jobs:

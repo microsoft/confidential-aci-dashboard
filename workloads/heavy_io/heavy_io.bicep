@@ -4,7 +4,7 @@ param tag string
 param managedIDGroup string = resourceGroup().name
 param managedIDName string
 param ccePolicies object
-param script string = 'workload_fio.sh'
+param script string = 'workload_fio'
 
 param cpu int = 4
 param memoryInGb int = 4
@@ -65,7 +65,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           }
           command: [
             '/bin/bash'
-            script
+            '${script}.sh'
           ]
         }
       }

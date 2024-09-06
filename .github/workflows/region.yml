@@ -129,7 +129,7 @@ jobs:
       fail-fast: false
       matrix:
         policy_type: ['generated', 'debug', 'allow_all']
-        script: ['workload_fio.sh', 'workload_tar.sh']
+        script: ['workload_fio', 'workload_tar']
     with:
       id: heavy-io-${{ matrix.policy_type }}-${{ matrix.script }}
       location: ${{ inputs.location }}

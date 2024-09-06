@@ -1,6 +1,6 @@
 using './heavy_io.bicep'
 
-param script='workload_fio.sh'
+param script='workload_fio'
 
 // Image info
 param registry='cacidashboard.azurecr.io'
