@@ -8,16 +8,16 @@ TARGET_PATH=`pwd`
 PREFIX=`basename $TARGET_PATH`
 TS=`date +'%Y%m%d-%H%M%S-%3N'`
 DEPLOYMENT_NAME="$PREFIX-$TS"
-RESOURCE_GROUP=tingmao-6.1-test
-MANAGED_IDENTITY="tw61test-mid"
-SUBSCRIPTION_ID=85c61f94-8912-4e82-900e-6ab44de9bdf8
-REGISTRY=tingmaotest.azurecr.io
-TAG=latest
-SCRIPT=workload_tar
+export MANAGED_IDENTITY="tw61test-mid"
+export RESOURCE_GROUP=tingmao-6.1-test
+export SUBSCRIPTION_ID=85c61f94-8912-4e82-900e-6ab44de9bdf8
+export REGISTRY=tingmaotest.azurecr.io
+export TAG=latest
+export SCRIPT=workload_tar
+# export LOCATION=eastus2euap
+export LOCATION=westus
 CPU=4
 MEMORY_IN_GB=4
-# LOCATION=eastus2euap
-LOCATION=westus
 
 echo Deployment name: $DEPLOYMENT_NAME
 
