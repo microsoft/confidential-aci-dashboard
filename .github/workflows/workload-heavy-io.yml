@@ -76,6 +76,7 @@ env:
   CLEANUP: ${{ inputs.cleanup }}
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
   SCRIPT: ${{ inputs.script || 'workload_fio.sh' }}
+  TAG: ${{ github.run_id }}
 
 jobs:
   server:
@@ -105,8 +106,14 @@ jobs:
       - name: Setup Docker
         run: sudo usermod -aG docker $USER
 
-      - name: Pull Image
-        run: c-aci-testing images pull workloads/heavy_io
+      # - name: Pull Image
+      #   run: c-aci-testing images pull workloads/heavy_io
+
+      - name: Build image
+        run: c-aci-testing images build workloads/heavy_io
+
+      - name: Push image
+        run: c-aci-testing images push workloads/heavy_io
 
       - name: Set Parameters
         run: |

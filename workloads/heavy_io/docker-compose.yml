@@ -1,6 +1,12 @@
 version: '3'
 services:
   workload:
-    image: cacidashboard.azurecr.io/heavy_io/workload:latest
+    image: cacidashboard.azurecr.io/heavy_io/workload:$TAG
+    build:
+      context: .
+      dockerfile: workload.Dockerfile
   sidecar:
-    image: cacidashboard.azurecr.io/heavy_io/sidecar:latest
+    image: cacidashboard.azurecr.io/heavy_io/sidecar:$TAG
+    build:
+      context: .
+      dockerfile: sidecar.Dockerfile
