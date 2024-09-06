@@ -62,7 +62,7 @@ on:
       script:
         type: string
         description: The script to run
-        default: workload_fio.sh
+        default: workload_fio
 
 env:
   DEPLOYMENT_NAME: ${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}

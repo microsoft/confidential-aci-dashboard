@@ -134,3 +134,4 @@ jobs:
       id: heavy-io-${{ matrix.policy_type }}-${{ matrix.script }}
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}
+      script: ${{ matrix.script }}
