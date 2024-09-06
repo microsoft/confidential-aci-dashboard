@@ -9,8 +9,8 @@ sleepTime=0.$((RANDOM%10))
 echo sleeping for $sleepTime | tee /dev/kmsg
 sleep $sleepTime
 echo ------------- payload start python + taring --------------- | tee /dev/kmsg
-cd /
 python3 -m http.server "$PORT" --bind 0.0.0.0 &
+cd /
 while :; do
   tar -c {bin,etc,home,lib,opt,root,sbin,usr,var} > /dev/null
   status=$?
