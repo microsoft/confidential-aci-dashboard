@@ -131,6 +131,6 @@ jobs:
         policy_type: ['generated', 'debug', 'allow_all']
         script: ['workload_fio.sh', 'workload_tar.sh']
     with:
-      id: heavy-io-${{ matrix.policy_type }}
+      id: heavy-io-${{ matrix.policy_type }}-${{ matrix.script }}
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}

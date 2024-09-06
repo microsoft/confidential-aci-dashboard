@@ -79,7 +79,7 @@ env:
   TAG: ${{ github.run_id }}
 
 jobs:
-  server:
+  heavy_io:
     runs-on: ubuntu-latest
     steps:
 
