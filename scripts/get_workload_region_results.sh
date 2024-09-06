@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 workload=$1
 region=$2
 since=$3
