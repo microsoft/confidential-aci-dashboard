@@ -1,13 +1,15 @@
 
 echo "<html><body>" > index.html
+echo "<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>" >> index.html
+echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(600px, 1fr)); grid-gap: 10px">' >> index.html
 
 # Loop through all .html files in the current directory
 for file in *.html; do
     if [ "$file" != "index.html" ]; then
-        # Add an <a> tag for each .html file
-        echo "<a href=\"$file\">$file</a><br>" >> index.html
+        cat $file >> index.html
+        echo "" >> index.html
     fi
 done
 
 # Close the HTML tags
-echo "</body></html>" >> index.html
+echo "</div></body></html>" >> index.html
