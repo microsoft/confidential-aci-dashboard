@@ -7,10 +7,6 @@ permissions:
   pages: write
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/results.yml
-      - scripts/get_workload_region_results.sh
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
