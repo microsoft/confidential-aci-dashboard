@@ -2,6 +2,10 @@
 
 Suite of tests to monitor reliability and performance of Confidential ACI.
 
+To see graphs of the results over time, see:
+
+https://microsoft.github.io/confidential-aci-dashboard/
+
 ## Region Status
 
 Deploys to many regions to gather data about region health
