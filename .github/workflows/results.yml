@@ -11,6 +11,8 @@ on:
     paths:
       - .github/workflows/results.yml
       - scripts/get_workload_region_results.sh
+      - scripts/graph_results.py
+      - scripts/create_homepage.sh
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
