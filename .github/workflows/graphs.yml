@@ -36,6 +36,8 @@ jobs:
         run: mkdir dist
 
       - uses: actions/download-artifact@v4
+        env:
+          GH_TOKEN: ${{ github.token }}
         with:
           run-id: ${{ inputs.run-id }}
           path: dist
