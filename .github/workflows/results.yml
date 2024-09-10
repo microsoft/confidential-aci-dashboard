@@ -61,36 +61,7 @@ jobs:
           path: artifact
 
   graph:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/graphs.yml
     needs: results
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Create Pages Directory
-        run: mkdir dist
-
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-
-      - name: Create Index Page
-        run: |
-          cd dist
-          find . -type f -name "*.html" -exec cp {} ./ \;
-          ../scripts/create_homepage.sh
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: 'dist'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    with:
+      run-id: ${{ github.run_id }}
