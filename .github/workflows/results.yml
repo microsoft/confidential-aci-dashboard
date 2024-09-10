@@ -62,5 +62,6 @@ jobs:
 
   graph:
     uses: ./.github/workflows/graphs.yml
+    needs: results
     with:
       run-id: ${{ github.run_id }}
