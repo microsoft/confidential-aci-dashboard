@@ -61,7 +61,7 @@ on:
         default: generated
 
 env:
-  DEPLOYMENT_NAME: ${{ inputs.id || 'many_layers' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'many-layers' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
@@ -73,7 +73,7 @@ env:
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
 
 jobs:
-  many_layers:
+  many-layers:
     runs-on: ubuntu-latest
     steps:
 
