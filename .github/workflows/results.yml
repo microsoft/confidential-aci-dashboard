@@ -29,8 +29,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        workload: ${{ fromJSON(github.event.inputs.workloads || '["attestation-with-wait"]') }}
-        region: ${{ fromJSON(github.event.inputs.regions || '["eastus", "westeurope", "eastus2euap"]') }}
+        workload: ${{ fromJSON(github.event.inputs.workloads || '["minimal", "server-with-wait", "attestation-with-wait"]') }}
+        region: ${{ fromJSON(github.event.inputs.regions || '["eastus", "westus", "westeurope", "northeurope", "centralindia", "centraluseuap", "eastus2euap"]') }}
 
     steps:
       - name: Checkout
