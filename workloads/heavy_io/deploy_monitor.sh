@@ -13,10 +13,10 @@ export RESOURCE_GROUP=tingmao-6.1-test
 export SUBSCRIPTION=85c61f94-8912-4e82-900e-6ab44de9bdf8
 export REGISTRY=tingmaotest.azurecr.io
 export TAG=latest
-export SCRIPT=workload_tar
-# export LOCATION=eastus2euap
-export LOCATION=westus
-export CPU=4
+export SCRIPT=workload_exec
+export LOCATION=eastus2euap
+# export LOCATION=westus
+export CPU=1
 export MEMORY_IN_GB=4
 
 echo Deployment name: $DEPLOYMENT_NAME
@@ -121,26 +121,29 @@ function do_checks() {
     return 1
   fi
 
-  sleep 30
+  sleep 60
+
+  dmesg_file="dmesg.$DEPLOYMENT_NAME.log"
+  run_on workload dmesg > $dmesg_file
+
+  found_sus_message=""
+  grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"
+  grep -i segfault $dmesg_file && found_sus_message="segfault"
+  grep -i 'protection fault' $dmesg_file && found_sus_message="protection-fault"
+  grep 'BUG:' $dmesg_file && found_sus_message="kernel-bug"
+
+  if [ "$found_sus_message" != "" ]; then
+    echo "Found suspicious message in dmesg: $found_sus_message"
+    failure_reason="dmesg-$found_sus_message"
+    return 1
+  else
+    rm $dmesg_file
+  fi
 
   curl -f http://$ip_address:8000/index.txt
   if [ $? -ne 0 ]; then
     echo "Failed to send request to container after 30s"
     failure_reason="curl-postsleep"
-    return 1
-  fi
-
-  run_on workload dmesg > dmesg.log
-
-  found_sus_message=""
-  grep -F '] hv_storvsc' dmesg.log && found_sus_message="hv_storvsc"
-  grep -i segfault dmesg.log && found_sus_message="segfault"
-  grep -i 'protection fault' dmesg.log && found_sus_message="protection-fault"
-  grep 'BUG:' dmesg.log && found_sus_message="kernel-bug"
-
-  if [ "$found_sus_message" != "" ]; then
-    echo "Found suspicious message in dmesg: $found_sus_message"
-    failure_reason="dmesg-$found_sus_message"
     return 1
   fi
 

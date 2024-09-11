@@ -1,2 +1,2 @@
 loop.log
-dmesg.log
+dmesg*.log

@@ -152,9 +152,9 @@ jobs:
           echo "Attempting to send a request..."
           curl -f http://$ip_address:8000/index.txt || exit 1
 
-      - name: Let container run for 30s and test again
+      - name: Let container run for 1min and test again
         run: |
-          sleep 30
+          sleep 100
           curl -f http://$ip_address:8000/index.txt || exit 1
 
       - name: Monitor Container Group
@@ -175,6 +175,34 @@ jobs:
             echo "Events for container $container_name:"
             echo "$container" | jq -r '.instanceView | .events[]'
           done
+
+      - name: Check dmesg
+        run: |
+            dmesg_file="dmesg.log"
+
+            az container exec \
+              --container-name "workload" \
+              -g $RESOURCE_GROUP \
+              -n $DEPLOYMENT_NAME \
+              --exec-command dmesg > $dmesg_file
+
+            found_sus_message=""
+            grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"
+            grep -i segfault $dmesg_file && found_sus_message="segfault"
+            grep -i 'protection fault' $dmesg_file && found_sus_message="protection-fault"
+            grep 'BUG:' $dmesg_file && found_sus_message="kernel-bug"
+
+            cat $dmesg_file
+
+            if [ -n "$found_sus_message" ]; then
+              echo "Found suspicious message in dmesg: $found_sus_message"
+              exit 1
+            fi
+
+            if [ ! -s $dmesg_file ]; then
+              echo "No dmesg output found"
+              exit 1
+            fi
 
       - name: Remove Container Group
         run: |
