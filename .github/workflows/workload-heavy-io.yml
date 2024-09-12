@@ -34,6 +34,15 @@ on:
         type: string
         description: The type of policy to use
         default: generated
+      script:
+        type: choice
+        description: The script to run
+        default: workload_fio
+        options:
+          - workload_fio
+          - workload_tar
+          - workload_exec
+          - workload_cpu
   workflow_call:
     inputs:
       id:
