@@ -120,3 +120,18 @@ jobs:
       id: non-confidential-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}
+
+  heavy-io:
+    name: heavy-io
+    secrets: inherit
+    uses: ./.github/workflows/workload-heavy-io.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'debug', 'allow_all']
+        script: ['workload_fio', 'workload_tar', 'workload_cpu']
+    with:
+      id: heavy-io-${{ matrix.policy_type }}-${{ matrix.script }}
+      location: ${{ inputs.location }}
+      policy_type: ${{ matrix.policy_type }}
+      script: ${{ matrix.script }}
