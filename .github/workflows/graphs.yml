@@ -1,0 +1,57 @@
+name: Graph Results
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+  pages: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      run-id:
+        type: string
+        required: true
+  workflow_call:
+    inputs:
+      run-id:
+        type: string
+        required: true
+
+jobs:
+
+  graph:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Create Pages Directory
+        run: mkdir dist
+
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ inputs.run-id }}
+          github-token: ${{ github.token }}
+          path: dist
+
+      - name: Create Index Page
+        run: |
+          cd dist
+          find . -type f -name "*.html" -exec cp {} ./ \;
+          ../scripts/create_homepage.sh
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

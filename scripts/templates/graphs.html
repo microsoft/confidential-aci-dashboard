@@ -1,0 +1,101 @@
+<html>
+<head>
+  <link href=https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css rel=stylesheet>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+      }
+
+      .button-row {
+          display: flex;
+          gap: 10px;
+          margin-top: 20px;
+      }
+
+      .toggle-button {
+          padding: 10px 20px;
+          border: 2px solid #007BFF;
+          background-color: #fff;
+          color: #007BFF;
+          cursor: pointer;
+          border-radius: 5px;
+          transition: all 0.3s;
+      }
+
+      .toggle-button.selected {
+          background-color: #007BFF;
+          color: #fff;
+      }
+
+      .hidden {
+          display: none;
+      }
+    </style>
+  <script src=https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js></script>
+</head>
+<body>
+
+<script src=https://cdn.plot.ly/plotly-latest.min.js></script>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(600px, 1fr)); grid-gap: 10px">
+    <div>
+      <h3>Workloads</h3>
+      <div id="workload-filters" class="button-row" style="flex-wrap: wrap;">
+      </div>
+    </div>
+
+    <div>
+      <h3>Regions</h3>
+      <div id="region-filters" class="button-row" style="flex-wrap: wrap;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="graphs" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(600px, 1fr)); grid-gap: 10px">
+</div>
+
+<script>
+  let workloads = [];
+  let regions = [];
+
+  function toggleButton(button, button_type, value) {
+      button.classList.toggle('selected');
+
+      if (button.classList.contains('selected')) {
+        if (button_type == "workload") {
+          workloads.push(value);
+        }
+        else if (button_type == "region") {
+          regions.push(value);
+        }
+      } else {
+        if (button_type == "workload") {
+          workloads = workloads.filter(num => num !== value);
+        }
+        else if (button_type == "region") {
+          regions = regions.filter(num => num !== value);
+        }
+      }
+
+      filterGraphs();
+  }
+
+  function filterGraphs() {
+    const graphs = document.querySelectorAll('.graph');
+    graphs.forEach(graph => {
+      const workload = graph.getAttribute('data-workload');
+      const region = graph.getAttribute('data-region');
+
+      if ((workloads.includes(workload) || workloads.length == 0) &&
+          (regions.includes(region) || regions.length == 0)
+      ) {
+        graph.classList.remove("hidden")
+      } else {
+        graph.classList.add("hidden")
+      }
+    })
+  }
+</script>
+
+</body></html>

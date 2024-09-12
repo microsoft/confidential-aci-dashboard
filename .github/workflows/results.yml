@@ -7,12 +7,8 @@ permissions:
   pages: write
 
 on:
-  pull_request:
-    paths:
-      - .github/workflows/results.yml
-      - scripts/get_workload_region_results.sh
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 4 * * *'
   workflow_dispatch:
     inputs:
       workloads:
@@ -33,8 +29,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        workload: ${{ fromJSON(github.event.inputs.workloads || '["attestation-with-wait"]') }}
-        region: ${{ fromJSON(github.event.inputs.regions || '["eastus", "westeurope", "eastus2euap"]') }}
+        workload: ${{ fromJSON(github.event.inputs.workloads || '["minimal", "server-with-wait", "attestation-with-wait"]') }}
+        region: ${{ fromJSON(github.event.inputs.regions || '["eastus", "westus", "westeurope", "northeurope", "centralindia", "centraluseuap", "eastus2euap"]') }}
 
     steps:
       - name: Checkout
@@ -65,36 +61,7 @@ jobs:
           path: artifact
 
   graph:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/graphs.yml
     needs: results
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Create Pages Directory
-        run: mkdir dist
-
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-
-      - name: Create Index Page
-        run: |
-          cd dist
-          find . -type f -name "*.html" -exec cp {} ./ \;
-          ../scripts/create_homepage.sh
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: 'dist'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    with:
+      run-id: ${{ github.run_id }}
