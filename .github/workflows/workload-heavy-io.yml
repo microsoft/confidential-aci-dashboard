@@ -165,7 +165,6 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          sleep 60 # Ensure all states are up to date
           az container show \
             --resource-group $RESOURCE_GROUP \
             --name $DEPLOYMENT_NAME \
