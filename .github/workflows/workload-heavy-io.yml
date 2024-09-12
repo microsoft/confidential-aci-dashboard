@@ -149,12 +149,12 @@ jobs:
         run: |
           sleep 1
           echo "Attempting to send a request..."
-          curl -f http://$ip_address:8000/index.txt || exit 1
+          curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
 
       - name: Let container run for 1min and test again
         run: |
           sleep 100
-          curl -f http://$ip_address:8000/index.txt || exit 1
+          curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
 
       - name: Monitor Container Group
         if: always()
@@ -178,20 +178,12 @@ jobs:
         run: |
             dmesg_file="dmesg.log"
 
-            # az container exec \
-            #   --container-name "workload" \
-            #   -g $RESOURCE_GROUP \
-            #   -n $DEPLOYMENT_NAME \
-            #   --exec-command dmesg > $dmesg_file
-
-            # Workaround az cli bug (Inappropriate ioctl for device)
-
-            az container exec \
-              --container-name "workload" \
-              -g $RESOURCE_GROUP \
-              -n $DEPLOYMENT_NAME \
-              --exec-command bash -c "dmesg > /var/www/$dmesg_file" || exit 1
-            curl -f http://$ip_address:8000/$dmesg_file || exit 1
+            curl --fail-with-body http://$ip_address:8000/dmesg.log -o $dmesg_file
+            if [ $? -ne 0 ]; then
+              echo "Failed to get dmesg:"
+              cat $dmesg_file
+              exit 1
+            fi
 
             found_sus_message=""
             grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"

@@ -10,7 +10,7 @@ sleepTime=0.$((RANDOM%10))
 echo sleeping for $sleepTime | tee /dev/kmsg
 sleep $sleepTime
 
-python3 -m http.server "$PORT" --bind 0.0.0.0 &
+python3 server.py &
 
 echo ------------- payload start fio --------------- | tee /dev/kmsg
 

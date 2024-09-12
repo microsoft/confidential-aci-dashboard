@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# A persistant python3 server to respond to our liveness probes
-python3 -m http.server "$PORT" --bind 0.0.0.0 &
+python3 server.py &
 
 echo ------------- payload start sysbench --------------- | tee /dev/kmsg
 
