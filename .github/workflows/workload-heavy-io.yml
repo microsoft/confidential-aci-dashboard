@@ -178,11 +178,20 @@ jobs:
         run: |
             dmesg_file="dmesg.log"
 
+            # az container exec \
+            #   --container-name "workload" \
+            #   -g $RESOURCE_GROUP \
+            #   -n $DEPLOYMENT_NAME \
+            #   --exec-command dmesg > $dmesg_file
+
+            # Workaround az cli bug (Inappropriate ioctl for device)
+
             az container exec \
               --container-name "workload" \
               -g $RESOURCE_GROUP \
               -n $DEPLOYMENT_NAME \
-              --exec-command dmesg > $dmesg_file
+              --exec-command bash -c "dmesg > /var/www/$dmesg_file" || exit 1
+            curl -f http://$ip_address:8000/$dmesg_file || exit 1
 
             found_sus_message=""
             grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"
