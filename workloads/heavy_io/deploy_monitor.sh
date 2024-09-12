@@ -4,14 +4,16 @@ if [ -z "$MANUAL" ]; then
   MANUAL=0
 fi
 
+if [ ! -f deploy_monitor.env ]; then
+  echo "deploy_monitor.env not found"
+  exit 1
+fi
+export $(cat deploy_monitor.env)
+
 TARGET_PATH=`pwd`
 PREFIX=`basename $TARGET_PATH`
 TS=`date +'%Y%m%d-%H%M%S-%3N'`
 export DEPLOYMENT_NAME="$PREFIX-$TS"
-export MANAGED_IDENTITY="tw61test-mid"
-export RESOURCE_GROUP=tingmao-6.1-test
-export SUBSCRIPTION=85c61f94-8912-4e82-900e-6ab44de9bdf8
-export REGISTRY=tingmaotest.azurecr.io
 export TAG=latest
 export SCRIPT=workload_exec
 export LOCATION=eastus2euap

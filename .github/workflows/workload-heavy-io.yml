@@ -122,7 +122,6 @@ jobs:
           c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
           c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
           c-aci-testing aci param_set workloads/heavy_io --parameter "script='$SCRIPT'"
-          c-aci-testing aci param_set workloads/heavy_io --parameter "tag='$TAG'"
           echo heavy_io.bicepparam:
           cat workloads/heavy_io/heavy_io.bicepparam
 
