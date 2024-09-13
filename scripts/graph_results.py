@@ -1,7 +1,9 @@
 import pandas as pd
-import plotly.express as px
+import numpy as np
+import plotly.graph_objects as go
 import plotly.io as pio
 from argparse import ArgumentParser
+from plotly.subplots import make_subplots
 
 parser = ArgumentParser()
 parser.add_argument("workload", type=str)
@@ -17,25 +19,103 @@ data['Conclusion'] = data['Conclusion'].apply(lambda x: 'Success' if '✓' in x 
 # Convert the 'Date' column to datetime format and extract the date
 data['Date'] = pd.to_datetime(data['Date']).dt.date
 
-# Group the data by 'Date' and 'Conclusion'
-grouped_data = data.groupby(['Date', 'Conclusion']).size().unstack(fill_value=0)
+# Create a 'Success' column with binary values
+data['Success'] = data['Conclusion'].apply(lambda x: 1 if x == 'Success' else 0)
 
-# Normalize the data to get the ratio (percentage) for each conclusion per day
-ratio_data = grouped_data.div(grouped_data.sum(axis=1), axis=0).reset_index()
+# Group data by 'Date' to get total runs and number of successes per day
+grouped_data = data.groupby('Date').agg(
+    total_runs=('Conclusion', 'count'),
+    total_successes=('Success', 'sum')
+).reset_index()
 
-# Identify existing columns (Success, Failure) in the ratio_data DataFrame
-existing_columns = [col for col in ['Success', 'Failure'] if col in ratio_data.columns]
+# Calculate success rate
+grouped_data['success_rate'] = grouped_data['total_successes'] / grouped_data['total_runs']
 
-# Melt the DataFrame only with the existing columns
-melted_data = ratio_data.melt(id_vars='Date', value_vars=existing_columns,
-                              var_name='Conclusion', value_name='Ratio')
+# Create a figure with secondary y-axis
+fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-# Plot the data as a stacked bar chart
-fig = px.bar(melted_data, x='Date', y='Ratio', color='Conclusion',
-             title=f'{args.workload} - {args.region}',
-             labels={'Ratio':'Success Rate', 'Date':'Date'},
-             color_discrete_map={'Success': 'green', 'Failure': 'red'},
-             barmode='stack')
+# Add area fill trace for success rate (behind the bars)
+fig.add_trace(
+    go.Scatter(
+        x=grouped_data['Date'],
+        y=grouped_data['success_rate'],
+        name='Success Rate Area',
+        mode='lines',
+        line=dict(color='rgba(0,0,0,0)'),  # Transparent line
+        fill='tozeroy',
+        fillcolor='rgba(0, 100, 80, 0.2)',  # Faint shading
+        hoverinfo='skip',  # Hide hover info for the area
+        showlegend=False,
+        yaxis='y2',
+    ),
+    secondary_y=True,
+)
+
+# Loop through each pair of consecutive points to create line segments
+for i in range(len(grouped_data) - 1):
+    x_vals = [grouped_data['Date'].iloc[i], grouped_data['Date'].iloc[i+1]]
+    y_vals = [grouped_data['success_rate'].iloc[i], grouped_data['success_rate'].iloc[i+1]]
+
+    # Determine the color for the line segment based on the success rates
+    if grouped_data['success_rate'].iloc[i] == 1 and grouped_data['success_rate'].iloc[i+1] == 1:
+        color = 'green'
+    else:
+        color = 'red'
+
+    # Add the line segment to the figure
+    fig.add_trace(
+        go.Scatter(
+            x=x_vals,
+            y=y_vals,
+            mode='lines',
+            line=dict(color=color),
+            showlegend=False,
+            yaxis='y2',
+        ),
+        secondary_y=True,
+    )
+
+# Add markers for the data points
+fig.add_trace(
+    go.Scatter(
+        x=grouped_data['Date'],
+        y=grouped_data['success_rate'],
+        mode='markers',
+        marker=dict(
+            color=['green' if sr == 1 else 'red' for sr in grouped_data['success_rate']],
+            size=8
+        ),
+        name='Success Rate',
+        yaxis='y2',
+    ),
+    secondary_y=True,
+)
+
+# Add bar trace for total runs (on top of the line traces)
+fig.add_trace(
+    go.Bar(
+        x=grouped_data['Date'],
+        y=grouped_data['total_runs'],
+        name='Total Runs',
+        marker_color='gray',
+        opacity=0.6  # Semi-transparent bars
+    ),
+    secondary_y=False,
+)
+
+# Update layout
+fig.update_layout(
+    title_text=f'{args.workload} - {args.region}',
+    xaxis_title='Date',
+    yaxis_title='Total Runs',
+    yaxis2_title='Success Rate',
+    yaxis2=dict(
+        overlaying='y',
+        side='right',
+        range=[0, 1.05]
+    ),
+    legend=dict(x=0.01, y=0.99, bgcolor='rgba(255,255,255,0)'),
+)
 
 # Save the figure as an HTML file
 pio.write_html(
