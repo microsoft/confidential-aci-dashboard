@@ -20,7 +20,6 @@ Deploys to many regions to gather data about region health
 
 ### Canary
 [![Region - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus2euap.yml)
-[![Region - Central US EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-centraluseuap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-centraluseuap.yml)
 
 ## High Spec Containers
 
@@ -37,7 +36,6 @@ Deploys with container with high specification (varies by region)
 ### Canary
 
 [![High Spec - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus2euap.yml)
-[![High Spec - Central US EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-centraluseuap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-centraluseuap.yml)
 
 ## Performance
 
@@ -58,7 +56,6 @@ Deploys but doesn't remove, checks that containers live at least 48 hours withou
 ### Canary
 
 [![Uptime - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus2euap.yml)
-[![Uptime - Central US EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-centraluseuap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-centraluseuap.yml)
 
 ## Adding new regions
 
