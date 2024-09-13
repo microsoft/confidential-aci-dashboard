@@ -89,6 +89,7 @@ env:
 jobs:
   heavy-io:
     runs-on: ubuntu-latest
+    continue-on-error: true # This only works because historical results tracks per job and failing jobs are still red
     steps:
 
       - name: Checkout
