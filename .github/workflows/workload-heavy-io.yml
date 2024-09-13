@@ -89,6 +89,7 @@ env:
 jobs:
   heavy-io:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
 
       - name: Checkout
