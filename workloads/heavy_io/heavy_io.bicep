@@ -88,6 +88,12 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
               cpu: cpu
             }
           }
+          // We do not have the correct attestation endpoint in this workload for skr to work properly, and it will
+          // just terminate.
+          command: useNormalSidecar ? [
+            '/bin/sleep'
+            'infinity'
+          ] : null
         }
       }
     ]

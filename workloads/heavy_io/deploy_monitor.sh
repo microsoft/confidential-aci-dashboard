@@ -15,10 +15,10 @@ PREFIX=`basename $TARGET_PATH`
 TS=`date +'%Y%m%d-%H%M%S-%3N'`
 export DEPLOYMENT_NAME="$PREFIX-$TS"
 export TAG=latest
-export SCRIPT=workload_exec
-export LOCATION=eastus2euap
-# export LOCATION=westus
-export CPU=1
+export SCRIPT=workload_cpu
+# export LOCATION=eastus2euap
+export LOCATION=westus
+export CPU=4
 export MEMORY_IN_GB=4
 export USE_NORMAL_SIDECAR=true
 
