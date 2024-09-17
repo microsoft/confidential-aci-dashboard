@@ -15,6 +15,7 @@ class Handler(BaseHTTPRequestHandler):
     self.end_headers()
 
   def do_GET(self):
+    print(f"GET {self.path}")
     if self.path == "/index.txt":
       self.status(200)
       self.wfile.write(b"Hello\n")
