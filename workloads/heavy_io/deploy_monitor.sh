@@ -20,6 +20,7 @@ export LOCATION=eastus2euap
 # export LOCATION=westus
 export CPU=1
 export MEMORY_IN_GB=4
+export USE_NORMAL_SIDECAR=true
 
 echo Deployment name: $DEPLOYMENT_NAME
 
@@ -48,6 +49,7 @@ c-aci-testing aci param_set $TARGET_PATH --parameter memoryInGb=$MEMORY_IN_GB
 c-aci-testing aci param_set $TARGET_PATH --parameter "script='$SCRIPT'"
 c-aci-testing aci param_set $TARGET_PATH --parameter "tag='$TAG'"
 c-aci-testing aci param_set $TARGET_PATH --parameter "registry='$REGISTRY'"
+c-aci-testing aci param_set $TARGET_PATH --parameter "useNormalSidecar=$USE_NORMAL_SIDECAR"
 
 echo Running deployment
 
