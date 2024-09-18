@@ -43,6 +43,9 @@ on:
           - workload_tar
           - workload_exec
           - workload_cpu
+      useNormalSidecar:
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       id:
@@ -72,6 +75,9 @@ on:
         type: string
         description: The script to run
         default: workload_fio
+      useNormalSidecar:
+        type: boolean
+        default: true
 
 env:
   DEPLOYMENT_NAME: ${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
@@ -85,6 +91,7 @@ env:
   CLEANUP: ${{ inputs.cleanup }}
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
   SCRIPT: ${{ inputs.script || 'workload_fio' }}
+  USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
 
 jobs:
   heavy-io:
@@ -132,6 +139,7 @@ jobs:
           c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
           c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
           c-aci-testing aci param_set workloads/heavy_io --parameter "script='$SCRIPT'"
+          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=$USE_NORMAL_SIDECAR"
           echo heavy_io.bicepparam:
           cat workloads/heavy_io/heavy_io.bicepparam
 

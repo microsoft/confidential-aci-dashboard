@@ -15,11 +15,12 @@ PREFIX=`basename $TARGET_PATH`
 TS=`date +'%Y%m%d-%H%M%S-%3N'`
 export DEPLOYMENT_NAME="$PREFIX-$TS"
 export TAG=latest
-export SCRIPT=workload_exec
-export LOCATION=eastus2euap
-# export LOCATION=westus
-export CPU=1
+export SCRIPT=workload_cpu
+# export LOCATION=eastus2euap
+export LOCATION=westus
+export CPU=4
 export MEMORY_IN_GB=4
+export USE_NORMAL_SIDECAR=true
 
 echo Deployment name: $DEPLOYMENT_NAME
 
@@ -48,6 +49,7 @@ c-aci-testing aci param_set $TARGET_PATH --parameter memoryInGb=$MEMORY_IN_GB
 c-aci-testing aci param_set $TARGET_PATH --parameter "script='$SCRIPT'"
 c-aci-testing aci param_set $TARGET_PATH --parameter "tag='$TAG'"
 c-aci-testing aci param_set $TARGET_PATH --parameter "registry='$REGISTRY'"
+c-aci-testing aci param_set $TARGET_PATH --parameter "useNormalSidecar=$USE_NORMAL_SIDECAR"
 
 echo Running deployment
 

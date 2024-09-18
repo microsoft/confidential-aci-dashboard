@@ -1,6 +1,7 @@
 using './heavy_io.bicep'
 
 param script='workload_fio'
+param useNormalSidecar=true
 
 // Image info
 param registry='cacidashboard.azurecr.io'
