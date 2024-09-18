@@ -77,7 +77,7 @@ on:
         default: workload_fio
       useNormalSidecar:
         type: boolean
-        default: false
+        default: true
 
 env:
   DEPLOYMENT_NAME: ${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
@@ -91,7 +91,7 @@ env:
   CLEANUP: ${{ inputs.cleanup }}
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
   SCRIPT: ${{ inputs.script || 'workload_fio' }}
-  USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || false }}
+  USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
 
 jobs:
   heavy-io:
