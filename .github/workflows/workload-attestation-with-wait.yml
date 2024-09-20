@@ -75,6 +75,7 @@ env:
 
 jobs:
   attestation-with-wait:
+    name: ${{ inputs.id || 'attestation-with-wait' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -74,6 +74,7 @@ env:
 
 jobs:
   server-with-wait:
+    name: ${{ inputs.id || 'server-with-wait' }}
     runs-on: ubuntu-latest
     steps:
 
