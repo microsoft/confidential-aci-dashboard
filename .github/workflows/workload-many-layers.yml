@@ -74,6 +74,7 @@ env:
 
 jobs:
   many-layers:
+    name: ${{ inputs.id || 'many-layers' }}
     runs-on: ubuntu-latest
     steps:
 
