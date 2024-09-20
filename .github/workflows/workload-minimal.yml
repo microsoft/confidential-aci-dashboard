@@ -74,7 +74,7 @@ env:
 
 jobs:
   minimal:
-    name: minimal ${{ inputs.policy_type }}
+    name: ${{ inputs.id || 'minimal' }}
     runs-on: ubuntu-latest
     steps:
 
