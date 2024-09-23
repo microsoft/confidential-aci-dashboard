@@ -1,0 +1,20 @@
+name: Region - Italy North
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/region-italynorth.yml
+
+jobs:
+  italynorth:
+    secrets: inherit
+    uses: ./.github/workflows/region.yml
+    with:
+      location: italynorth

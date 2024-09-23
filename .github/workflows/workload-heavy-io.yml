@@ -43,6 +43,9 @@ on:
           - workload_tar
           - workload_exec
           - workload_cpu
+      useNormalSidecar:
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       id:
@@ -72,6 +75,9 @@ on:
         type: string
         description: The script to run
         default: workload_fio
+      useNormalSidecar:
+        type: boolean
+        default: true
 
 env:
   DEPLOYMENT_NAME: ${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_id }}-${{ github.run_number }}
@@ -85,9 +91,11 @@ env:
   CLEANUP: ${{ inputs.cleanup }}
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
   SCRIPT: ${{ inputs.script || 'workload_fio' }}
+  USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
 
 jobs:
   heavy-io:
+    name: ${{ inputs.id || 'heavy-io' }}
     runs-on: ubuntu-latest
     continue-on-error: true # This only works because historical results tracks per job and failing jobs are still red
     steps:
@@ -132,6 +140,7 @@ jobs:
           c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
           c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
           c-aci-testing aci param_set workloads/heavy_io --parameter "script='$SCRIPT'"
+          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=$USE_NORMAL_SIDECAR"
           echo heavy_io.bicepparam:
           cat workloads/heavy_io/heavy_io.bicepparam
 
@@ -159,12 +168,15 @@ jobs:
         run: |
           sleep 1
           echo "Attempting to send a request..."
-          curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
+          # We want to limit the total amount of time this curl command can run for,
+          # rather than just connect time, so that if the server accepts the request
+          # but then hangs we also exit. This necessitates the use of `timeout`.
+          timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
 
       - name: Let container run for 1min and test again
         run: |
           sleep 100
-          curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
+          timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
 
       - name: Monitor Container Group
         if: always()
@@ -188,7 +200,7 @@ jobs:
         run: |
             dmesg_file="dmesg.log"
 
-            curl --fail-with-body http://$ip_address:8000/dmesg.log -o $dmesg_file
+            timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/dmesg.log -o $dmesg_file
             if [ $? -ne 0 ]; then
               echo "Failed to get dmesg:"
               cat $dmesg_file
