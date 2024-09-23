@@ -14,6 +14,7 @@ Deploys to many regions to gather data about region health
 
 [![Region - East US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastus.yml)
 [![Region - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-northeurope.yml)
+[![Region - East Asia](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastasia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-eastasia.yml)
 [![Region - Germany West Central](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-germanywestcentral.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-germanywestcentral.yml)
 [![Region - Italy North](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-italynorth.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-italynorth.yml)
 [![Region - UAE North](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-uaenorth.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/region-uaenorth.yml)
@@ -34,6 +35,7 @@ Deploys with container with high specification (varies by region)
 
 [![High Spec - East US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus.yml)
 [![High Spec - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-northeurope.yml)
+[![High Spec - East Asia](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastasia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastasia.yml)
 [![High Spec - Germany West Central](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-germanywestcentral.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-germanywestcentral.yml)
 [![High Spec - Italy North](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-italynorth.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-italynorth.yml)
 [![High Spec - UAE North](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-uaenorth.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-uaenorth.yml)
@@ -59,6 +61,7 @@ Deploys but doesn't remove, checks that containers live at least 48 hours withou
 
 [![Uptime - East US](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastus.yml)
 [![Uptime - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-northeurope.yml)
+[![Uptime - East Asia](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastasia.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-eastasia.yml)
 [![Uptime - Germany West Central](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-germanywestcentral.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-germanywestcentral.yml)
 [![Uptime - Italy North](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-italynorth.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-italynorth.yml)
 [![Uptime - UAE North](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-uaenorth.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/uptime-uaenorth.yml)
