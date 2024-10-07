@@ -86,7 +86,7 @@ for run_id in $workflow_runs; do
         $run_id \
         --json jobs \
         | jq -c -r --arg workload "$workload" \
-            '[.jobs[] | select(.name | endswith($workload))]')
+            '[.jobs[] | select(.name | test($workload + "(-generated|-debug|-allow-all|$)"))]')
     parse_jobs "$job_results"
 done
 
