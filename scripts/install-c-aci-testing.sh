@@ -1,6 +1,9 @@
 #!/bin/bash
 
 version="1.0.6"
-pip install flit
-git clone https://github.com/microsoft/confidential-aci-testing.git
-(cd confidential-aci-testing && git checkout $version && flit install)
+curl -sL "$(\
+    curl -s "https://api.github.com/repos/microsoft/confidential-aci-testing/releases/tags/$version" \
+        | jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url')" \
+            -o c-aci-testing.tar.gz
+pip install c-aci-testing.tar.gz
+rm c-aci-testing.tar.gz
