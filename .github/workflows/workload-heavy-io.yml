@@ -212,6 +212,7 @@ jobs:
             grep -i segfault $dmesg_file && found_sus_message="segfault"
             grep -i 'protection fault' $dmesg_file && found_sus_message="protection-fault"
             grep 'BUG:' $dmesg_file && found_sus_message="kernel-bug"
+            grep 'RIP:' $dmesg_file && found_sus_message="kernel-backtrace"
 
             cat $dmesg_file
 
