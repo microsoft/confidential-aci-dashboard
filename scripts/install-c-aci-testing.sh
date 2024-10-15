@@ -1,6 +1,6 @@
 #!/bin/bash
 
 version="1.0.6"
-gh release download $version -R microsoft/confidential-aci-testing
-pip install c_aci_testing*.tar.gz
-rm c_aci_testing*.tar.gz
+pip install flit
+git clone https://github.com/microsoft/confidential-aci-testing.git
+(cd confidential-aci-testing && git checkout $version && flit install)
