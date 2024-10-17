@@ -59,6 +59,7 @@ on:
         default: ''
       winFlavor:
         type: choice
+        description: The Windows version of the image
         default: ws2025
         options:
           - ws2022
@@ -99,6 +100,10 @@ on:
         type: string
         description: The name of the containerplat blob
         default: ''
+      winFlavor:
+        type: string
+        description: The Windows version of the image
+        default: ws2025
 
 env:
   DEPLOYMENT_NAME: vm-${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_number }}
