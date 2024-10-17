@@ -1,0 +1,5 @@
+version: '3'
+services:
+  outbound_traffic:
+    image: cacidashboard.azurecr.io/ubuntu:20.04
+    command: apt-get update

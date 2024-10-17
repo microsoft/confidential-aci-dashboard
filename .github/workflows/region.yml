@@ -138,3 +138,16 @@ jobs:
       useNormalSidecar: true
       # if westus, 4, otherwise 1
       cpu: ${{ inputs.location == 'westus' && 4 || 1 }}
+
+  vnet:
+    name: vnet
+    secrets: inherit
+    uses: ./.github/workflows/workload-vnet.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'debug', 'allow_all']
+    with:
+      id: vnet-${{ matrix.policy_type }}
+      location: ${{ inputs.location }}
+      policy_type: ${{ matrix.policy_type }}
