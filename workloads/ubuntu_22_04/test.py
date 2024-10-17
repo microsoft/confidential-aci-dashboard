@@ -39,7 +39,7 @@ class Ubuntu2204Test(unittest.TestCase):
         with target_run_ctx(
             target_path=target_path,
             deployment_name=id,
-            cleanup=False,
+            cleanup=False, # In the dashboard, further steps handle cleanup
             policy_type="allow_all", # Hard code this since we need to be able to execute arbitrary bash commands
             **vars(args),
         ) as deployment_ids:
