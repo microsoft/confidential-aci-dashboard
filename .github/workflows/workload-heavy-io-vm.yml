@@ -85,6 +85,10 @@ on:
       useNormalSidecar:
         type: boolean
         default: true
+      cplatBlobName:
+        type: string
+        description: The name of the containerplat blob
+        default: ''
 
 env:
   DEPLOYMENT_NAME: vm-${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_number }}
@@ -100,7 +104,7 @@ env:
   USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
   VM_SIZE: ${{ inputs.vmSize || 'Standard_DC4ads_cc_v5' }}
   VM_IMAGE: ${{ inputs.vmImage || secrets.VM_IMAGE }}
-  CPLAT_BLOB_NAME: ${{ vars.CPLAT_BLOB_NAME }}
+  CPLAT_BLOB_NAME: ${{ inputs.cplatBlobName || vars.CPLAT_BLOB_NAME }}
 
 jobs:
   heavy-io:
@@ -178,6 +182,7 @@ jobs:
 
       - name: Print info
         run: |
+          c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"'
           c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'c:/containerplat/shimdiag.exe exec k8s uname -a'
           c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'c:/containerplat/shimdiag.exe exec k8s cat /proc/cpuinfo > C:/cpuinfo.log; Get-Content C:/cpuinfo.log -Tail 30'
 
