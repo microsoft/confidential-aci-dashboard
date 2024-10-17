@@ -57,6 +57,12 @@ on:
         type: string
         description: The name of the containerplat blob
         default: ''
+      winFlavor:
+        type: choice
+        default: ws2025
+        options:
+          - ws2022
+          - ws2025
   workflow_call:
     inputs:
       id:
@@ -109,6 +115,7 @@ env:
   VM_SIZE: ${{ inputs.vmSize || 'Standard_DC4ads_cc_v5' }}
   VM_IMAGE: ${{ inputs.vmImage || secrets.VM_IMAGE }}
   CPLAT_BLOB_NAME: ${{ inputs.cplatBlobName || vars.CPLAT_BLOB_NAME }}
+  WIN_FLAVOR: ${{ inputs.winFlavor || 'ws2025' }}
 
 jobs:
   heavy-io:
