@@ -1,4 +1,4 @@
-name: Workload - CPU Info
+name: Workload - Info
 
 permissions:
   id-token: write
