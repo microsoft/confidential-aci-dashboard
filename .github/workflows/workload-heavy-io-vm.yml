@@ -26,6 +26,11 @@ on:
         type: number
         description: VM memory in GB for the container
         default: 4
+      vmImage:
+        type: string
+        description: The Atlas image to use for the VM
+        required: false
+        default: ''
       vmSize:
         type: string
         description: The size of the VM
@@ -94,7 +99,7 @@ env:
   SCRIPT: ${{ inputs.script || 'workload_fio' }}
   USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
   VM_SIZE: ${{ inputs.vmSize || 'Standard_DC4ads_cc_v5' }}
-  VM_IMAGE: ${{ secrets.VM_IMAGE }}
+  VM_IMAGE: ${{ inputs.vmImage || secrets.VM_IMAGE }}
   CPLAT_BLOB_NAME: ${{ vars.CPLAT_BLOB_NAME }}
 
 jobs:
