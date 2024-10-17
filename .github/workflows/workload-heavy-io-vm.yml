@@ -21,7 +21,7 @@ on:
       cpu:
         type: number
         description: The number of CPU cores per container
-        default: 2
+        default: 4
       memory_in_gb:
         type: number
         description: VM memory in GB for the container
@@ -34,25 +34,11 @@ on:
       vmSize:
         type: string
         description: The size of the VM
-        default: Standard_DC4ads_cc_v5
+        default: Standard_DC8as_cc_v5
       cleanup:
         type: boolean
         description: Whether to cleanup the VM after testing
         default: true
-      script:
-        type: choice
-        description: The script to run
-        default: workload_fio
-        options:
-          - workload_cpu
-          - workload_cpu_fio
-          - workload_exec
-          - workload_fio
-          - workload_multicpu_fio
-          - workload_tar
-      # useNormalSidecar:
-      #   type: boolean
-      #   default: false
       cplatBlobName:
         type: string
         description: The name of the containerplat blob
@@ -76,7 +62,7 @@ on:
       cpu:
         type: number
         description: The number of CPU cores per container
-        default: 2
+        default: 4
       memory_in_gb:
         type: number
         description: VM memory in GB for the container
@@ -84,18 +70,11 @@ on:
       vmSize:
         type: string
         description: The size of the VM
-        default: Standard_DC4ads_cc_v5
+        default: Standard_DC8as_cc_v5
       cleanup:
         type: boolean
         description: Whether to cleanup the VM after testing
         default: true
-      script:
-        type: string
-        description: The script to run
-        default: workload_fio
-      # useNormalSidecar:
-      #   type: boolean
-      #   default: true
       cplatBlobName:
         type: string
         description: The name of the containerplat blob
@@ -115,8 +94,6 @@ env:
   CPU: ${{ inputs.cpu || 4 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
-  SCRIPT: ${{ inputs.script || 'workload_fio' }}
-  # USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
   USE_NORMAL_SIDECAR: true
   VM_SIZE: ${{ inputs.vmSize || 'Standard_DC4ads_cc_v5' }}
   VM_IMAGE: ${{ inputs.vmImage || secrets.VM_IMAGE }}
@@ -176,12 +153,12 @@ jobs:
       - name: Push image
         run: c-aci-testing images push workloads/heavy_io
 
-      - name: Set common parameters
+      - name: Set parameters
         run: |
           c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
           c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
-          c-aci-testing aci param_set workloads/heavy_io --parameter "script='$SCRIPT'"
-          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=$USE_NORMAL_SIDECAR"
+          c-aci-testing aci param_set workloads/heavy_io --parameter "script='workload_cpu_fio'"
+          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=true"
           echo heavy_io.bicepparam:
           cat workloads/heavy_io/heavy_io.bicepparam
 
@@ -194,6 +171,12 @@ jobs:
           c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
           cat workloads/heavy_io/policy_heavy_io.rego
 
+      # The Atlas image often reboots automatically on first boot for unknown reasons, but does not happen more than once.
+      # So we just wait for a bit to let that happen.
+      # It is also more realistic to not start spinning up containers immediately after the VM is created.
+      - name: Wait for any pending first-boot reboots
+        run: sleep 150
+
       - name: Deploy Container Group
         run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
 
@@ -203,11 +186,39 @@ jobs:
           c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'c:/containerplat/shimdiag.exe exec k8s uname -a'
           c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'c:/containerplat/shimdiag.exe exec k8s cat /proc/cpuinfo > C:/cpuinfo.log; Get-Content C:/cpuinfo.log -Tail 80'
 
+      - name: Deploy another container group
+        run: |
+          c-aci-testing aci param_set workloads/heavy_io --parameter cpu=2
+          c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=2
+          c-aci-testing aci param_set workloads/heavy_io --parameter "script='workload_exec'"
+          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=false"
+          echo heavy_io.bicepparam:
+          cat workloads/heavy_io/heavy_io.bicepparam
+          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --lcow-dir-name lcow2
+
+      - name: Deploy a third small container group
+        run: |
+          c-aci-testing aci param_set workloads/heavy_io --parameter cpu=1
+          c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=1
+          c-aci-testing aci param_set workloads/heavy_io --parameter "script='workload_tar'"
+          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=true"
+          echo heavy_io.bicepparam:
+          cat workloads/heavy_io/heavy_io.bicepparam
+          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --lcow-dir-name lcow3
+
       - name: Check, wait a bit, then check VM
         run: |
-          c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME
-          sleep 60
-          c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME
+          date
+          for lcow_dir_name in lcow lcow2 lcow3; do
+            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --lcow-dir-name $lcow_dir_name
+          done
+          for i in {1..10}; do
+            sleep 60
+            date
+            for lcow_dir_name in lcow lcow2 lcow3; do
+              c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --lcow-dir-name $lcow_dir_name
+            done
+          done
           echo Container Logs:
           c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Get-Item C:/*/container_log_*.log | foreach { echo $_.Name; cat $_ }'
 
