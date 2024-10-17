@@ -123,10 +123,22 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.SUBSCRIPTION }}
 
-      - name: Install c_aci_testing package
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: ./scripts/install-c-aci-testing.sh
+      # - name: Install c_aci_testing package
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #   run: ./scripts/install-c-aci-testing.sh
+
+      ###### TESTING    REMOVE BEFORE MERGE ########
+      - name: Checkout c-aci-testing
+        uses: actions/checkout@v2
+        with:
+          repository: microsoft/confidential-aci-testing
+          ref: tingmao/vmtest
+          path: c-aci-testing
+
+      - name: Install c-aci-testing
+        run: cd c-aci-testing && pip install flit && flit install
+      ###### END TESTING    REMOVE BEFORE MERGE ########
 
       - name: Install Azure CLI
         env:
