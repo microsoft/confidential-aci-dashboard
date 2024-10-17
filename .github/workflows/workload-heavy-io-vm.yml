@@ -50,9 +50,9 @@ on:
           - workload_fio
           - workload_multicpu_fio
           - workload_tar
-      useNormalSidecar:
-        type: boolean
-        default: false
+      # useNormalSidecar:
+      #   type: boolean
+      #   default: false
       cplatBlobName:
         type: string
         description: The name of the containerplat blob
@@ -93,9 +93,9 @@ on:
         type: string
         description: The script to run
         default: workload_fio
-      useNormalSidecar:
-        type: boolean
-        default: true
+      # useNormalSidecar:
+      #   type: boolean
+      #   default: true
       cplatBlobName:
         type: string
         description: The name of the containerplat blob
@@ -116,7 +116,8 @@ env:
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
   SCRIPT: ${{ inputs.script || 'workload_fio' }}
-  USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
+  # USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
+  USE_NORMAL_SIDECAR: true
   VM_SIZE: ${{ inputs.vmSize || 'Standard_DC4ads_cc_v5' }}
   VM_IMAGE: ${{ inputs.vmImage || secrets.VM_IMAGE }}
   CPLAT_BLOB_NAME: ${{ inputs.cplatBlobName || vars.CPLAT_BLOB_NAME }}
