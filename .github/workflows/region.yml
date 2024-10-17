@@ -151,3 +151,16 @@ jobs:
       id: info-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}
+
+  ubuntu-22-04:
+    name: ubuntu-22-04
+    secrets: inherit
+    uses: ./.github/workflows/workload-ubuntu-22-04.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['allow_all'] # Relies on shelling into container
+    with:
+      id: ubuntu-22-04-${{ matrix.policy_type }}
+      location: ${{ inputs.location }}
+      policy_type: ${{ matrix.policy_type }}
