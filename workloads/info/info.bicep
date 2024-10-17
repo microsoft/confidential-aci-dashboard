@@ -28,7 +28,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       }
     ]
     confidentialComputeProperties: {
-      ccePolicy: ccePolicies.cpuinfo
+      ccePolicy: ccePolicies.info
     }
     containers: [
       {
@@ -38,7 +38,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           command: [
             'sh'
             '-c'
-            'cat /proc/cpuinfo'
+            'uname -a && dmesg | grep "Kernel command line" && dmesg | grep "Host Build" && cat /proc/cpuinfo'
           ]
           resources: {
             requests: {
