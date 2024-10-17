@@ -1,4 +1,4 @@
-name: Workload - CPU Info
+name: Workload - Info
 
 permissions:
   id-token: write
@@ -61,7 +61,7 @@ on:
         default: generated
 
 env:
-  DEPLOYMENT_NAME: ${{ inputs.id || 'cpuinfo' }}-${{ inputs.location }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'info' }}-${{ inputs.location }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
@@ -73,8 +73,8 @@ env:
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
 
 jobs:
-  cpuinfo:
-    name: ${{ inputs.id || 'cpuinfo' }}
+  info:
+    name: ${{ inputs.id || 'info' }}
     runs-on: ubuntu-latest
     steps:
 
@@ -102,20 +102,20 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Pull Image
-        run: c-aci-testing images pull workloads/cpuinfo
+        run: c-aci-testing images pull workloads/info
 
       - name: Set Parameters
         run: |
-          c-aci-testing aci param_set workloads/cpuinfo --parameter cpu=$CPU
-          c-aci-testing aci param_set workloads/cpuinfo --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/info --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/info --parameter memoryInGb=$MEMORY_IN_GB
 
       - name: Generate Security Policy
         run: |
-          c-aci-testing policies gen workloads/cpuinfo --deployment-name $DEPLOYMENT_NAME
-          cat workloads/cpuinfo/policy_cpuinfo.rego
+          c-aci-testing policies gen workloads/info --deployment-name $DEPLOYMENT_NAME
+          cat workloads/info/policy_info.rego
 
       - name: Deploy Container Group
-        run: c-aci-testing aci deploy workloads/cpuinfo --deployment-name $DEPLOYMENT_NAME
+        run: c-aci-testing aci deploy workloads/info --deployment-name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
         if: always()

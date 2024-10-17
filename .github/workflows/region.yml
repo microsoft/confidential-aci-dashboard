@@ -139,15 +139,15 @@ jobs:
       # if westus, 4, otherwise 1
       cpu: ${{ inputs.location == 'westus' && 4 || 1 }}
 
-  cpuinfo:
-    name: cpuinfo
+  info:
+    name: info
     secrets: inherit
-    uses: ./.github/workflows/workload-cpuinfo.yml
+    uses: ./.github/workflows/workload-info.yml
     strategy:
       fail-fast: false
       matrix:
         policy_type: ['generated', 'debug', 'allow_all']
     with:
-      id: cpuinfo-${{ matrix.policy_type }}
+      id: info-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}
