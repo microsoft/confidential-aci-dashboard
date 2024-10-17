@@ -53,6 +53,10 @@ on:
       useNormalSidecar:
         type: boolean
         default: false
+      cplatBlobName:
+        type: string
+        description: The name of the containerplat blob
+        default: ''
   workflow_call:
     inputs:
       id:
