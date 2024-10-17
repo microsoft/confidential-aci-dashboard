@@ -176,6 +176,11 @@ jobs:
       - name: Deploy Container Group
         run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
 
+      - name: Print info
+        run: |
+          c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'c:/containerplat/shimdiag.exe exec k8s uname -a'
+          c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'c:/containerplat/shimdiag.exe exec k8s cat /proc/cpuinfo > C:/cpuinfo.log; Get-Content C:/cpuinfo.log -Tail 30'
+
       - name: Wait a bit then check VM
         run: |
           sleep 60
