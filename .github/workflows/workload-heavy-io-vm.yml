@@ -1,11 +1,11 @@
-name: Workload - Heavy IO
+name: VM Workload - Heavy IO
 
 permissions:
   id-token: write
   contents: read
 
 on:
-  pull_request:
+  # pull_request:
   push:
     branches:
       - main
