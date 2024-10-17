@@ -1,0 +1,246 @@
+name: Workload - Heavy IO
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      id:
+        type: string
+        description: ID of the run
+      location:
+        type: string
+        description: Where to deploy to
+        required: true
+      cpu:
+        type: number
+        description: The number of CPU cores for the container
+        default: 4
+      memory_in_gb:
+        type: number
+        description: VM memory in GB for the container
+        default: 8
+      vmSize:
+        type: string
+        description: The size of the VM
+        default: Standard_DC4ads_cc_v5
+      cleanup:
+        type: boolean
+        description: Whether to cleanup the VM after testing
+        default: true
+      policy_type:
+        type: string
+        description: The type of policy to use
+        default: generated
+      script:
+        type: choice
+        description: The script to run
+        default: workload_fio
+        options:
+          - workload_cpu
+          - workload_cpu_fio
+          - workload_exec
+          - workload_fio
+          - workload_multicpu_fio
+          - workload_tar
+      useNormalSidecar:
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      id:
+        type: string
+        description: ID of the run
+      location:
+        type: string
+        description: Where to deploy to
+        required: true
+      cpu:
+        type: number
+        description: The number of CPU cores for the container
+        default: 4
+      memory_in_gb:
+        type: number
+        description: VM memory in GB for the container
+        default: 8
+      vmSize:
+        type: string
+        description: The size of the VM
+        default: Standard_DC4ads_cc_v5
+      cleanup:
+        type: boolean
+        description: Whether to cleanup the VM after testing
+        default: true
+      policy_type:
+        type: string
+        description: The type of policy to use
+        default: generated
+      script:
+        type: string
+        description: The script to run
+        default: workload_fio
+      useNormalSidecar:
+        type: boolean
+        default: true
+
+env:
+  DEPLOYMENT_NAME: vm-${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_number }}
+  SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
+  RESOURCE_GROUP: c-aci-dashboard
+  REGISTRY: cacidashboard.azurecr.io
+  MANAGED_IDENTITY: cacidashboard
+  LOCATION: ${{ inputs.location || 'westus' }}
+  CPU: ${{ inputs.cpu || 4 }}
+  MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
+  CLEANUP: ${{ inputs.cleanup }}
+  POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
+  SCRIPT: ${{ inputs.script || 'workload_fio' }}
+  USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
+  VM_SIZE: ${{ inputs.vmSize || 'Standard_DC4ads_cc_v5' }}
+  VM_IMAGE: ${{ secrets.VM_IMAGE }}
+  CPLAT_BLOB_NAME: ${{ vars.CPLAT_BLOB_NAME }}
+
+jobs:
+  heavy-io:
+    name: ${{ inputs.id || 'heavy-io' }}
+    runs-on: ubuntu-latest
+    continue-on-error: true # This only works because historical results tracks per job and failing jobs are still red
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
+
+      - name: Install c_aci_testing package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/install-c-aci-testing.sh
+
+      - name: Install Azure CLI
+        env:
+          AZ_CLI_VERSION: 2.61.0
+        run: ./scripts/install-az-cli.sh
+
+      - name: Setup Docker
+        run: sudo usermod -aG docker $USER
+
+      - name: Use precise current time as tag
+        run: |
+          TAG=$(date "+%Y%m%d-%H%M%S.%N")
+          echo "TAG=$TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Build image
+        run: c-aci-testing images build workloads/heavy_io
+
+      - name: Push image
+        run: c-aci-testing images push workloads/heavy_io
+
+      - name: Set Parameters
+        run: |
+          c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/heavy_io --parameter "script='$SCRIPT'"
+          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=$USE_NORMAL_SIDECAR"
+          echo heavy_io.bicepparam:
+          cat workloads/heavy_io/heavy_io.bicepparam
+
+      - name: Generate Security Policy
+        run: |
+          c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
+          cat workloads/heavy_io/policy_heavy_io.rego
+
+      - name: Deploy Container Group
+        run: c-aci-testing vm deploy workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
+
+      # - name: Wait for IP address
+      #   run: |
+      #     ip_address=""
+      #     elapsed=0
+      #     while [[ -z "$ip_address" && elapsed -lt 60 ]]; do
+      #       ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
+      #       echo "IP Address: $ip_address"
+      #       sleep 5
+      #       elapsed=$((elapsed + 5))
+      #     done
+      #     echo "ip_address=$ip_address" >> $GITHUB_ENV
+
+      # - name: Curl Server
+      #   run: |
+      #     sleep 1
+      #     echo "Attempting to send a request..."
+      #     # We want to limit the total amount of time this curl command can run for,
+      #     # rather than just connect time, so that if the server accepts the request
+      #     # but then hangs we also exit. This necessitates the use of `timeout`.
+      #     timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
+
+      # - name: Let container run for 1min and test again
+      #   run: |
+      #     sleep 100
+      #     timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
+
+      # - name: Monitor Container Group
+      #   if: always()
+      #   continue-on-error: true
+      #   run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
+
+      # - name: Get Container States
+      #   if: always()
+      #   continue-on-error: true
+      #   run: |
+      #     az container show \
+      #       --resource-group $RESOURCE_GROUP \
+      #       --name $DEPLOYMENT_NAME \
+      #     | jq -c '.containers[]' | while read -r container; do
+      #       container_name=$(echo "$container" | jq -r '.name')
+      #       echo "Events for container $container_name:"
+      #       echo "$container" | jq -r '.instanceView | .events[]'
+      #     done
+
+      # - name: Check dmesg
+      #   run: |
+      #       dmesg_file="dmesg.log"
+
+      #       timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/dmesg.log -o $dmesg_file
+      #       if [ $? -ne 0 ]; then
+      #         echo "Failed to get dmesg:"
+      #         cat $dmesg_file
+      #         exit 1
+      #       fi
+
+      #       found_sus_message=""
+      #       grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"
+      #       grep -i segfault $dmesg_file && found_sus_message="segfault"
+      #       grep -i 'protection fault' $dmesg_file && found_sus_message="protection-fault"
+      #       grep 'BUG:' $dmesg_file && found_sus_message="kernel-bug"
+      #       grep 'RIP:' $dmesg_file && found_sus_message="kernel-backtrace"
+
+      #       cat $dmesg_file
+
+      #       if [ -n "$found_sus_message" ]; then
+      #         echo "Found suspicious message in dmesg: $found_sus_message"
+      #         exit 1
+      #       fi
+
+      #       if [ ! -s $dmesg_file ]; then
+      #         echo "No dmesg output found"
+      #         exit 1
+      #       fi
+
+      - name: Remove VM
+        run: |
+          if [ "$CLEANUP" != false ]; then
+            c-aci-testing vm remove --deployment-name $DEPLOYMENT_NAME
+          fi
