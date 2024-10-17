@@ -20,12 +20,12 @@ on:
         required: true
       cpu:
         type: number
-        description: The number of CPU cores for the container
-        default: 4
+        description: The number of CPU cores per container
+        default: 2
       memory_in_gb:
         type: number
         description: VM memory in GB for the container
-        default: 8
+        default: 4
       vmSize:
         type: string
         description: The size of the VM
@@ -34,10 +34,6 @@ on:
         type: boolean
         description: Whether to cleanup the VM after testing
         default: true
-      policy_type:
-        type: string
-        description: The type of policy to use
-        default: generated
       script:
         type: choice
         description: The script to run
@@ -63,12 +59,12 @@ on:
         required: true
       cpu:
         type: number
-        description: The number of CPU cores for the container
-        default: 4
+        description: The number of CPU cores per container
+        default: 2
       memory_in_gb:
         type: number
         description: VM memory in GB for the container
-        default: 8
+        default: 4
       vmSize:
         type: string
         description: The size of the VM
@@ -77,10 +73,6 @@ on:
         type: boolean
         description: Whether to cleanup the VM after testing
         default: true
-      policy_type:
-        type: string
-        description: The type of policy to use
-        default: generated
       script:
         type: string
         description: The script to run
@@ -99,7 +91,6 @@ env:
   CPU: ${{ inputs.cpu || 4 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
-  POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
   SCRIPT: ${{ inputs.script || 'workload_fio' }}
   USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
   VM_SIZE: ${{ inputs.vmSize || 'Standard_DC4ads_cc_v5' }}
@@ -159,7 +150,7 @@ jobs:
       - name: Push image
         run: c-aci-testing images push workloads/heavy_io
 
-      - name: Set Parameters
+      - name: Set common parameters
         run: |
           c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
           c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
@@ -168,13 +159,22 @@ jobs:
           echo heavy_io.bicepparam:
           cat workloads/heavy_io/heavy_io.bicepparam
 
-      - name: Generate Security Policy
+      - name: Deploy VM with containerplat
+        run: c-aci-testing vm create --deployment-name $DEPLOYMENT_NAME
+
+      # The security policy has to be allow_all for exec-based checks to work
+      - name: Fill in allow_all security policy
         run: |
-          c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
+          c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
           cat workloads/heavy_io/policy_heavy_io.rego
 
       - name: Deploy Container Group
-        run: c-aci-testing vm deploy workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
+        run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
+
+      - name: Wait a bit then check VM
+        run: |
+          sleep 60
+          c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME
 
       # - name: Wait for IP address
       #   run: |
@@ -220,35 +220,36 @@ jobs:
       #       echo "$container" | jq -r '.instanceView | .events[]'
       #     done
 
-      # - name: Check dmesg
-      #   run: |
-      #       dmesg_file="dmesg.log"
+      # TODO: find a better way to fetch dmesg - Azure truncates the output
+      - name: Check dmesg
+        run: |
+            dmesg_file="dmesg.log"
 
-      #       timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/dmesg.log -o $dmesg_file
-      #       if [ $? -ne 0 ]; then
-      #         echo "Failed to get dmesg:"
-      #         cat $dmesg_file
-      #         exit 1
-      #       fi
+            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'cat C:/lcow/dmesg*.txt' > $dmesg_file
+            if [ $? -ne 0 ]; then
+              echo "Failed to get dmesg:"
+              cat $dmesg_file
+              exit 1
+            fi
 
-      #       found_sus_message=""
-      #       grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"
-      #       grep -i segfault $dmesg_file && found_sus_message="segfault"
-      #       grep -i 'protection fault' $dmesg_file && found_sus_message="protection-fault"
-      #       grep 'BUG:' $dmesg_file && found_sus_message="kernel-bug"
-      #       grep 'RIP:' $dmesg_file && found_sus_message="kernel-backtrace"
+            found_sus_message=""
+            grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"
+            grep -i segfault $dmesg_file && found_sus_message="segfault"
+            grep -i 'protection fault' $dmesg_file && found_sus_message="protection-fault"
+            grep 'BUG:' $dmesg_file && found_sus_message="kernel-bug"
+            grep 'RIP:' $dmesg_file && found_sus_message="kernel-backtrace"
 
-      #       cat $dmesg_file
+            cat $dmesg_file
 
-      #       if [ -n "$found_sus_message" ]; then
-      #         echo "Found suspicious message in dmesg: $found_sus_message"
-      #         exit 1
-      #       fi
+            if [ -n "$found_sus_message" ]; then
+              echo "Found suspicious message in dmesg: $found_sus_message"
+              exit 1
+            fi
 
-      #       if [ ! -s $dmesg_file ]; then
-      #         echo "No dmesg output found"
-      #         exit 1
-      #       fi
+            if [ ! -s $dmesg_file ]; then
+              echo "No dmesg output found"
+              exit 1
+            fi
 
       - name: Remove VM
         run: |
