@@ -177,6 +177,15 @@ jobs:
       - name: Wait for any pending first-boot reboots
         run: sleep 150
 
+      # Token breaks after 10 min
+      # https://github.com/Azure/azure-cli/issues/28708
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
+
       - name: Deploy Container Group
         run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
 
@@ -212,7 +221,24 @@ jobs:
           for lcow_dir_name in lcow lcow2 lcow3; do
             c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --lcow-dir-name $lcow_dir_name
           done
-          for i in {1..10}; do
+          for i in {1..5}; do
+            sleep 60
+            date
+            for lcow_dir_name in lcow lcow2 lcow3; do
+              c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --lcow-dir-name $lcow_dir_name
+            done
+          done
+
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
+
+      - name: Check, wait a bit, then check VM
+        run: |
+          for i in {6..10}; do
             sleep 60
             date
             for lcow_dir_name in lcow lcow2 lcow3; do
@@ -265,6 +291,13 @@ jobs:
       #       echo "Events for container $container_name:"
       #       echo "$container" | jq -r '.instanceView | .events[]'
       #     done
+
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
 
       # TODO: find a better way to fetch dmesg - Azure truncates the output
       - name: Check dmesg
