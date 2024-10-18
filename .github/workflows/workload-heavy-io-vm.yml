@@ -187,7 +187,7 @@ jobs:
           subscription-id: ${{ vars.SUBSCRIPTION }}
 
       - name: Deploy Container Group
-        run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
+        run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow
 
       - name: Print info
         run: |
@@ -203,7 +203,7 @@ jobs:
           c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=false"
           echo heavy_io.bicepparam:
           cat workloads/heavy_io/heavy_io.bicepparam
-          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --lcow-dir-name lcow2
+          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow2
 
       - name: Deploy a third small container group
         run: |
@@ -213,19 +213,19 @@ jobs:
           c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=true"
           echo heavy_io.bicepparam:
           cat workloads/heavy_io/heavy_io.bicepparam
-          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --lcow-dir-name lcow3
+          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow3
 
       - name: Check, wait a bit, then check VM
         run: |
           date
           for lcow_dir_name in lcow lcow2 lcow3; do
-            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --lcow-dir-name $lcow_dir_name
+            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix $lcow_dir_name
           done
           for i in {1..5}; do
             sleep 60
             date
             for lcow_dir_name in lcow lcow2 lcow3; do
-              c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --lcow-dir-name $lcow_dir_name
+              c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix $lcow_dir_name
             done
           done
 
@@ -242,7 +242,7 @@ jobs:
             sleep 60
             date
             for lcow_dir_name in lcow lcow2 lcow3; do
-              c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --lcow-dir-name $lcow_dir_name
+              c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix $lcow_dir_name
             done
           done
           echo Container Logs:
@@ -301,6 +301,7 @@ jobs:
 
       # TODO: find a better way to fetch dmesg - Azure truncates the output
       - name: Check dmesg
+        if: always()
         run: |
             dmesg_file="dmesg.log"
 
