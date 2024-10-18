@@ -18,3 +18,14 @@ jobs:
     uses: ./.github/workflows/region.yml
     with:
       location: uaenorth
+  vm-heavy-io:
+    secrets: inherit
+    uses: ./.github/workflows/vm-workload-heavy-io.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        winFlavor: ['ws2022', 'ws2025']
+        cplatBlobName: ['${{ vars.CPLAT_BLOB_NAME }}', 'containerplat-0.2.4-rc.3-5.15']
+    with:
+      id: vm-heavy-io-${{ matrix.winFlavor }}-${{ matrix.cplatBlobName }}
+      location: uaenorth
