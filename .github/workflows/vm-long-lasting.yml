@@ -71,7 +71,7 @@ on:
         default: ws2025
 
 env:
-  DEPLOYMENT_NAME: vm-${{ inputs.id || 'check-reboot' }}-${{ inputs.location }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'vm-long-lasting' }}-${{ inputs.location }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io

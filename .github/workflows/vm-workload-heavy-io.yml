@@ -90,7 +90,7 @@ on:
         default: ws2025
 
 env:
-  DEPLOYMENT_NAME: vm-${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'vm-heavy-io' }}-${{ inputs.location }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
@@ -182,7 +182,7 @@ jobs:
       - name: Wait for any pending first-boot reboots
         run: sleep 600
 
-      # Token breaks after 10 min
+      # OCID token refresh breaks after 5 min
       # https://github.com/Azure/azure-cli/issues/28708
       - name: Log into Azure
         uses: azure/login@v2
@@ -220,38 +220,15 @@ jobs:
           cat workloads/heavy_io/heavy_io.bicepparam
           c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow3
 
-      - name: Check, wait a bit, then check VM
+      - name: Check and wait loop
         run: |
-          date
-          for lcow_dir_name in lcow lcow2 lcow3; do
-            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix $lcow_dir_name
-          done
-          for i in {1..5}; do
-            sleep 60
+          for i in {1..200}; do
+            sleep 5
             date
             for lcow_dir_name in lcow lcow2 lcow3; do
               c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix $lcow_dir_name
             done
           done
-
-      - name: Log into Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.SUBSCRIPTION }}
-
-      - name: Check, wait a bit, then check VM
-        run: |
-          for i in {6..10}; do
-            sleep 60
-            date
-            for lcow_dir_name in lcow lcow2 lcow3; do
-              c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix $lcow_dir_name
-            done
-          done
-          echo Container Logs:
-          c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Get-Item C:/*/container_log_*.log | foreach { echo $_.Name; cat $_ }'
 
       # - name: Wait for IP address
       #   run: |
