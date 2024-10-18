@@ -83,6 +83,7 @@ env:
   VM_IMAGE: ${{ inputs.vmImage || ( inputs.winFlavor == 'ws2022' && secrets.VM_IMAGE_WS2022 || secrets.VM_IMAGE ) }}
   CPLAT_BLOB_NAME: ${{ inputs.cplatBlobName || vars.CPLAT_BLOB_NAME }}
   WIN_FLAVOR: ${{ inputs.winFlavor || 'ws2025' }}
+  WORKLOAD_DIR: workloads/server
 
 jobs:
   vm-reboot-timing:
@@ -126,29 +127,42 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Pull Image
-        run: c-aci-testing images pull workloads/minimal
+        run: c-aci-testing images pull $WORKLOAD_DIR
 
       - name: Set parameters
         run: |
-          c-aci-testing aci param_set workloads/minimal --parameter cpu=2
-          c-aci-testing aci param_set workloads/minimal --parameter memoryInGb=4
+          c-aci-testing aci param_set $WORKLOAD_DIR --parameter cpu=2
+          c-aci-testing aci param_set $WORKLOAD_DIR --parameter memoryInGb=4
 
       # The security policy has to be allow_all for exec-based checks to work
       - name: Fill in allow_all security policy
         run: |
-          c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
-          cat workloads/minimal/policy_minimal.rego
+          c-aci-testing policies gen $WORKLOAD_DIR --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
+          cat $WORKLOAD_DIR/policy_minimal.rego
 
       - name: Deploy VM with containerplat and run container
-        run: c-aci-testing vm deploy workloads/minimal --deployment-name $DEPLOYMENT_NAME --prefix lcow
+        run: c-aci-testing vm deploy $WORKLOAD_DIR --deployment-name $DEPLOYMENT_NAME --prefix lcow
 
       - name: Check, wait a bit, then check VM
         run: |
+          set +e
+          fail_count=0
           for i in {1..200}; do
             sleep 5
             date
             c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Write-Output "last boot" (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime; try { cd C:\lcow; .\check.ps1 } catch { Write-Output "ERROR: failed to run check" $_.Exception.ToString() }'
+            if [ $? -ne 0 ]; then
+              fail_count=$((fail_count+1))
+              if [ $fail_count -ge 3 ]; then
+                break
+              fi
+              echo Failed! Will rerun container
+              c-aci-testing vm runc $WORKLOAD_DIR --deployment-name $DEPLOYMENT_NAME --prefix lcow
+            fi
           done
+          if [ $fail_count -gt 0 ]; then
+            exit 1
+          fi
 
       - name: Log into Azure
         uses: azure/login@v2
