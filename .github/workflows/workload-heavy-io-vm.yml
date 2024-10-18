@@ -175,7 +175,7 @@ jobs:
       # So we just wait for a bit to let that happen.
       # It is also more realistic to not start spinning up containers immediately after the VM is created.
       - name: Wait for any pending first-boot reboots
-        run: sleep 150
+        run: sleep 600
 
       # Token breaks after 10 min
       # https://github.com/Azure/azure-cli/issues/28708
