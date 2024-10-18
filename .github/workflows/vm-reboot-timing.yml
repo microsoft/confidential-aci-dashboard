@@ -69,14 +69,12 @@ on:
         default: ws2025
 
 env:
-  DEPLOYMENT_NAME: vm-${{ inputs.id || 'minimal' }}-${{ inputs.location }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: vm-${{ inputs.id || 'check-reboot' }}-${{ inputs.location }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
   MANAGED_IDENTITY: cacidashboard
   LOCATION: ${{ inputs.location || 'westus' }}
-  CPU: ${{ inputs.cpu || 4 }}
-  MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
   USE_NORMAL_SIDECAR: true
   VM_SIZE: ${{ inputs.vmSize || 'Standard_DC4ads_cc_v5' }}
@@ -138,7 +136,7 @@ jobs:
       - name: Fill in allow_all security policy
         run: |
           c-aci-testing policies gen $WORKLOAD_DIR --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
-          cat $WORKLOAD_DIR/policy_minimal.rego
+          cat $WORKLOAD_DIR/policy_*.rego
 
       - name: Deploy VM with containerplat and run container
         run: c-aci-testing vm deploy $WORKLOAD_DIR --deployment-name $DEPLOYMENT_NAME --prefix lcow
