@@ -21,7 +21,7 @@ on:
       cpu:
         type: number
         description: The number of CPU cores in container
-        default: 1
+        default: 2
       memory_in_gb:
         type: number
         description: The memory in container in Gb
@@ -46,7 +46,7 @@ on:
       cpu:
         type: number
         description: The number of CPU cores in container
-        default: 1
+        default: 2
       memory_in_gb:
         type: number
         description: The memory in container in Gb
@@ -67,7 +67,7 @@ env:
   REGISTRY: cacidashboard.azurecr.io
   MANAGED_IDENTITY: cacidashboard
   LOCATION: ${{ inputs.location || 'westeurope' }}
-  CPU: ${{ inputs.cpu || 1 }}
+  CPU: ${{ inputs.cpu || 2 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
