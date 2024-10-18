@@ -1,4 +1,4 @@
-name: VM Workload - Heavy IO
+name: VM reboot timing
 
 permissions:
   id-token: write
