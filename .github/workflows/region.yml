@@ -139,6 +139,19 @@ jobs:
       # if westus, 4, otherwise 1
       cpu: ${{ inputs.location == 'westus' && 4 || 1 }}
 
+  info:
+    name: info
+    secrets: inherit
+    uses: ./.github/workflows/workload-info.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'debug', 'allow_all']
+    with:
+      id: info-${{ matrix.policy_type }}
+      location: ${{ inputs.location }}
+      policy_type: ${{ matrix.policy_type }}
+
   vnet:
     name: vnet
     secrets: inherit
