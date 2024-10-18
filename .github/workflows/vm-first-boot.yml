@@ -1,4 +1,4 @@
-name: VM reboot timing
+name: VM first boot test
 
 permissions:
   id-token: write
