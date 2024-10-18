@@ -29,7 +29,7 @@ resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01
           command: [
             '/bin/bash'
             '-c'
-            'echo "Container Started"'
+            'echo "Container ${imageName(image)} Started"'
           ]
           resources: {
             requests: {
