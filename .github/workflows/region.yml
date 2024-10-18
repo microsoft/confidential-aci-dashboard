@@ -163,3 +163,16 @@ jobs:
       id: vnet-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}
+
+  common-images:
+    name: common-images
+    secrets: inherit
+    uses: ./.github/workflows/workload-common-images.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'debug', 'allow_all']
+    with:
+      id: common-images-${{ matrix.policy_type }}
+      location: ${{ inputs.location }}
+      policy_type: ${{ matrix.policy_type }}
