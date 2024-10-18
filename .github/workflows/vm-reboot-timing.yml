@@ -136,7 +136,7 @@ jobs:
       # The security policy has to be allow_all for exec-based checks to work
       - name: Fill in allow_all security policy
         run: |
-          c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME
+          c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
           cat workloads/minimal/policy_minimal.rego
 
       - name: Deploy VM with containerplat and run container
