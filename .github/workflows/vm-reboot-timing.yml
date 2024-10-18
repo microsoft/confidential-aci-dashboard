@@ -5,7 +5,7 @@ permissions:
   contents: read
 
 on:
-  pull_request:
+  # pull_request:
   push:
     branches:
       - main
@@ -85,8 +85,8 @@ env:
   WIN_FLAVOR: ${{ inputs.winFlavor || 'ws2025' }}
 
 jobs:
-  heavy-io:
-    name: ${{ inputs.id || 'heavy-io' }}
+  vm-reboot-timing:
+    name: ${{ inputs.id || 'vm-reboot-timing' }}
     runs-on: ubuntu-latest
     steps:
 
