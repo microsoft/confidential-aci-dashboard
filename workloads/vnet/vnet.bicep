@@ -1,5 +1,4 @@
 param location string
-param registry string
 param ccePolicies object
 param cpu int = 1
 param memoryInGb int = 2
