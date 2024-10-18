@@ -6,6 +6,8 @@ permissions:
 
 on:
   pull_request:
+    paths:
+      - .github/workflows/vm-long-lasting.yml
   push:
     branches:
       - main
