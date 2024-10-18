@@ -198,9 +198,12 @@ jobs:
 
       - name: Print info
         run: |
-          c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"'
-          c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'c:/containerplat/shimdiag.exe exec k8s uname -a'
-          c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'c:/containerplat/shimdiag.exe exec k8s cat /proc/cpuinfo'
+          c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
+            Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" > C:\info.txt;
+            c:\containerplat\shimdiag.exe exec k8s uname -a >> C:\info.txt;
+            c:\containerplat\shimdiag.exe exec k8s cat /proc/cpuinfo >> C:\info.txt
+          '
+          c-aci-testing vm cat --deployment-name $DEPLOYMENT_NAME 'C:\info.txt'
 
       - name: Deploy another container group
         run: |
@@ -294,7 +297,8 @@ jobs:
         run: |
             dmesg_file="dmesg.log"
 
-            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'cat C:/*/dmesg*.log' > $dmesg_file
+            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'cat C:/*/dmesg*.log > C:/all-dmesg.log'
+            c-aci-testing vm cat --deployment-name $DEPLOYMENT_NAME 'C:/all-dmesg.log' > $dmesg_file
             if [ $? -ne 0 ]; then
               echo "Failed to get dmesg:"
               cat $dmesg_file
