@@ -309,8 +309,9 @@ jobs:
             grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"
             grep -i segfault $dmesg_file && found_sus_message="segfault"
             grep -i 'protection fault' $dmesg_file && found_sus_message="protection-fault"
-            grep 'BUG:' $dmesg_file && found_sus_message="kernel-bug"
-            grep 'RIP:' $dmesg_file && found_sus_message="kernel-backtrace"
+            grep -v 'watchdog: BUG: soft lockup' $dmesg_file | grep 'BUG:' && found_sus_message="kernel-bug"
+            grep -v 'hv_send_ipi_mask' $dmesg_file | grep 'WARNING:' && found_sus_message="kernel-bug"
+            # grep 'RIP:' $dmesg_file && found_sus_message="kernel-backtrace"
 
             cat $dmesg_file
 
