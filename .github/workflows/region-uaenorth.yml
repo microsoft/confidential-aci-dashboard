@@ -29,7 +29,7 @@ jobs:
     with:
       id: vm-heavy-io-${{ matrix.winFlavor }}-6.1
       location: uaenorth
-      cplatBlobName: ${{ vars.CPLAT_BLOB_NAME }}
+      cplatBlobName: ${{ vars.CPLAT_6_1_BLOB_NAME }}
 
   vm-heavy-io-5-15:
     secrets: inherit
