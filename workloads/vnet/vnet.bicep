@@ -1,33 +1,17 @@
 param location string
 param registry string
-param tag string
 param ccePolicies object
-param managedIDGroup string = resourceGroup().name
-param managedIDName string
-
 param cpu int = 1
 param memoryInGb int = 2
 
 resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
   name: deployment().name
   location: location
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${resourceId(managedIDGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities', managedIDName)}': {}
-    }
-  }
   properties: {
     osType: 'Linux'
     sku: 'Confidential'
     subnetIds: [{id: subnet.id}]
     restartPolicy: 'Never'
-    imageRegistryCredentials: [
-      {
-        server: registry
-        identity: resourceId(managedIDGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities', managedIDName)
-      }
-    ]
     confidentialComputeProperties: {
       ccePolicy: ccePolicies.vnet
     }
@@ -35,11 +19,11 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       {
         name: 'ubuntu'
         properties: {
-          image: '${registry}/ubuntu:${empty(tag) ? '20.04': tag}'
+          image: 'mcr.microsoft.com/mirror/docker/library/ubuntu:20.04'
           command: [
             'sh'
             '-c'
-            'sleep infinity'
+            'apt-get update && apt-get install curl && curl http://example.com'
           ]
           resources: {
             requests: {
