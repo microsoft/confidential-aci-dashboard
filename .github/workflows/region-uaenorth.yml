@@ -42,3 +42,4 @@ jobs:
       id: vm-heavy-io-${{ matrix.winFlavor }}-5.15
       location: uaenorth
       cplatBlobName: ${{ vars.CPLAT_5_15_BLOB_NAME }}
+      winFlavor: ${{ matrix.winFlavor }}

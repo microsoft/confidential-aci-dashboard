@@ -5,7 +5,9 @@ permissions:
   contents: read
 
 on:
-  # pull_request:
+  pull_request:
+    paths:
+      - .github/workflows/vm-workload-heavy-io.yml
   push:
     branches:
       - main
