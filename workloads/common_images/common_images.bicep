@@ -9,7 +9,7 @@ var common_images = [
   'mcr.microsoft.com/mirror/docker/library/ubuntu:24.04'
 ]
 
-func imageName(image string) string => split(image, '/')[length(split(image, '/'))-1]
+func imageName(image string) string => replace(replace(split(image, '/')[length(split(image, '/'))-1], ':', ''), '.', '')
 
 resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = [for (image, idx) in common_images: {
   name: '${deployment().name}-${imageName(image)}'
@@ -19,7 +19,7 @@ resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01
     sku: 'Confidential'
     restartPolicy: 'Never'
     confidentialComputeProperties: {
-      ccePolicy: ccePolicies.common_images[idx]
+      ccePolicy: ccePolicies['common_images_${imageName(image)}']
     }
     containers: [
       {
