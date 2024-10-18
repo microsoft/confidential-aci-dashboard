@@ -148,14 +148,15 @@ jobs:
           for i in {1..200}; do
             sleep 5
             date
-            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Write-Output "last boot" (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime; try { cd C:\lcow; .\check.ps1 } catch { Write-Output "ERROR: failed to run check" $_.Exception.ToString() }'
+            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Write-Output "last boot" (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime'
+            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
             if [ $? -ne 0 ]; then
               fail_count=$((fail_count+1))
-              if [ $fail_count -ge 3 ]; then
+              if [ $fail_count -gt 1 ]; then
                 break
               fi
-              echo Failed! Will rerun container
-              c-aci-testing vm runc $WORKLOAD_DIR --deployment-name $DEPLOYMENT_NAME --prefix lcow
+              echo Failed first time - will rerun container
+              c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'C:\lcow\run.ps1'
             fi
           done
           if [ $fail_count -gt 0 ]; then
