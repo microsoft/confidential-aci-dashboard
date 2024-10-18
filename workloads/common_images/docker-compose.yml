@@ -2,7 +2,7 @@ version: '3'
 services:
   ubuntu_22_04:
     image: mcr.microsoft.com/mirror/docker/library/ubuntu:22.04
-    command: ["/bin/bash", "-c", 'ls /']
+    command: ["/bin/bash", "-c", 'echo "Container Started"']
   ubuntu_24_04:
     image: mcr.microsoft.com/mirror/docker/library/ubuntu:24.04
-    command: ["/bin/bash", "-c", 'ls /']
+    command: ["/bin/bash", "-c", 'echo "Container Started"']

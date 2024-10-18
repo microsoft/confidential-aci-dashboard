@@ -29,7 +29,7 @@ resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01
           command: [
             '/bin/bash'
             '-c'
-            'ls /'
+            'echo "Container Started"'
           ]
           resources: {
             requests: {
@@ -43,4 +43,4 @@ resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01
   }
 }]
 
-output ids array = [for (image, idx) in common_images: containerGroups[idx]]
+output ids array = [for (image, idx) in common_images: containerGroups[idx].id]
