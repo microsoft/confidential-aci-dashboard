@@ -112,7 +112,7 @@ jobs:
       - name: Generate Security Policy
         run: |
           c-aci-testing policies gen workloads/common_images --deployment-name $DEPLOYMENT_NAME
-          cat workloads/common_images/policy_common_images.rego
+          cat workloads/common_images/policy_common_images*.rego
 
       - name: Deploy Container Group
         run: c-aci-testing aci deploy workloads/common_images --deployment-name $DEPLOYMENT_NAME
