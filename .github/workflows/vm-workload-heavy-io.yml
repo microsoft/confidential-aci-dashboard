@@ -222,12 +222,12 @@ jobs:
 
       - name: Check and wait loop
         run: |
-          for i in {1..200}; do
-            sleep 5
+          for i in {1..50}; do
+            sleep 30
             date
-            for lcow_dir_name in lcow lcow2 lcow3; do
-              c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix $lcow_dir_name
-            done
+            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'C:\lcow\check.ps1; C:\lcow2\check.ps1; C:\lcow3\check.ps1' > check.log 2>&1
+            cat check.log
+            grep -F ERROR check.log && exit 1
           done
 
       # - name: Wait for IP address
