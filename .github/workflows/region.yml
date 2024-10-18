@@ -164,15 +164,15 @@ jobs:
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}
 
-  ubuntu-22-04:
-    name: ubuntu-22-04
+  common-images:
+    name: common-images
     secrets: inherit
     uses: ./.github/workflows/workload-common-images.yml
     strategy:
       fail-fast: false
       matrix:
-        policy_type: ['allow_all'] # Relies on shelling into container
+        policy_type: ['generated', 'debug', 'allow_all']
     with:
-      id: ubuntu-22-04-${{ matrix.policy_type }}
+      id: common-images-${{ matrix.policy_type }}
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}

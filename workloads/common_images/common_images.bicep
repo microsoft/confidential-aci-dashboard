@@ -9,8 +9,10 @@ var common_images = [
   'mcr.microsoft.com/mirror/docker/library/ubuntu:24.04'
 ]
 
+func imageName(image string) string => split(image, '/')[length(split(image, '/'))-1]
+
 resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = [for (image, idx) in common_images: {
-  name: '${deployment().name}-${image}'
+  name: '${deployment().name}-${imageName(image)}'
   location: location
   properties: {
     osType: 'Linux'
@@ -21,7 +23,7 @@ resource containerGroups 'Microsoft.ContainerInstance/containerGroups@2023-05-01
     }
     containers: [
       {
-        name: split(image, '/')[length(split(image, '/'))-1]
+        name: imageName(image)
         properties: {
           image: image
           command: [
