@@ -69,7 +69,7 @@ on:
         default: ws2025
 
 env:
-  DEPLOYMENT_NAME: vm-${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: vm-${{ inputs.id || 'minimal' }}-${{ inputs.location }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
@@ -125,35 +125,22 @@ jobs:
       - name: Setup Docker
         run: sudo usermod -aG docker $USER
 
-      - name: Use precise current time as tag
-        run: |
-          TAG=$(date "+%Y%m%d-%H%M%S.%N")
-          echo "TAG=$TAG"
-          echo "TAG=$TAG" >> $GITHUB_ENV
-
-      - name: Build image
-        run: c-aci-testing images build workloads/heavy_io
-
-      - name: Push image
-        run: c-aci-testing images push workloads/heavy_io
+      - name: Pull Image
+        run: c-aci-testing images pull workloads/minimal
 
       - name: Set parameters
         run: |
-          c-aci-testing aci param_set workloads/heavy_io --parameter cpu=4
-          c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=4
-          c-aci-testing aci param_set workloads/heavy_io --parameter "script='workload_cpu_fio'"
-          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=true"
-          echo heavy_io.bicepparam:
-          cat workloads/heavy_io/heavy_io.bicepparam
+          c-aci-testing aci param_set workloads/minimal --parameter cpu=2
+          c-aci-testing aci param_set workloads/minimal --parameter memoryInGb=4
 
       # The security policy has to be allow_all for exec-based checks to work
       - name: Fill in allow_all security policy
         run: |
-          c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
-          cat workloads/heavy_io/policy_heavy_io.rego
+          c-aci-testing policies gen workloads/minimal --deployment-name $DEPLOYMENT_NAME
+          cat workloads/minimal/policy_minimal.rego
 
       - name: Deploy VM with containerplat and run container
-        run: c-aci-testing vm deploy workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow
+        run: c-aci-testing vm deploy workloads/minimal --deployment-name $DEPLOYMENT_NAME --prefix lcow
 
       - name: Check, wait a bit, then check VM
         run: |
