@@ -1,4 +1,4 @@
-name: Workload - Ubuntu 22.04
+name: Workload - Common Images
 
 permissions:
   id-token: write
@@ -61,7 +61,7 @@ on:
         default: generated
 
 env:
-  DEPLOYMENT_NAME: ${{ inputs.id || 'ubuntu-22-04' }}-${{ inputs.location }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'common-images' }}-${{ inputs.location }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
@@ -73,8 +73,8 @@ env:
   POLICY_TYPE: ${{ inputs.policy_type || 'generated' }}
 
 jobs:
-  ubuntu-22-04:
-    name: ${{ inputs.id || 'ubuntu-22-04' }}
+  common-images:
+    name: ${{ inputs.id || 'common-images' }}
     runs-on: ubuntu-latest
     steps:
 
@@ -102,23 +102,20 @@ jobs:
         run: sudo usermod -aG docker $USER
 
       - name: Pull Image
-        run: c-aci-testing images pull workloads/ubuntu_22_04
+        run: c-aci-testing images pull workloads/common_images
 
       - name: Set Parameters
         run: |
-          c-aci-testing aci param_set workloads/ubuntu_22_04 --parameter cpu=$CPU
-          c-aci-testing aci param_set workloads/ubuntu_22_04 --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/common_images --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/common_images --parameter memoryInGb=$MEMORY_IN_GB
 
       - name: Generate Security Policy
         run: |
-          c-aci-testing policies gen workloads/ubuntu_22_04 --deployment-name $DEPLOYMENT_NAME
-          cat workloads/ubuntu_22_04/policy_ubuntu_22_04.rego
+          c-aci-testing policies gen workloads/common_images --deployment-name $DEPLOYMENT_NAME
+          cat workloads/common_images/policy_common_images.rego
 
       - name: Deploy Container Group
-        run: c-aci-testing aci deploy workloads/ubuntu_22_04 --deployment-name $DEPLOYMENT_NAME
-
-      - name: Run Client Side Test
-        run: python workloads/ubuntu_22_04/test.py
+        run: c-aci-testing aci deploy workloads/common_images --deployment-name $DEPLOYMENT_NAME
 
       - name: Monitor Container Group
         if: always()
