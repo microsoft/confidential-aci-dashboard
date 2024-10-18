@@ -136,8 +136,7 @@ jobs:
       policy_type: ${{ matrix.policy_type }}
       script: ${{ matrix.script }}
       useNormalSidecar: true
-      # if westus, 4, otherwise 1
-      cpu: ${{ inputs.location == 'westus' && 4 || 1 }}
+      cpu: ${{ inputs.location == 'westus' && 4 || 2 }}
 
   info:
     name: info
@@ -152,10 +151,23 @@ jobs:
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}
 
+  vnet:
+    name: vnet
+    secrets: inherit
+    uses: ./.github/workflows/workload-vnet.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        policy_type: ['generated', 'debug', 'allow_all']
+    with:
+      id: vnet-${{ matrix.policy_type }}
+      location: ${{ inputs.location }}
+      policy_type: ${{ matrix.policy_type }}
+
   ubuntu-22-04:
     name: ubuntu-22-04
     secrets: inherit
-    uses: ./.github/workflows/workload-ubuntu-22-04.yml
+    uses: ./.github/workflows/workload-common-images.yml
     strategy:
       fail-fast: false
       matrix:
