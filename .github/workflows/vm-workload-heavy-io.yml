@@ -228,9 +228,14 @@ jobs:
             sleep 30
             date
             c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'C:\lcow\check.ps1; C:\lcow2\check.ps1; C:\lcow3\check.ps1' > check.log 2>&1
+            exitcode=$?
             cat check.log
             grep -F ERROR check.log && exit 1
+            if [ $exitcode -ne 0 ]; then
+              exit 1
+            fi
           done
+          exit 0
 
       # - name: Wait for IP address
       #   run: |
