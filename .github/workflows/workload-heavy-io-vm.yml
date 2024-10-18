@@ -101,8 +101,8 @@ env:
   WIN_FLAVOR: ${{ inputs.winFlavor || 'ws2025' }}
 
 jobs:
-  heavy-io:
-    name: ${{ inputs.id || 'heavy-io' }}
+  vm-heavy-io:
+    name: ${{ inputs.id || 'vm-heavy-io' }}
     runs-on: ubuntu-latest
     steps:
 

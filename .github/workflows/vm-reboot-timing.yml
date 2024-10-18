@@ -26,7 +26,7 @@ on:
       vmSize:
         type: string
         description: The size of the VM
-        default: Standard_DC8as_cc_v5
+        default: Standard_DC4as_cc_v5
       cleanup:
         type: boolean
         description: Whether to cleanup the VM after testing
@@ -144,80 +144,10 @@ jobs:
 
       - name: Check, wait a bit, then check VM
         run: |
-          date
-          c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
-          for i in {1..5}; do
-            sleep 60
+          for i in {1..200}; do
+            sleep 5
             date
-            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
-          done
-
-      - name: Log into Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.SUBSCRIPTION }}
-
-      - name: Check, wait a bit, then check VM
-        run: |
-          date
-          c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
-          for i in {1..5}; do
-            sleep 60
-            date
-            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
-          done
-
-      - name: Log into Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.SUBSCRIPTION }}
-
-      - name: Check, wait a bit, then check VM
-        run: |
-          date
-          c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
-          for i in {1..5}; do
-            sleep 60
-            date
-            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
-          done
-
-      - name: Log into Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.SUBSCRIPTION }}
-
-      - name: Check, wait a bit, then check VM
-        run: |
-          date
-          c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
-          for i in {1..5}; do
-            sleep 60
-            date
-            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
-          done
-
-      - name: Log into Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.SUBSCRIPTION }}
-
-      - name: Check, wait a bit, then check VM
-        run: |
-          date
-          c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
-          for i in {1..5}; do
-            sleep 60
-            date
-            c-aci-testing vm check --deployment-name $DEPLOYMENT_NAME --prefix lcow
+            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Write-Output "last boot" (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime; try { cd C:\lcow; .\check.ps1 } catch { Write-Output "ERROR: failed to run check" $_.Exception.ToString() }'
           done
 
       - name: Log into Azure
