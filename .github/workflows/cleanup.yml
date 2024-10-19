@@ -32,6 +32,9 @@ jobs:
               az resource delete --ids ${container}
           done
 
+
+      - name: Cleanup VMs
+        run: |
           RUNNING_VMS=$(az vm list --resource-group c-aci-dashboard --query '[].id' -o tsv)
           for vm in $RUNNING_VMS; do
               echo "Deleting VM: ${vm}"
