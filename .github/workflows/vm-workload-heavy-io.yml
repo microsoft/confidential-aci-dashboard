@@ -196,7 +196,7 @@ jobs:
           subscription-id: ${{ vars.SUBSCRIPTION }}
 
       - name: Deploy Container Group
-        run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow
+        run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow_cpu_fio
 
       - name: Print info
         run: |
@@ -215,7 +215,7 @@ jobs:
           c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=false"
           echo heavy_io.bicepparam:
           cat workloads/heavy_io/heavy_io.bicepparam
-          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow2
+          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow_exec
 
       - name: Deploy a third small container group
         run: |
@@ -225,7 +225,7 @@ jobs:
           c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=true"
           echo heavy_io.bicepparam:
           cat workloads/heavy_io/heavy_io.bicepparam
-          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow3
+          c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow_tar
 
       - name: Upload helper scripts
         run: |
@@ -242,9 +242,9 @@ jobs:
             date
             c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
               C:\vm_helpers\check_http.ps1;
-              C:\lcow\check.ps1;
-              C:\lcow2\check.ps1;
-              C:\lcow3\check.ps1;
+              C:\lcow_cpu_fio\check.ps1;
+              C:\lcow_exec\check.ps1;
+              C:\lcow_tar\check.ps1;
             ' > check.log 2>&1
             exitcode=$?
             cat check.log
