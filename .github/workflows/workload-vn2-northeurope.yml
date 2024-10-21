@@ -12,10 +12,12 @@ on:
         required: false
         default: northeurope
 
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      RESOURCE_GROUP: mchamarthy-aks-ci-northeurope
+      AKS_CLUSTER_NAME: aks-ci-northeurope
 
     steps:
     - name: Checkout code
@@ -39,27 +41,18 @@ jobs:
     - name: Install Helm
       run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-    - name: Install kubectl
-      run: |
-        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-        chmod +x kubectl
-        sudo mv kubectl /usr/local/bin/
-
     - name: Install Azure CLI
       run: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
 
     - name: Clone VN2 Repo
       run: |
         git clone https://github.com/microsoft/virtualnodesOnAzureContainerInstances.git
-        ls virtualnodesOnAzureContainerInstances/
-
-    - name: Get AKS Credentials
-      run: |
-        az account set --subscription ${{ vars.SUBSCRIPTION }}
-        az aks get-credentials --resource-group mchamarthy-aks-ci-northeurope --name aks-ci-northeurope --overwrite-existing
-
-    - name: Helm Install
-      run: helm install vn2 virtualnodesOnAzureContainerInstances/Helm/virtualnode
+        ls virtualnodesOnAzureContainerInstances/    
 
     - name: Deploy to AKS using bash script
       run: |
@@ -67,7 +60,7 @@ jobs:
         chmod +x workloads/vn2/deploy-cleanup-vn2.sh
         
         # Run the bash script and ensure the workflow fails if the script fails
-        ./workloads/vn2/deploy-cleanup-vn2.sh mchamarthy-aks-ci-northeurope aks-ci-northeurope
-        shell: bash
-        continue-on-error: false  # Ensures the workflow fails if the script exits with a non-zero status
+        ./workloads/vn2/deploy-cleanup-vn2.sh $RESOURCE_GROUP $AKS_CLUSTER_NAME
+      shell: bash
+      continue-on-error: false  # Ensures the workflow fails if the script exits with a non-zero status
 

@@ -13,6 +13,14 @@ AKS_CLUSTER_NAME=$2
 echo "Setting the AKS context for kubectl..."
 az aks get-credentials --resource-group "$RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME"
 
+# Check if vn2 is already installed and install if not
+if helm list --filter 'vn2' | grep -q 'vn2'; then
+  echo "Helm release 'vn2' is already installed. Skipping Helm install."
+else
+  echo "Helm release 'vn2' is not installed. Proceeding with installation."
+  helm install vn2 virtualnodesOnAzureContainerInstances/Helm/virtualnode
+fi
+
 # Deploy the pod
 echo "Deploying pod to AKS..."
 kubectl apply -f workloads/vn2/sample-pod.yaml
