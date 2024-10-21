@@ -231,8 +231,11 @@ jobs:
         run: |
           c-aci-testing vm run_script --deployment-name $DEPLOYMENT_NAME scripts/vm_helpers do_nothing.ps1
 
+      # The pipeline should fail as long as there are any errors, but we allow the check loop to continue
+      # after the first error to see if error condition is persistent.
       - name: Check and wait loop
         run: |
+          fail_count=0
           for i in {1..50}; do
             sleep 30
             date
@@ -244,12 +247,15 @@ jobs:
             ' > check.log 2>&1
             exitcode=$?
             cat check.log
-            grep -F ERROR check.log && exit 1
-            if [ $exitcode -ne 0 ]; then
-              exit 1
+            grep -F ERROR check.log
+            if [ $? -eq 0 ] || [ $exitcode -ne 0 ]; then
+              fail_count=$((fail_count+1))
+            fi
+            if [ $fail_count -gt 1 ]; then
+              exit $fail_count
             fi
           done
-          exit 0
+          exit $fail_count
 
       # - name: Wait for IP address
       #   run: |
