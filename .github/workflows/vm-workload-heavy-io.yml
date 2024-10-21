@@ -99,7 +99,7 @@ env:
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
   MANAGED_IDENTITY: cacidashboard
-  LOCATION: ${{ inputs.location || 'westus' }}
+  LOCATION: ${{ inputs.location || 'uaenorth' }}
   CPU: ${{ inputs.cpu || 4 }}
   MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}

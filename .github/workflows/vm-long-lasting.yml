@@ -78,7 +78,7 @@ env:
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
   MANAGED_IDENTITY: cacidashboard
-  LOCATION: ${{ inputs.location || 'westus' }}
+  LOCATION: ${{ inputs.location || 'uaenorth' }}
   CLEANUP: ${{ inputs.cleanup }}
   USE_NORMAL_SIDECAR: true
   VM_SIZE: ${{ inputs.vmSize || 'Standard_DC4ads_cc_v5' }}
