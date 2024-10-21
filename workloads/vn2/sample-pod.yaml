@@ -21,12 +21,12 @@ spec:
         image: mcr.microsoft.com/aci/aci-confidential-helloworld:v1
         resources:
           requests:
-            memory: "8G"
-            cpu: "4"
+            memory: "2G"
+            cpu: "2"
         ports:
         - containerPort: 80
       nodeSelector:
-        type: virtual-kubelet
+        virtualization: virtualnode2
       tolerations:
         - key: "virtual-kubelet.io/provider"
           operator: "Exists"

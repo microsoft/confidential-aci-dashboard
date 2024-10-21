@@ -50,7 +50,7 @@ jobs:
 
     - name: Clone VN2 Repo
       run: |
-        git clone git@github.com:microsoft/virtualnodesOnAzureContainerInstances.git
+        git clone https://github.com/microsoft/virtualnodesOnAzureContainerInstances.git
         ls virtualnodesOnAzureContainerInstances/
 
     - name: Get AKS Credentials
@@ -59,13 +59,38 @@ jobs:
         az aks get-credentials --resource-group mchamarthy-aks-ci-northeurope --name aks-ci-northeurope --overwrite-existing
 
     - name: Helm Install
-      run: helm install vn2 virtualnodesOnAzureContainerInstances/Helm
+      run: helm install vn2 virtualnodesOnAzureContainerInstances/Helm/virtualnode
 
     - name: Deploy to AKS
       run: kubectl apply -f ${{ github.workspace }}/workloads/vn2/sample-pod.yaml
 
+    - name: Wait for pods to be in Running state
+      id: wait_for_pods
+      run: |
+        end=$((SECONDS+180))
+        while [ $SECONDS -lt $end ]; do
+        POD_STATUS=$(kubectl get pods --namespace=default --output=jsonpath='{.items[*].status.phase}')
+        echo "Current pod status: $POD_STATUS"
+        if [[ "$POD_STATUS" == "Running" ]]; then
+        echo "Pods are in Running state."
+        exit 0
+        fi
+        echo "Waiting for pods to be in Running state..."
+        sleep 10
+        done
+        echo "Timeout reached. Pods did not reach Running state."
+        exit 1
+        shell: bash
+
+    - name: Cleanup if deployment failed
+      if: failure()
+      run: |
+        echo "Deleting all deployments since pods failed to reach Running state."
+        kubectl delete deployment --all --namespace=default
+
     - name: Verify Pod Deployment
-      run: kubectl get pods -o wide
+      if: success()
+      run: kubectl get pods -o wide --namespace=default
 
     - name: Remove pods
       run: kubectl delete deployment --all --namespace=default
