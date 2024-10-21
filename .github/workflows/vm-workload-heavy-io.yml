@@ -227,12 +227,21 @@ jobs:
           cat workloads/heavy_io/heavy_io.bicepparam
           c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow3
 
+      - name: Upload helper scripts
+        run: |
+          c-aci-testing vm run_script --deployment-name $DEPLOYMENT_NAME scripts/vm_helpers do_nothing.ps1
+
       - name: Check and wait loop
         run: |
           for i in {1..50}; do
             sleep 30
             date
-            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'C:\lcow\check.ps1; C:\lcow2\check.ps1; C:\lcow3\check.ps1' > check.log 2>&1
+            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
+              C:\vm_helpers\check_http.ps1
+              C:\lcow\check.ps1;
+              C:\lcow2\check.ps1;
+              C:\lcow3\check.ps1;
+            ' > check.log 2>&1
             exitcode=$?
             cat check.log
             grep -F ERROR check.log && exit 1
