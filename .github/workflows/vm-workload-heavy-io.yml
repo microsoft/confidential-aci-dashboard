@@ -11,6 +11,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - .github/workflows/vm-workload-heavy-io.yml
   workflow_dispatch:
     inputs:
       id:
