@@ -176,7 +176,7 @@ jobs:
 
       - name: Wait and check loop
         run: |
-          for i in {1..500}; do
+          for i in {1..100}; do
             sleep 5
             date
             c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Write-Output "last boot" (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime'
