@@ -61,37 +61,13 @@ jobs:
     - name: Helm Install
       run: helm install vn2 virtualnodesOnAzureContainerInstances/Helm/virtualnode
 
-    - name: Deploy to AKS
-      run: kubectl apply -f ${{ github.workspace }}/workloads/vn2/sample-pod.yaml
-
-    - name: Wait for pods to be in Running state
-      id: wait_for_pods
+    - name: Deploy to AKS using bash script
       run: |
-        end=$((SECONDS+180))
-        while [ $SECONDS -lt $end ]; do
-        POD_STATUS=$(kubectl get pods --namespace=default --output=jsonpath='{.items[*].status.phase}')
-        echo "Current pod status: $POD_STATUS"
-        if [[ "$POD_STATUS" == "Running" ]]; then
-        echo "Pods are in Running state."
-        exit 0
-        fi
-        echo "Waiting for pods to be in Running state..."
-        sleep 10
-        done
-        echo "Timeout reached. Pods did not reach Running state."
-        exit 1
+        # Make the script executable
+        chmod +x workloads/vn2/deploy-cleanup-vn2.sh
+        
+        # Run the bash script and ensure the workflow fails if the script fails
+        ./workloads/vn2/deploy-cleanup-vn2.sh mchamarthy-aks-ci-northeurope aks-ci-northeurope
         shell: bash
-
-    - name: Cleanup if deployment failed
-      if: failure()
-      run: |
-        echo "Deleting all deployments since pods failed to reach Running state."
-        kubectl delete deployment --all --namespace=default
-
-    - name: Verify Pod Deployment
-      if: success()
-      run: kubectl get pods -o wide --namespace=default
-
-    - name: Remove pods
-      run: kubectl delete deployment --all --namespace=default
+        continue-on-error: false  # Ensures the workflow fails if the script exits with a non-zero status
 
