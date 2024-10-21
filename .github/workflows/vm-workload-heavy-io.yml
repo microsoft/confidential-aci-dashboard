@@ -235,12 +235,13 @@ jobs:
       # after the first error to see if error condition is persistent.
       - name: Check and wait loop
         run: |
+          set +e
           fail_count=0
           for i in {1..50}; do
             sleep 30
             date
             c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
-              C:\vm_helpers\check_http.ps1
+              C:\vm_helpers\check_http.ps1;
               C:\lcow\check.ps1;
               C:\lcow2\check.ps1;
               C:\lcow3\check.ps1;
