@@ -55,7 +55,9 @@ Deploys with container with high specification (varies by region)
 
 Deploys confidential containers with VN2
 
-[![Region - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/workload-vn2-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/workload-vn2-northeurope.yml)
+[![Region - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/vn2-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/vn2-northeurope.yml)
+
+[![Region - North UAE](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/vn2-uaenorth.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/vn2-uaenorth.yml)
 
 ## Performance
 
