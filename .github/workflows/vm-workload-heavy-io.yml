@@ -241,7 +241,7 @@ jobs:
             sleep 30
             date
             c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
-              C:\vm_helpers\check_http.ps1;
+              C:\vm_helpers\check_heavy_io_http.ps1;
               C:\lcow_cpu_fio\check.ps1;
               C:\lcow_exec\check.ps1;
               C:\lcow_tar\check.ps1;
