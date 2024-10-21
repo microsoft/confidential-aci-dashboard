@@ -29,7 +29,8 @@
                 "managed_identity",
                 "many_layers",
                 "minimal",
-                "server"
+                "server",
+                "vnet"
             ]
         },
         {
