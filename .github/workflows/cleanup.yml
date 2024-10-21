@@ -44,3 +44,8 @@ jobs:
               az resource delete --resource-group c-aci-dashboard -n ${vm_deployment_name}-vnet --resource-type Microsoft.Network/virtualNetworks
               az resource delete --resource-group c-aci-dashboard -n ${vm_deployment_name}-nsg --resource-type Microsoft.Network/networkSecurityGroups
           done
+
+
+      - name: Cleanup pushed images
+        run: |
+          az acr run --registry cacidashboard --cmd 'acr purge --filter "^heavy_io/.+:.*" --ago 1d' /dev/null
