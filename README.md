@@ -51,6 +51,12 @@ Deploys with container with high specification (varies by region)
 
 [![High Spec - East US 2 EUAP](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus2euap.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/high-spec-eastus2euap.yml)
 
+## Deployment with VN2
+
+Deploys confidential containers with VN2
+
+[![Region - North Europe](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/workload-vn2-northeurope.yml/badge.svg?branch=main)](https://github.com/microsoft/confidential-aci-dashboard/actions/workflows/workload-vn2-northeurope.yml)
+
 ## Performance
 
 **Coming Soon
