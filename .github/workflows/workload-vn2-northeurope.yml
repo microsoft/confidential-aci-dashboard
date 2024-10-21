@@ -5,12 +5,9 @@ permissions:
    contents: read
 
 on:
-  workflow_dispatch:  # Trigger manually
-    Inputs:
-      Region:
-        description: 'Region to be deployed to'
-        required: false
-        default: northeurope
+  schedule:
+    - cron: '0 0 * * *'  # This will run the workflow every day at midnight UTC
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
   deploy:

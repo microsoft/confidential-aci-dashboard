@@ -33,23 +33,27 @@ cleanup() {
   echo "Deleting the deployment..."
   kubectl delete deployment --all --namespace=default
   
-  # Step 2: Wait for pods to be deleted
-  echo "Waiting for pods to be deleted..."
-  while kubectl get pods --namespace=default | grep -q 'Running\|Pending\|ContainerCreating\|Terminating'; do
+  # Step 2: Wait for pods to be deleted with a timeout of 8 minutes
+  echo "Waiting for pods to be deleted (timeout in 8 minutes)..."
+  end=$((SECONDS+480))  # 8 minutes timeout
+  while [ $SECONDS -lt $end ]; do
+    if ! kubectl get pods --namespace=default | grep -q 'Running\|Pending\|ContainerCreating\|Terminating'; then
+      echo "All pods are deleted."
+      echo "Uninstalling Helm release 'vn2'..."
+      helm uninstall vn2
+      
+      echo "Deleting the virtual node 'vn2-virtualnode-0'..."
+      kubectl delete node vn2-virtualnode-0
+      
+      echo "Cleanup complete."
+      return  # Exit the cleanup function successfully
+    fi
     echo "Pods are still terminating. Waiting for them to be deleted..."
     sleep 5
   done
-  echo "All pods are deleted."
   
-  # Step 3: Uninstall Helm release `vn2`
-  echo "Uninstalling Helm release 'vn2'..."
-  helm uninstall vn2
-  
-  # Step 4: Delete the virtual node `vn2-virtualnode-0`
-  echo "Deleting the virtual node 'vn2-virtualnode-0'..."
-  kubectl delete node vn2-virtualnode-0
-  
-  echo "Cleanup complete."
+  echo "Timeout reached. Pods did not delete within 8 minutes."
+  exit 1  # Exit immediately with failure if timeout occurs
 }
 
 # Wait for pods to be in Running state
