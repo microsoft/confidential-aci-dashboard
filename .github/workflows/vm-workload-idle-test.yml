@@ -1,4 +1,4 @@
-name: VM Workload - Heavy IO
+name: VM Workload - Idle Test
 
 permissions:
   id-token: write
@@ -94,7 +94,7 @@ on:
         default: ws2025
 
 env:
-  DEPLOYMENT_NAME: ${{ inputs.id || 'vm-heavy-io' }}-${{ inputs.location }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'vm-idle-test' }}-${{ inputs.location }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
@@ -110,8 +110,8 @@ env:
   WIN_FLAVOR: ${{ inputs.winFlavor || 'ws2025' }}
 
 jobs:
-  vm-heavy-io:
-    name: ${{ inputs.id || 'vm-heavy-io' }}
+  vm-idle-test:
+    name: ${{ inputs.id || 'vm-idle-test' }}
     runs-on: ubuntu-latest
     steps:
 
