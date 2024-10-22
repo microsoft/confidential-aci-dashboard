@@ -1,0 +1,328 @@
+name: VM Workload - Heavy IO
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/vm-workload-heavy-io.yml
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/vm-workload-heavy-io.yml
+  workflow_dispatch:
+    inputs:
+      id:
+        type: string
+        description: ID of the run
+      location:
+        type: string
+        description: Where to deploy to
+        required: true
+      cpu:
+        type: number
+        description: The number of CPU cores per container
+        default: 4
+      memory_in_gb:
+        type: number
+        description: VM memory in GB for the container
+        default: 4
+      vmImage:
+        type: string
+        description: The Atlas image to use for the VM
+        required: false
+        default: ''
+      vmSize:
+        type: string
+        description: The size of the VM
+        default: Standard_DC8as_cc_v5
+      cleanup:
+        type: boolean
+        description: Whether to cleanup the VM after testing
+        default: true
+      cplatBlobName:
+        type: string
+        description: The name of the containerplat blob
+        default: ''
+      winFlavor:
+        type: choice
+        description: The Windows version of the image
+        default: ws2025
+        options:
+          - ws2022
+          - ws2025
+  workflow_call:
+    inputs:
+      id:
+        type: string
+        description: ID of the run
+      location:
+        type: string
+        description: Where to deploy to
+        required: true
+      cpu:
+        type: number
+        description: The number of CPU cores per container
+        default: 4
+      memory_in_gb:
+        type: number
+        description: VM memory in GB for the container
+        default: 4
+      vmImage:
+        type: string
+        description: The Atlas image to use for the VM
+        required: false
+        default: ''
+      vmSize:
+        type: string
+        description: The size of the VM
+        default: Standard_DC8as_cc_v5
+      cleanup:
+        type: boolean
+        description: Whether to cleanup the VM after testing
+        default: true
+      cplatBlobName:
+        type: string
+        description: The name of the containerplat blob
+        default: ''
+      winFlavor:
+        type: string
+        description: The Windows version of the image
+        default: ws2025
+
+env:
+  DEPLOYMENT_NAME: ${{ inputs.id || 'vm-heavy-io' }}-${{ inputs.location }}-${{ github.run_number }}
+  SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
+  RESOURCE_GROUP: c-aci-dashboard
+  REGISTRY: cacidashboard.azurecr.io
+  MANAGED_IDENTITY: cacidashboard
+  LOCATION: ${{ inputs.location || 'uaenorth' }}
+  CPU: ${{ inputs.cpu || 4 }}
+  MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
+  CLEANUP: ${{ inputs.cleanup }}
+  USE_NORMAL_SIDECAR: true
+  VM_SIZE: ${{ inputs.vmSize || 'Standard_DC8as_cc_v5' }}
+  VM_IMAGE: ${{ inputs.vmImage || ( inputs.winFlavor == 'ws2022' && secrets.VM_IMAGE_WS2022 || secrets.VM_IMAGE_WS2025 ) }}
+  CPLAT_BLOB_NAME: ${{ inputs.cplatBlobName || vars.CPLAT_6_1_BLOB_NAME }}
+  WIN_FLAVOR: ${{ inputs.winFlavor || 'ws2025' }}
+
+jobs:
+  vm-heavy-io:
+    name: ${{ inputs.id || 'vm-heavy-io' }}
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
+
+      # - name: Install c_aci_testing package
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #   run: ./scripts/install-c-aci-testing.sh
+
+      ###### TESTING    REMOVE BEFORE MERGE ########
+      - name: Checkout c-aci-testing
+        uses: actions/checkout@v2
+        with:
+          repository: microsoft/confidential-aci-testing
+          ref: tingmao/vmtest
+          path: c-aci-testing
+
+      - name: Install c-aci-testing
+        run: cd c-aci-testing && pip install flit && flit install
+      ###### END TESTING    REMOVE BEFORE MERGE ########
+
+      - name: Install Azure CLI
+        env:
+          AZ_CLI_VERSION: 2.61.0
+        run: ./scripts/install-az-cli.sh
+
+      - name: Setup Docker
+        run: sudo usermod -aG docker $USER
+
+      - name: Use precise current time as tag
+        run: |
+          TAG=$(date "+%Y%m%d-%H%M%S.%N")
+          echo "TAG=$TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Build image
+        run: c-aci-testing images build workloads/heavy_io
+
+      - name: Push image
+        run: c-aci-testing images push workloads/heavy_io
+
+      - name: Set parameters
+        run: |
+          c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/heavy_io --parameter "script='workload_idle'"
+          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=true"
+          echo heavy_io.bicepparam:
+          cat workloads/heavy_io/heavy_io.bicepparam
+
+      - name: Deploy VM with containerplat
+        run: c-aci-testing vm create --deployment-name $DEPLOYMENT_NAME
+
+      # The security policy has to be allow_all for exec-based checks to work
+      - name: Fill in allow_all security policy
+        run: |
+          c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
+          cat workloads/heavy_io/policy_heavy_io.rego
+
+      # The Atlas image often reboots automatically on first boot for unknown reasons, but does not happen more than once.
+      # So we just wait for a bit to let that happen.
+      # It is also more realistic to not start spinning up containers immediately after the VM is created.
+      - name: Wait for any pending first-boot reboots
+        run: sleep 600
+
+      # OCID token refresh breaks after 5 min
+      # https://github.com/Azure/azure-cli/issues/28708
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
+
+      - name: Deploy Container Group
+        run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow_idle
+
+      - name: Print info
+        run: |
+          c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
+            Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" > C:\info.txt;
+            c:\containerplat\shimdiag.exe exec k8s uname -a >> C:\info.txt;
+            c:\containerplat\shimdiag.exe exec k8s cat /proc/cpuinfo >> C:\info.txt
+          '
+          c-aci-testing vm cat --deployment-name $DEPLOYMENT_NAME 'C:\info.txt'
+
+      - name: Upload helper scripts
+        run: |
+          c-aci-testing vm run_script --deployment-name $DEPLOYMENT_NAME scripts/vm_helpers do_nothing.ps1
+
+      # The pipeline should fail as long as there are any errors, but we allow the check loop to continue
+      # after the first error to see if error condition is persistent.
+      - name: Check and wait loop
+        run: |
+          set +e
+          fail_count=0
+          for i in {1..50}; do
+            sleep 30
+            date
+            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
+              C:\vm_helpers\check_heavy_io_http.ps1;
+              C:\lcow_idle\check.ps1;
+            ' > check.log 2>&1
+            exitcode=$?
+            cat check.log
+            grep -F ERROR check.log
+            if [ $? -eq 0 ] || [ $exitcode -ne 0 ]; then
+              fail_count=$((fail_count+1))
+            fi
+            if [ $fail_count -gt 1 ]; then
+              exit $fail_count
+            fi
+          done
+          exit $fail_count
+
+      # - name: Wait for IP address
+      #   run: |
+      #     ip_address=""
+      #     elapsed=0
+      #     while [[ -z "$ip_address" && elapsed -lt 60 ]]; do
+      #       ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
+      #       echo "IP Address: $ip_address"
+      #       sleep 5
+      #       elapsed=$((elapsed + 5))
+      #     done
+      #     echo "ip_address=$ip_address" >> $GITHUB_ENV
+
+      # - name: Curl Server
+      #   run: |
+      #     sleep 1
+      #     echo "Attempting to send a request..."
+      #     # We want to limit the total amount of time this curl command can run for,
+      #     # rather than just connect time, so that if the server accepts the request
+      #     # but then hangs we also exit. This necessitates the use of `timeout`.
+      #     timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
+
+      # - name: Let container run for 1min and test again
+      #   run: |
+      #     sleep 100
+      #     timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
+
+      # - name: Monitor Container Group
+      #   if: always()
+      #   continue-on-error: true
+      #   run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
+
+      # - name: Get Container States
+      #   if: always()
+      #   continue-on-error: true
+      #   run: |
+      #     az container show \
+      #       --resource-group $RESOURCE_GROUP \
+      #       --name $DEPLOYMENT_NAME \
+      #     | jq -c '.containers[]' | while read -r container; do
+      #       container_name=$(echo "$container" | jq -r '.name')
+      #       echo "Events for container $container_name:"
+      #       echo "$container" | jq -r '.instanceView | .events[]'
+      #     done
+
+      - name: Log into Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.SUBSCRIPTION }}
+
+      # TODO: find a better way to fetch dmesg - Azure truncates the output
+      - name: Check dmesg
+        if: always()
+        run: |
+            dmesg_file="dmesg.log"
+
+            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME 'Get-Item C:\*\dmesg*.log | foreach { echo ""; echo ""; echo $_.FullName; cat -Raw $_ } > C:\all-dmesg.log'
+            c-aci-testing vm cat --deployment-name $DEPLOYMENT_NAME 'C:\all-dmesg.log' > $dmesg_file
+            if [ $? -ne 0 ]; then
+              echo "Failed to get dmesg:"
+              cat $dmesg_file
+              exit 1
+            fi
+
+            found_sus_message=""
+            grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"
+            grep -i segfault $dmesg_file && found_sus_message="segfault"
+            grep -i 'protection fault' $dmesg_file && found_sus_message="protection-fault"
+            grep -v 'watchdog: BUG: soft lockup' $dmesg_file | grep 'BUG:' && found_sus_message="kernel-bug"
+            grep -v 'hv_send_ipi_mask' $dmesg_file | grep 'WARNING:' && found_sus_message="kernel-bug"
+            # grep 'RIP:' $dmesg_file && found_sus_message="kernel-backtrace"
+
+            cat $dmesg_file
+
+            if [ -n "$found_sus_message" ]; then
+              echo "Found suspicious message in dmesg: $found_sus_message"
+              exit 1
+            fi
+
+            if [ ! -s $dmesg_file ]; then
+              echo "No dmesg output found"
+              exit 1
+            fi
+
+      - name: Remove VM
+        run: |
+          if [ "$CLEANUP" != false ]; then
+            c-aci-testing vm remove --deployment-name $DEPLOYMENT_NAME
+          fi
