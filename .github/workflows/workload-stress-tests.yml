@@ -1,4 +1,4 @@
-name: Workload - Heavy IO
+name: Workload - Stress Tests
 
 permissions:
   id-token: write
@@ -82,7 +82,7 @@ on:
         default: true
 
 env:
-  DEPLOYMENT_NAME: ${{ inputs.id || 'heavy-io' }}-${{ inputs.location }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'stress-tests' }}-${{ inputs.location }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
@@ -96,8 +96,8 @@ env:
   USE_NORMAL_SIDECAR: ${{ inputs.useNormalSidecar || true }}
 
 jobs:
-  heavy-io:
-    name: ${{ inputs.id || 'heavy-io' }}
+  stress-tests:
+    name: ${{ inputs.id || 'stress-tests' }}
     runs-on: ubuntu-latest
     continue-on-error: true # This only works because historical results tracks per job and failing jobs are still red
     steps:
@@ -132,27 +132,27 @@ jobs:
           echo "TAG=$TAG" >> $GITHUB_ENV
 
       - name: Build image
-        run: c-aci-testing images build workloads/heavy_io
+        run: c-aci-testing images build workloads/stress_tests
 
       - name: Push image
-        run: c-aci-testing images push workloads/heavy_io
+        run: c-aci-testing images push workloads/stress_tests
 
       - name: Set Parameters
         run: |
-          c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
-          c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
-          c-aci-testing aci param_set workloads/heavy_io --parameter "script='$SCRIPT'"
-          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=$USE_NORMAL_SIDECAR"
-          echo heavy_io.bicepparam:
-          cat workloads/heavy_io/heavy_io.bicepparam
+          c-aci-testing aci param_set workloads/stress_tests --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/stress_tests --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/stress_tests --parameter "script='$SCRIPT'"
+          c-aci-testing aci param_set workloads/stress_tests --parameter "useNormalSidecar=$USE_NORMAL_SIDECAR"
+          echo stress_tests.bicepparam:
+          cat workloads/stress_tests/stress_tests.bicepparam
 
       - name: Generate Security Policy
         run: |
-          c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
-          cat workloads/heavy_io/policy_heavy_io.rego
+          c-aci-testing policies gen workloads/stress_tests --deployment-name $DEPLOYMENT_NAME
+          cat workloads/stress_tests/policy_stress_tests.rego
 
       - name: Deploy Container Group
-        run: c-aci-testing aci deploy workloads/heavy_io --deployment-name $DEPLOYMENT_NAME
+        run: c-aci-testing aci deploy workloads/stress_tests --deployment-name $DEPLOYMENT_NAME
 
       - name: Wait for IP address
         run: |
