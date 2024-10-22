@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RESOURCE_GROUP: mchamarthy-aks-ci-uaenorth
-      AKS_CLUSTER_NAME: aks-ci-uaeeurope
+      AKS_CLUSTER_NAME: aks-ci-uaenorth
 
     steps:
     - name: Checkout code

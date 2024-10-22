@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit immediately if any command fails
+set -e
+
 # Check if the correct number of arguments are provided
 if [ "$#" -ne 2 ]; then
   echo "Usage: $0 <resource-group-name> <aks-cluster-name>"
