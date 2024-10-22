@@ -10,7 +10,7 @@ param useNormalSidecar bool = false
 param cpu int = 4
 param memoryInGb int = 4
 
-var sidecarImage = useNormalSidecar ? 'mcr.microsoft.com/aci/skr:2.7' : '${registry}/heavy_io/sidecar:${tag}'
+var sidecarImage = useNormalSidecar ? 'mcr.microsoft.com/aci/skr:2.7' : '${registry}/stress_tests/sidecar:${tag}'
 
 resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
   name: deployment().name
@@ -41,13 +41,13 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
       }
     ]
     confidentialComputeProperties: {
-      ccePolicy: ccePolicies.heavy_io
+      ccePolicy: ccePolicies.stress_tests
     }
     containers: [
       {
         name: 'workload'
         properties: {
-          image: '${registry}/heavy_io/workload:${tag}'
+          image: '${registry}/stress_tests/workload:${tag}'
           ports: [
             {
               protocol: 'TCP'

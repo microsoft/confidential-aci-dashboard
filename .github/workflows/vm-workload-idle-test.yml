@@ -7,12 +7,12 @@ permissions:
 on:
   pull_request:
     paths:
-      - .github/workflows/vm-workload-heavy-io.yml
+      - .github/workflows/vm-workload-stress-tests.yml
   push:
     branches:
       - main
     paths:
-      - .github/workflows/vm-workload-heavy-io.yml
+      - .github/workflows/vm-workload-stress-tests.yml
   workflow_dispatch:
     inputs:
       id:
@@ -157,19 +157,19 @@ jobs:
           echo "TAG=$TAG" >> $GITHUB_ENV
 
       - name: Build image
-        run: c-aci-testing images build workloads/heavy_io
+        run: c-aci-testing images build workloads/stress_tests
 
       - name: Push image
-        run: c-aci-testing images push workloads/heavy_io
+        run: c-aci-testing images push workloads/stress_tests
 
       - name: Set parameters
         run: |
-          c-aci-testing aci param_set workloads/heavy_io --parameter cpu=$CPU
-          c-aci-testing aci param_set workloads/heavy_io --parameter memoryInGb=$MEMORY_IN_GB
-          c-aci-testing aci param_set workloads/heavy_io --parameter "script='workload_idle'"
-          c-aci-testing aci param_set workloads/heavy_io --parameter "useNormalSidecar=true"
-          echo heavy_io.bicepparam:
-          cat workloads/heavy_io/heavy_io.bicepparam
+          c-aci-testing aci param_set workloads/stress_tests --parameter cpu=$CPU
+          c-aci-testing aci param_set workloads/stress_tests --parameter memoryInGb=$MEMORY_IN_GB
+          c-aci-testing aci param_set workloads/stress_tests --parameter "script='workload_idle'"
+          c-aci-testing aci param_set workloads/stress_tests --parameter "useNormalSidecar=true"
+          echo stress_tests.bicepparam:
+          cat workloads/stress_tests/stress_tests.bicepparam
 
       - name: Deploy VM with containerplat
         run: c-aci-testing vm create --deployment-name $DEPLOYMENT_NAME
@@ -177,8 +177,8 @@ jobs:
       # The security policy has to be allow_all for exec-based checks to work
       - name: Fill in allow_all security policy
         run: |
-          c-aci-testing policies gen workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
-          cat workloads/heavy_io/policy_heavy_io.rego
+          c-aci-testing policies gen workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --policy-type allow_all
+          cat workloads/stress_tests/policy_stress_tests.rego
 
       # The Atlas image often reboots automatically on first boot for unknown reasons, but does not happen more than once.
       # So we just wait for a bit to let that happen.
@@ -196,7 +196,7 @@ jobs:
           subscription-id: ${{ vars.SUBSCRIPTION }}
 
       - name: Deploy Container Group
-        run: c-aci-testing vm runc workloads/heavy_io --deployment-name $DEPLOYMENT_NAME --prefix lcow_idle
+        run: c-aci-testing vm runc workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --prefix lcow_idle
 
       - name: Print info
         run: |
@@ -221,7 +221,7 @@ jobs:
             sleep 30
             date
             c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
-              C:\vm_helpers\check_heavy_io_http.ps1;
+              C:\vm_helpers\check_stress_tests_http.ps1;
               C:\lcow_idle\check.ps1;
             ' > check.log 2>&1
             exitcode=$?

@@ -121,17 +121,17 @@ jobs:
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}
 
-  heavy-io:
-    name: heavy-io
+  stress-tests:
+    name: stress-tests
     secrets: inherit
-    uses: ./.github/workflows/workload-heavy-io.yml
+    uses: ./.github/workflows/workload-stress-tests.yml
     strategy:
       fail-fast: false
       matrix:
         policy_type: ['generated', 'debug', 'allow_all']
         script: ['workload_fio', 'workload_tar', 'workload_cpu', 'workload_exec', 'workload_cpu_fio', 'workload_multicpu_fio']
     with:
-      id: heavy-io-${{ matrix.policy_type }}-${{ matrix.script }}
+      id: stress-tests-${{ matrix.policy_type }}-${{ matrix.script }}
       location: ${{ inputs.location }}
       policy_type: ${{ matrix.policy_type }}
       script: ${{ matrix.script }}

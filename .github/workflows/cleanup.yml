@@ -48,4 +48,4 @@ jobs:
 
       - name: Cleanup pushed images
         run: |
-          az acr run --registry cacidashboard --cmd 'acr purge --filter "^heavy_io/.+:.*" --ago 0d --keep 1 --untagged' /dev/null
+          az acr run --registry cacidashboard --cmd 'acr purge --filter "^stress_tests/.+:.*" --ago 0d --keep 1 --untagged' /dev/null
