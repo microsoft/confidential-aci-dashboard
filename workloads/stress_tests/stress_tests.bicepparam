@@ -1,4 +1,4 @@
-using './heavy_io.bicep'
+using './stress_tests.bicep'
 
 param script='workload_fio'
 param useNormalSidecar=true
@@ -10,6 +10,6 @@ param tag=''
 // Deployment info
 param location=''
 param ccePolicies={
-  heavy_io: ''
+  stress_tests: ''
 }
 param managedIDName='cacidashboard'
