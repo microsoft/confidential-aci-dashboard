@@ -37,11 +37,11 @@ jobs:
           RUNNING_VMS=$(az vm list --resource-group c-aci-dashboard --query '[].id' -o tsv)
           for vm in $RUNNING_VMS; do
               echo "Deleting VM: ${vm}"
-              az vm delete --ids ${vm} --yes --force-deletion yes
+              az vm delete --ids ${vm} --yes --force-deletion yes --verbose
               vm_deployment_name=`echo $vm | grep -oP '(?<=/virtualMachines/).*(?=-vm)'`
               echo "Deleting vnet and nsg: ${vm_deployment_name}-..."
-              az resource delete --resource-group c-aci-dashboard -n ${vm_deployment_name}-vnet --resource-type Microsoft.Network/virtualNetworks
-              az resource delete --resource-group c-aci-dashboard -n ${vm_deployment_name}-nsg --resource-type Microsoft.Network/networkSecurityGroups
+              az resource delete --resource-group c-aci-dashboard -n ${vm_deployment_name}-vnet --resource-type Microsoft.Network/virtualNetworks --verbose
+              az resource delete --resource-group c-aci-dashboard -n ${vm_deployment_name}-nsg --resource-type Microsoft.Network/networkSecurityGroups --verbose
           done
 
 
