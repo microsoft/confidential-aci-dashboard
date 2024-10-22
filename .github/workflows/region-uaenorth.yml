@@ -19,7 +19,7 @@ jobs:
     with:
       location: uaenorth
 
-  vm-stress-tests:
+  vm-stress-tests-6-1:
     secrets: inherit
     uses: ./.github/workflows/vm-workload-stress-tests.yml
     strategy:
