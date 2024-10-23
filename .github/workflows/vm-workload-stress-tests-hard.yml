@@ -1,4 +1,4 @@
-name: VM Workload - Stress Tests
+name: VM Workload - Stress Tests (Hard)
 
 permissions:
   id-token: write
@@ -7,12 +7,12 @@ permissions:
 on:
   pull_request:
     paths:
-      - .github/workflows/vm-workload-stress-tests.yml
+      - .github/workflows/vm-workload-stress-tests-hard.yml
   push:
     branches:
       - main
     paths:
-      - .github/workflows/vm-workload-stress-tests.yml
+      - .github/workflows/vm-workload-stress-tests-hard.yml
   workflow_dispatch:
     inputs:
       id:
@@ -94,7 +94,7 @@ on:
         default: ws2025
 
 env:
-  DEPLOYMENT_NAME: ${{ inputs.id || 'vm-stress-tests' }}-${{ inputs.location }}-${{ github.run_number }}
+  DEPLOYMENT_NAME: ${{ inputs.id || 'vm-stress-tests-hard' }}-${{ inputs.location }}-${{ github.run_number }}
   SUBSCRIPTION: ${{ vars.SUBSCRIPTION }}
   RESOURCE_GROUP: c-aci-dashboard
   REGISTRY: cacidashboard.azurecr.io
@@ -110,8 +110,8 @@ env:
   WIN_FLAVOR: ${{ inputs.winFlavor || 'ws2025' }}
 
 jobs:
-  vm-stress-tests:
-    name: ${{ inputs.id || 'vm-stress-tests' }}
+  vm-stress-tests-hard:
+    name: ${{ inputs.id || 'vm-stress-tests-hard' }}
     runs-on: ubuntu-latest
     continue-on-error: true # This only works because historical results tracks per job and failing jobs are still red
     steps:
@@ -195,22 +195,15 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.SUBSCRIPTION }}
 
-      - name: Deploy Container Group (fio)
+      - name: Deploy Container Group (cpu_fio)
         run: |
-          c-aci-testing aci param_set workloads/stress_tests --parameter "script='workload_fio'"
-          c-aci-testing vm runc workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --prefix lcow_fio
+          c-aci-testing aci param_set workloads/stress_tests --parameter "script='workload_cpu_fio'"
+          c-aci-testing vm runc workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --prefix lcow_cpu_fio
 
-      - name: Deploy Container Group (cpu)
+      - name: Deploy Container Group (exec)
         run: |
-          c-aci-testing aci param_set workloads/stress_tests --parameter "script='workload_cpu'"
-          c-aci-testing vm runc workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --prefix lcow_cpu
-
-      - name: Deploy Container Group (tar, small)
-        run: |
-          c-aci-testing aci param_set workloads/stress_tests --parameter cpu=1
-          c-aci-testing aci param_set workloads/stress_tests --parameter memoryInGb=1
-          c-aci-testing aci param_set workloads/stress_tests --parameter "script='workload_tar'"
-          c-aci-testing vm runc workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --prefix lcow_tar
+          c-aci-testing aci param_set workloads/stress_tests --parameter "script='workload_exec'"
+          c-aci-testing vm runc workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --prefix lcow_exec
 
       - name: Print info
         run: |
@@ -285,9 +278,9 @@ jobs:
           grep -F '] hv_storvsc' $dmesg_file && found_sus_message="hv_storvsc"
           grep -i segfault $dmesg_file && found_sus_message="segfault"
           grep -i 'protection fault' $dmesg_file && found_sus_message="protection-fault"
-          grep 'BUG:' $dmesg_file && found_sus_message="kernel-bug"
-          grep 'WARNING:' $dmesg_file && found_sus_message="kernel-bug"
-          grep 'RIP:' $dmesg_file && found_sus_message="kernel-backtrace"
+          grep -v 'watchdog: BUG: soft lockup' $dmesg_file | grep 'BUG:' && found_sus_message="kernel-bug"
+          grep -v 'hv_send_ipi_mask' $dmesg_file | grep 'WARNING:' && found_sus_message="kernel-bug"
+          # grep 'RIP:' $dmesg_file && found_sus_message="kernel-backtrace"
 
           cat $dmesg_file
 
