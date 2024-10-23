@@ -22,14 +22,6 @@ on:
         type: string
         description: Where to deploy to
         required: true
-      cpu:
-        type: number
-        description: The number of CPU cores per container
-        default: 4
-      memory_in_gb:
-        type: number
-        description: VM memory in GB for the container
-        default: 4
       vmImage:
         type: string
         description: The Atlas image to use for the VM
@@ -63,14 +55,6 @@ on:
         type: string
         description: Where to deploy to
         required: true
-      cpu:
-        type: number
-        description: The number of CPU cores per container
-        default: 4
-      memory_in_gb:
-        type: number
-        description: VM memory in GB for the container
-        default: 4
       vmImage:
         type: string
         description: The Atlas image to use for the VM
@@ -101,8 +85,6 @@ env:
   MANAGED_IDENTITY: cacidashboard
   STORAGE_ACCOUNT: cacitestingstorage
   LOCATION: ${{ inputs.location || 'uaenorth' }}
-  CPU: ${{ inputs.cpu || 4 }}
-  MEMORY_IN_GB: ${{ inputs.memory_in_gb || 4 }}
   CLEANUP: ${{ inputs.cleanup }}
   USE_NORMAL_SIDECAR: true
   VM_SIZE: ${{ inputs.vmSize || 'Standard_DC8as_cc_v5' }}
@@ -157,8 +139,6 @@ jobs:
 
       - name: Set parameters
         run: |
-          c-aci-testing aci param_set workloads/stress_tests --parameter cpu=$CPU
-          c-aci-testing aci param_set workloads/stress_tests --parameter memoryInGb=$MEMORY_IN_GB
           c-aci-testing aci param_set workloads/stress_tests --parameter "useNormalSidecar=true"
           echo stress_tests.bicepparam:
           cat workloads/stress_tests/stress_tests.bicepparam
@@ -184,17 +164,21 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.SUBSCRIPTION }}
 
-      - name: Deploy Container Group (fio)
+      - name: Deploy Container Group (fio, 2cpu)
         run: |
+          c-aci-testing aci param_set workloads/stress_tests --parameter cpu=2
+          c-aci-testing aci param_set workloads/stress_tests --parameter memoryInGb=4
           c-aci-testing aci param_set workloads/stress_tests --parameter "script='workload_fio'"
           c-aci-testing vm runc workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --prefix lcow_fio
 
-      - name: Deploy Container Group (cpu)
+      - name: Deploy Container Group (cpu, 2cpu)
         run: |
+          c-aci-testing aci param_set workloads/stress_tests --parameter cpu=2
+          c-aci-testing aci param_set workloads/stress_tests --parameter memoryInGb=4
           c-aci-testing aci param_set workloads/stress_tests --parameter "script='workload_cpu'"
           c-aci-testing vm runc workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --prefix lcow_cpu
 
-      - name: Deploy Container Group (tar, small)
+      - name: Deploy Container Group (tar, 1cpu)
         run: |
           c-aci-testing aci param_set workloads/stress_tests --parameter cpu=1
           c-aci-testing aci param_set workloads/stress_tests --parameter memoryInGb=1
