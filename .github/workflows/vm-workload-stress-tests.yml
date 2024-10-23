@@ -227,80 +227,44 @@ jobs:
           cat workloads/stress_tests/stress_tests.bicepparam
           c-aci-testing vm runc workloads/stress_tests --deployment-name $DEPLOYMENT_NAME --prefix lcow_tar
 
-      - name: Upload helper scripts
+      - name: Start check loop on VM
         run: |
-          c-aci-testing vm cp_into --deployment-name $DEPLOYMENT_NAME scripts/vm_helpers C:\vm_helpers
+          c-aci-testing vm cp_into --deployment-name $DEPLOYMENT_NAME \
+            scripts/vm_helpers \
+            'C:\vm_helpers' \
+            'C:\vm_helpers\start_check_loop.ps1 -checkArgs "-checkInterval 30 -additionalChecksScript check_stress_tests_http.ps1"'
 
-      # The pipeline should fail as long as there are any errors, but we allow the check loop to continue
-      # after the first error to see if error condition is persistent.
-      - name: Check and wait loop
+      - name: Pull VM for check results
         run: |
           set +e
-          fail_count=0
-          for i in {1..50}; do
-            sleep 30
-            date
-            c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
-              C:\vm_helpers\check_stress_tests_http.ps1;
-              C:\lcow_cpu_fio\check.ps1;
-              C:\lcow_exec\check.ps1;
-              C:\lcow_tar\check.ps1;
-            ' > check.log 2>&1
-            exitcode=$?
-            cat check.log
-            grep -F ERROR check.log
-            if [ $? -eq 0 ] || [ $exitcode -ne 0 ]; then
-              fail_count=$((fail_count+1))
-            fi
-            if [ $fail_count -gt 1 ]; then
-              exit $fail_count
+          consecutive_fail_count=0
+          for i in {1..20}; do
+            sleep 120
+            c-aci-testing vm cat --deployment-name $DEPLOYMENT_NAME 'C:\check_loop.log' > check.log
+            if [ $? -ne 0 ]; then
+              echo Error: Failed to pull VM for check log
+              consecutive_fail_count=$((consecutive_fail_count+1))
+              if [ $consecutive_fail_count -gt 3 ]; then
+                exit 1
+              fi
+            else
+              consecutive_fail_count=0
+              echo Last 20 lines of check_loop.log:
+              tail -n 20 check.log
             fi
           done
-          exit $fail_count
+          set -e
+          exit 0
 
-      # - name: Wait for IP address
-      #   run: |
-      #     ip_address=""
-      #     elapsed=0
-      #     while [[ -z "$ip_address" && elapsed -lt 60 ]]; do
-      #       ip_address=$(c-aci-testing aci get ips --deployment-name $DEPLOYMENT_NAME | sed "s/\['\([^']*\)'\]/\1/")
-      #       echo "IP Address: $ip_address"
-      #       sleep 5
-      #       elapsed=$((elapsed + 5))
-      #     done
-      #     echo "ip_address=$ip_address" >> $GITHUB_ENV
-
-      # - name: Curl Server
-      #   run: |
-      #     sleep 1
-      #     echo "Attempting to send a request..."
-      #     # We want to limit the total amount of time this curl command can run for,
-      #     # rather than just connect time, so that if the server accepts the request
-      #     # but then hangs we also exit. This necessitates the use of `timeout`.
-      #     timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
-
-      # - name: Let container run for 1min and test again
-      #   run: |
-      #     sleep 100
-      #     timeout -s INT 1m curl --fail-with-body http://$ip_address:8000/index.txt || exit 1
-
-      # - name: Monitor Container Group
-      #   if: always()
-      #   continue-on-error: true
-      #   run: c-aci-testing aci monitor --deployment-name $DEPLOYMENT_NAME
-
-      # - name: Get Container States
-      #   if: always()
-      #   continue-on-error: true
-      #   run: |
-      #     az container show \
-      #       --resource-group $RESOURCE_GROUP \
-      #       --name $DEPLOYMENT_NAME \
-      #     | jq -c '.containers[]' | while read -r container; do
-      #       container_name=$(echo "$container" | jq -r '.name')
-      #       echo "Events for container $container_name:"
-      #       echo "$container" | jq -r '.instanceView | .events[]'
-      #     done
+      - name: Check for errors
+        run: |
+          echo Full check_loop.log:
+          cat check.log
+          grep -F ERROR check.log
+          if [ $? -eq 0 ]; then
+            echo Found errors in check log.
+            exit 1
+          fi
 
       - name: Log into Azure
         uses: azure/login@v2
