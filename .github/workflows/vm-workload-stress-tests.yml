@@ -229,7 +229,7 @@ jobs:
 
       - name: Upload helper scripts
         run: |
-          c-aci-testing vm run_script --deployment-name $DEPLOYMENT_NAME scripts/vm_helpers do_nothing.ps1
+          c-aci-testing vm cp_into --deployment-name $DEPLOYMENT_NAME scripts/vm_helpers C:\vm_helpers
 
       # The pipeline should fail as long as there are any errors, but we allow the check loop to continue
       # after the first error to see if error condition is persistent.
