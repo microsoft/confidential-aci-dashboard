@@ -242,6 +242,7 @@ jobs:
           subscription-id: ${{ vars.SUBSCRIPTION }}
 
       - name: Check dmesg
+        if: always()
         run: |
           set +e
           dmesg_file="dmesg.log"
