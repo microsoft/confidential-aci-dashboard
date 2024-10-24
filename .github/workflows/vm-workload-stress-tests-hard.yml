@@ -28,7 +28,7 @@ on:
         default: 4
       memory_in_gb:
         type: number
-        description: VM memory in GB for the container
+        description: Memory in GB for the container
         default: 4
       vmImage:
         type: string
@@ -69,7 +69,7 @@ on:
         default: 4
       memory_in_gb:
         type: number
-        description: VM memory in GB for the container
+        description: Memory in GB for the container
         default: 4
       vmImage:
         type: string
@@ -198,8 +198,9 @@ jobs:
         run: |
           c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
             Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" > C:\info.txt;
-            c:\containerplat\shimdiag.exe exec k8s uname -a >> C:\info.txt;
-            c:\containerplat\shimdiag.exe exec k8s cat /proc/cpuinfo >> C:\info.txt
+            echo >> C:\info.txt;
+            C:\lcow_cpu_fio\connect_stress_tests.ps1 uname -a >> C:\info.txt;
+            C:\lcow_cpu_fio\connect_stress_tests.ps1 cat /proc/cpuinfo >> C:\info.txt
           '
           c-aci-testing vm cat --deployment-name $DEPLOYMENT_NAME 'C:\info.txt'
 
