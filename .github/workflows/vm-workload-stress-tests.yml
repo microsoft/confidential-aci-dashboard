@@ -22,6 +22,11 @@ on:
         type: string
         description: Where to deploy to
         required: true
+      zone:
+        type: string
+        description: The zone to deploy to
+        required: false
+        default: ''
       vmImage:
         type: string
         description: The Atlas image to use for the VM
@@ -55,6 +60,11 @@ on:
         type: string
         description: Where to deploy to
         required: true
+      zone:
+        type: string
+        description: The zone to deploy to
+        required: false
+        default: ''
       vmImage:
         type: string
         description: The Atlas image to use for the VM
@@ -91,6 +101,7 @@ env:
   VM_IMAGE: ${{ inputs.vmImage || ( inputs.winFlavor == 'ws2022' && secrets.VM_IMAGE_WS2022 || secrets.VM_IMAGE_WS2025 ) }}
   CPLAT_BLOB_NAME: ${{ inputs.cplatBlobName || vars.CPLAT_6_1_BLOB_NAME }}
   WIN_FLAVOR: ${{ inputs.winFlavor || 'ws2025' }}
+  VM_ZONE: ${{ inputs.zone || '' }}
 
 jobs:
   vm-stress-tests:
