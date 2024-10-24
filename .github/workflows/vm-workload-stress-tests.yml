@@ -189,11 +189,11 @@ jobs:
             echo >> C:\info.txt
             Set-Alias -Name shimdiag -Value C:\ContainerPlat\shimdiag.exe
             echo "uname": >> C:\info.txt
-            shimdiag exec (shimdiag list)[0] sh -c 'uname -a' >> C:\info.txt
+            shimdiag exec (shimdiag list)[0] uname -a >> C:\info.txt
             echo "cpuinfo": >> C:\info.txt
-            shimdiag exec (shimdiag list)[0] sh -c 'cat /proc/cpuinfo' >> C:\info.txt
+            shimdiag exec (shimdiag list)[0] cat /proc/cpuinfo >> C:\info.txt
             echo "snp-report": >> C:\info.txt
-            shimdiag exec (shimdiag list)[0] sh -c 'snp-report' >> C:\info.txt
+            shimdiag exec (shimdiag list)[0] snp-report >> C:\info.txt
           '
           c-aci-testing vm cat --deployment-name $DEPLOYMENT_NAME 'C:\info.txt'
 
