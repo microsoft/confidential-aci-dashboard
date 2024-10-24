@@ -199,10 +199,9 @@ jobs:
       - name: Print info
         run: |
           c-aci-testing vm exec --deployment-name $DEPLOYMENT_NAME '
-            Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" > C:\info.txt;
-            echo >> C:\info.txt;
-            C:\lcow_fio\connect_stress_tests.ps1 uname -a >> C:\info.txt;
-            C:\lcow_fio\connect_stress_tests.ps1 cat /proc/cpuinfo >> C:\info.txt
+            Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" > C:\info.txt
+            echo >> C:\info.txt
+            c:\containerplat\shimdiag.exe exec (c:\containerplat\shimdiag.exe list)[0] sh -c 'uname -a; cat /proc/cpuinfo' >> C:\info.txt
           '
           c-aci-testing vm cat --deployment-name $DEPLOYMENT_NAME 'C:\info.txt'
 
