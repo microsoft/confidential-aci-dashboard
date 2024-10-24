@@ -28,8 +28,6 @@ COPY sidecar.Dockerfile /tmp/sidecar.Dockerfile.23
 COPY sidecar.Dockerfile /tmp/sidecar.Dockerfile.24
 COPY sidecar.Dockerfile /tmp/sidecar.Dockerfile.25
 
-# During testing we found that failure happens no matter what this container
-# does, but we might as well run something interesting.
 # We can't run the normal skr command because the other container does not
 # handle the necessary HTTP request.
-CMD [ "/bin/sh", "-c", "cd / && echo start infra tar loop > /dev/kmsg && while :; do tar -c bin etc home lib opt root sbin usr var > /dev/null; done" ]
+CMD [ "/bin/sleep", "infinity" ]

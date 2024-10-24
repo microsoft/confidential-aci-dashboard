@@ -18,3 +18,14 @@ jobs:
     uses: ./.github/workflows/region.yml
     with:
       location: westeurope
+
+  genoa-vm:
+    secrets: inherit
+    uses: ./.github/workflows/vm-workload-stress-tests.yml
+    with:
+      id: vm-genoa-ws2025-6.1
+      location: westeurope
+      vmSize: Standard_DC8as_cc_v5
+      zone: 3
+      cplatBlobName: ${{ vars.CPLAT_6_1_BLOB_NAME }}
+      winFlavor: ws2025

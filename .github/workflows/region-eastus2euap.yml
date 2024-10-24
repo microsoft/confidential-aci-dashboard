@@ -18,3 +18,29 @@ jobs:
     uses: ./.github/workflows/region.yml
     with:
       location: eastus2euap
+
+  vm-stress-tests:
+    secrets: inherit
+    uses: ./.github/workflows/vm-workload-stress-tests.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        winFlavor: ['ws2022', 'ws2025']
+    with:
+      id: vm-stress-tests-${{ matrix.winFlavor }}-6.1
+      location: eastus2euap
+      cplatBlobName: ${{ vars.CPLAT_6_1_BLOB_NAME }}
+      winFlavor: ${{ matrix.winFlavor }}
+
+  vm-stress-tests-5-15:
+    secrets: inherit
+    uses: ./.github/workflows/vm-workload-stress-tests.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        winFlavor: ['ws2022', 'ws2025']
+    with:
+      id: vm-stress-tests-${{ matrix.winFlavor }}-5.15
+      location: eastus2euap
+      cplatBlobName: ${{ vars.CPLAT_5_15_BLOB_NAME }}
+      winFlavor: ${{ matrix.winFlavor }}

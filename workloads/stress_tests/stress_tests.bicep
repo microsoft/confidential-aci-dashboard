@@ -84,8 +84,8 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           ]
           resources: {
             requests: {
-              memoryInGB: memoryInGb
-              cpu: cpu
+              memoryInGB: 2
+              cpu: 2
             }
           }
           // We do not have the correct attestation endpoint in this workload for skr to work properly, and it will
